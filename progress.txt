@@ -27,3 +27,11 @@
 * started reading fcf paper, realized it's not the most impt. thing right now
 * read next two pages of HMAC-DRBG paper. lucid up to proof. is it game-based?
 
+8/4/15
+* nothing, clashed with ELE pset and CWR assignment
+
+8/5/15
+* checked out the two crypto coursera classes; decided on boneh's; watched most of the first lecture on PRGs
+* submitted project proposal
+* GOAL: watch coursera videos, do the exercises, be able to point to a specific area of HMAC proof that I'm stuck on.
+
