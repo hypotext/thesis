@@ -35,3 +35,15 @@
 * submitted project proposal
 * GOAL: watch coursera videos, do the exercises, be able to point to a specific area of HMAC proof that I'm stuck on.
 
+8/6/15
+* none, opted to work in morning instead
+
+8/7/15
+* morning: finished PRG intro, watched first half of PRG security definitions. we're proving security GIVEN THAT HMAC is secure (given that hash function is secure). actual security would imply P != NP
+* night: (~3.5 hrs)
+  - finished PRG security defs: adversary as statistical test, secure IFF unpredictable (Yao's theorem)
+  - realized that goldwasser (?)'s book is a real and long textbook, not just the 30 pages of notes i have. ordered/downlowded it
+  - checked out HMAC proof 1: confusing
+  - checked out HMAC proof 2: lucid! random oracle model bad? 
+    - hash-based DRBG proof first, then HMAC's?
+* TODO: HMAC proof 2, semantic security, el-gamal, game-based crypto reduction proofs, goldwasser book, **figure out where i get stuck on a proof**
