@@ -47,3 +47,10 @@
   - checked out HMAC proof 2: lucid! random oracle model bad? 
     - hash-based DRBG proof first, then HMAC's?
 * TODO: HMAC proof 2, semantic security, el-gamal, game-based crypto reduction proofs, goldwasser book, **figure out where i get stuck on a proof**
+
+8/8/15
+* good progress: read HMAC proof 2 paper and understood the proofs.
+* they were surprisingly simple. converting random oracle model proofs to game-based proofs? how does this differ from HMAC proof 2? can this be formalized?
+* HMAC-DRBG algorithm itself is surprisingly simple: V_{i+1} = HMAC(K, V_i); bits_{i+1} = bits_i || V_{i+1}.
+* TODO: write up and send progress. next steps??
+
