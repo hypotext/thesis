@@ -54,3 +54,8 @@
 * HMAC-DRBG algorithm itself is surprisingly simple: V_{i+1} = HMAC(K, V_i); bits_{i+1} = bits_i || V_{i+1}.
 * TODO: write up and send progress. next steps??
 
+8/9/15
+* sent email with summary of progress and three questions (on HMAC proof 2) to advisors
+* meetings with matt/andrew/lennart and with dave
+  * need to learn about better crypto models/proofs than the unreliable random oracle proofs in the paper
+* transcribed notes and TODOs from meetings
