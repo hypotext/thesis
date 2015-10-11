@@ -59,3 +59,11 @@
 * meetings with matt/andrew/lennart and with dave
   * need to learn about better crypto models/proofs than the unreliable random oracle proofs in the paper
 * transcribed notes and TODOs from meetings
+
+8/10/15
+* not much today. TIL: start the day with the most important work (thesis) not the least important (emails)
+* posted on zulip about progress. really appreciated katrina's comment on how much of a cool opportunity this is (both to learn and to contribute) + how interesting my work is to an outsider!
+* end-of-day: looked at matt's paper, opened wikipedia tab on "provable security." CPA, CCA = ?
+  * math gets real in pages 7, 11
+* read this SE on cryptographic oracles: they leak partial info https://security.stackexchange.com/questions/10617/what-is-a-cryptographic-oracle
+
