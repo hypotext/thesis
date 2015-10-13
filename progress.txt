@@ -67,3 +67,12 @@
   * math gets real in pages 7, 11
 * read this SE on cryptographic oracles: they leak partial info https://security.stackexchange.com/questions/10617/what-is-a-cryptographic-oracle
 
+8/11/15
+* thesis'd early!
+* read first few pages of symmetric encryption provable security paper (SEPS)
+
+8/12/15
+* thesis'd early!
+* read more pages of SEPS paper. understood notation, approaching math... 
+* need to read FCF
+
