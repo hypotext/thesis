@@ -76,3 +76,14 @@
 * read more pages of SEPS paper. understood notation, approaching math... 
 * need to read FCF
 
+8/13/15
+* nothing: ORF pset, pushed it off until morning
+
+8/14/15
+* morning: read next page of SEPS paper (LOR-CPA, CCA definition)
+* evening: ~4 hours on paper. definitions are easy, understood semantic security
+  * stuck on proof that adv(LOR-CPA) <= 2 adv(ROR-CPA). or is it the other way around? i think the intuition should be easy (solving real-or-random with left-or-right) but i don't understand the oracle simulation. 
+  * also looked at XOR proofs. can i understand them? the theorem seems okay
+* flipped through new goldreich book
+* also: the diffie-hellman CCS paper is incredible
+* TODO: FCF paper, FCF code, rest of this paper, go back to HMAC proof and try it
