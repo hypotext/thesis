@@ -87,3 +87,12 @@
 * flipped through new goldreich book
 * also: the diffie-hellman CCS paper is incredible
 * TODO: FCF paper, FCF code, rest of this paper, go back to HMAC proof and try it
+
+8/15/15
+* spent the day on writing my research statement for CRA; decided to sleep early
+
+8/16/15
+* read symenc and FCF papers, skyped with matt, learned a lot (see notes)
+  * it was very helpful to have understood the LOR/ROR definitions and seen the FCF security proof!
+  * what could I have done better? read more of both papers, probably
+* transcribed (most of) my notes
