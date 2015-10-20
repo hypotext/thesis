@@ -96,3 +96,14 @@
   * it was very helpful to have understood the LOR/ROR definitions and seen the FCF security proof!
   * what could I have done better? read more of both papers, probably
 * transcribed (most of) my notes
+
+8/17/15
+* tried reading some of FCF paper, didn't get far
+
+8/18/15
+* nothing on thesis
+* worked on NSF proposal and talked with mario. to look into: featherweight synthesis and cryptoverif (prosecco)
+
+8/19/15
+* read a bit of FCF paper
+* should prepare some ideas for PLV meeting
