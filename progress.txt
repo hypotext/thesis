@@ -5,7 +5,7 @@
 9/31/15
 * nothing
 
-8/1/15
+10/1/15
 * started responding to naphat's email
 * read his notes
 * starting to write email for next week's meeting
@@ -16,29 +16,29 @@
 * TODO learn probability. read proofs.
 * TODO send these two emails ASAP
 
-8/2/15
+10/2/15
 * responded to naphat's email
 * made comprehensive TODO list
 * wrote proposal except for related work
 
-8/3/15
+10/3/15
 * finished proposal and sent it
 * sent meeting email
 * started reading fcf paper, realized it's not the most impt. thing right now
 * read next two pages of HMAC-DRBG paper. lucid up to proof. is it game-based?
 
-8/4/15
+10/4/15
 * nothing, clashed with ELE pset and CWR assignment
 
-8/5/15
+10/5/15
 * checked out the two crypto coursera classes; decided on boneh's; watched most of the first lecture on PRGs
 * submitted project proposal
 * GOAL: watch coursera videos, do the exercises, be able to point to a specific area of HMAC proof that I'm stuck on.
 
-8/6/15
+10/6/15
 * none, opted to work in morning instead
 
-8/7/15
+10/7/15
 * morning: finished PRG intro, watched first half of PRG security definitions. we're proving security GIVEN THAT HMAC is secure (given that hash function is secure). actual security would imply P != NP
 * night: (~3.5 hrs)
   - finished PRG security defs: adversary as statistical test, secure IFF unpredictable (Yao's theorem)
@@ -48,38 +48,38 @@
     - hash-based DRBG proof first, then HMAC's?
 * TODO: HMAC proof 2, semantic security, el-gamal, game-based crypto reduction proofs, goldwasser book, **figure out where i get stuck on a proof**
 
-8/8/15
+10/10/15
 * good progress: read HMAC proof 2 paper and understood the proofs.
 * they were surprisingly simple. converting random oracle model proofs to game-based proofs? how does this differ from HMAC proof 2? can this be formalized?
 * HMAC-DRBG algorithm itself is surprisingly simple: V_{i+1} = HMAC(K, V_i); bits_{i+1} = bits_i || V_{i+1}.
 * TODO: write up and send progress. next steps??
 
-8/9/15
+10/9/15
 * sent email with summary of progress and three questions (on HMAC proof 2) to advisors
 * meetings with matt/andrew/lennart and with dave
   * need to learn about better crypto models/proofs than the unreliable random oracle proofs in the paper
 * transcribed notes and TODOs from meetings
 
-8/10/15
+10/10/15
 * not much today. TIL: start the day with the most important work (thesis) not the least important (emails)
 * posted on zulip about progress. really appreciated katrina's comment on how much of a cool opportunity this is (both to learn and to contribute) + how interesting my work is to an outsider!
 * end-of-day: looked at matt's paper, opened wikipedia tab on "provable security." CPA, CCA = ?
   * math gets real in pages 7, 11
 * read this SE on cryptographic oracles: they leak partial info https://security.stackexchange.com/questions/10617/what-is-a-cryptographic-oracle
 
-8/11/15
+10/11/15
 * thesis'd early!
 * read first few pages of symmetric encryption provable security paper (SEPS)
 
-8/12/15
+10/12/15
 * thesis'd early!
 * read more pages of SEPS paper. understood notation, approaching math... 
 * need to read FCF
 
-8/13/15
+10/13/15
 * nothing: ORF pset, pushed it off until morning
 
-8/14/15
+10/14/15
 * morning: read next page of SEPS paper (LOR-CPA, CCA definition)
 * evening: ~4 hours on paper. definitions are easy, understood semantic security
   * stuck on proof that adv(LOR-CPA) <= 2 adv(ROR-CPA). or is it the other way around? i think the intuition should be easy (solving real-or-random with left-or-right) but i don't understand the oracle simulation. 
@@ -88,22 +88,27 @@
 * also: the diffie-hellman CCS paper is incredible
 * TODO: FCF paper, FCF code, rest of this paper, go back to HMAC proof and try it
 
-8/15/15
+10/15/15
 * spent the day on writing my research statement for CRA; decided to sleep early
 
-8/16/15
+10/16/15
 * read symenc and FCF papers, skyped with matt, learned a lot (see notes)
   * it was very helpful to have understood the LOR/ROR definitions and seen the FCF security proof!
   * what could I have done better? read more of both papers, probably
 * transcribed (most of) my notes
 
-8/17/15
+10/17/15
 * tried reading some of FCF paper, didn't get far
 
-8/18/15
+10/18/15
 * nothing on thesis
 * worked on NSF proposal and talked with mario. to look into: featherweight synthesis and cryptoverif (prosecco)
 
-8/19/15
+10/19/15
 * read a bit of FCF paper
 * should prepare some ideas for PLV meeting
+
+10/21/15
+* got FCF import to work in code
+* wrote HMAC_DRBG types/functions/API spec pseudocode and inner Generate loop implementation
+* added naphat's code
