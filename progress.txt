@@ -112,3 +112,10 @@
 * got FCF import to work in code
 * wrote HMAC_DRBG types/functions/API spec pseudocode and inner Generate loop implementation
 * added naphat's code
+
+10/22/15
+* spent the night and day writing my NSF essays, finished and sent them
+* but wasn't able to do enough work to have questions for the meeting
+
+10/23/15
+* 
