@@ -127,5 +127,7 @@
 
 10/28/15
 * read rest of section on proof (took too long)
-* stuck on "bad event." my thought was that it would be 
+* stuck on "bad event." my thought was that it would be when the random function is called with input it's already been called with (so then it returns the same output instead of a new randomly sampled thing)
+* skimmed adam's code. saw/understood part of the bad event, but 2nd adversary event??
+* TODO: bellare paper on "until-bad"
 * TODO: read the paper proof, look at adam's code, finish my dep types spec, paper proof of its correctness, attempt game-based proof
