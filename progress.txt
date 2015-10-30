@@ -131,3 +131,21 @@
 * skimmed adam's code. saw/understood part of the bad event, but 2nd adversary event??
 * TODO: bellare paper on "until-bad"
 * TODO: read the paper proof, look at adam's code, finish my dep types spec, paper proof of its correctness, attempt game-based proof
+
+10/29/15
+* (earlier: close-read adam's paper and looked at his code, also USENIX paper section)
+* wrote rough sequence of games for HMAC-DRBG
+  * confused by HMAC collision probability. birthday attack? (not similar to expression) or just 1/2^{HMAC output size}? (hirose p8)
+  * confused about the bad events: 1. RF -> truly random (memoizing); 2. HMAC output equals any of the previous inputs/outputs (= outputs cycle)
+  * any other bad events?
+* confused about how to approach the first block (simplest possible example)
+  * true by assumption? what PRF strength def? adam only has advantage
+  * also, 2 blocks
+* looked at bellare paper
+  * OK until bad; look at and do the PRP/PRF switching lemma?
+  * has lots of useful proof tactics
+* coq stuck: writing vector version of loop; writing PRF game with sampling random functions
+* TODO: clean code, write progress email
+* TODO: consider proofs for the more complicated versions of the PRG (esp. reseed/update) 
+* TODO: write the full spec
+* TODO: work hard on this earlier so i can ask matt questions
