@@ -149,3 +149,18 @@
 * TODO: consider proofs for the more complicated versions of the PRG (esp. reseed/update) 
 * TODO: write the full spec
 * TODO: work hard on this earlier so i can ask matt questions
+
+10/30/15
+* wrote long questions email
+* met with Andrew and Lennart (Matt couldn't make it)
+* transcribed notes
+* some progress on sampling functions and on FCF/loops (still need to email Adam)
+
+10/31/15-11/2/15: nothing
+
+11/3/15
+* started IW progress checkpoint; updated progress
+* should really be working on IW daily (though the approach of "work on only IW for an entire day" works pretty well too)
+
+11/4/15
+* 
