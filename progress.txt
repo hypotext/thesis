@@ -168,3 +168,15 @@
 * transcribed half of notes
 * emailed adam about 4 questions
 
+11/5/15
+* at recurse center. sent checkpoint form
+
+11/6/15
+* nothing, GRE prep
+
+11/7/15
+* responded to matt and adam's emails; looked into CTR-DRBG
+* PRF encryption proof induction?
+
+11/8/15
+* read adam's email, need to respond to it
