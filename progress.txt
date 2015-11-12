@@ -180,3 +180,25 @@
 
 11/8/15
 * read adam's email, need to respond to it
+
+11/9/15
+* nothing
+
+11/10/15
+* responded to adam's email
+
+11/11/15
+* responded to adam's email
+* need to work every day!!
+
+11/12/15
+* TODO: (c+p from last time)
+TODO: read what adam did
+TODO: think about extension of proof for HMAC-DRBG
+(TODO: in order: new scheme, new game defs (?), new proofs
+then extend to loops, etc.)
+TODO: review functions, oraclecomp, adversary types
+TODO: "paper crypto proofs"
+
+TODO: continue learning about ...? backtracking resistance? better spec?
+
