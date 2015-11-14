@@ -192,13 +192,47 @@
 * need to work every day!!
 
 11/12/15
-* TODO: (c+p from last time)
-TODO: read what adam did
+
+TODO: read what adam did (up to line 400)
+TODO: read adam's 2 emails
 TODO: think about extension of proof for HMAC-DRBG
 (TODO: in order: new scheme, new game defs (?), new proofs
 then extend to loops, etc.)
 TODO: review functions, oraclecomp, adversary types
-TODO: "paper crypto proofs"
 
+- injection?
+- do it myself?
+- my current approach feels more reactive than active WRT math -- how to get back on track?
+
+TODO: "paper crypto proofs"
 TODO: continue learning about ...? backtracking resistance? better spec?
+
+HMAC differences:
+- computes new (key, v) after each total loop
+- allows additional input
+- HMAC re-seeds with new entropy after a certain number of calls (re-seed counter > re-seed interval)
+
+- might like to figure out the max # blocks wanted
+
+- can we prove backtracking resistance for this simple construction?
+  at time n, we know K,V for time n/2, do we compromise time (0..n/2)
+  intuitively no because given k,v (output) it's hard to guess k,v (input)
+  unless bad events?
+
+- i understand the overall proof outline; can you talk about the intermediate games? like how to put PRF in an oracle and why, comp_spec, ...
+- intermediate steps in random function to random bits
+- glossary of all the arrows?
+- i haven't looked through the detailed proof tactics yet, can we do one on paper?
+
+11/13/15
+* separate meetings with matt and adam
+* transcribed notes
+* asked question on crypto stackexchange about backtracking resistance
+https://crypto.stackexchange.com/questions/30546/if-a-prg-is-constructed-by-iterating-a-prf-is-it-backtracking-resistant 
+
+https://security.stackexchange.com/questions/30170/after-how-much-data-encryption-aes-256-we-should-change-key 
+
+https://crypto.stackexchange.com/questions/29966/is-pseudorandom-function-also-a-one-way-function
+
+clear TODOs this time. work every day
 
