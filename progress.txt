@@ -236,3 +236,9 @@ https://crypto.stackexchange.com/questions/29966/is-pseudorandom-function-also-a
 
 clear TODOs this time. work every day
 
+11/14/15
+* back here: https://crypto.stackexchange.com/questions/30546/if-a-prg-is-constructed-by-iterating-a-prf-is-it-backtracking-resistant
+* looked at last answer. PRF = indistinguishable from a RANDOMLY CHOSEN FUNCTION over same domain (vs. output is indistinguishable from random)
+why would we want to construct a PRF from a PRP
+* oh okay, AES is clearly invertible if we know the key, and "is" a PRF?
+* TODO: read adam's code, send email to matt
