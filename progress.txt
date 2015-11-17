@@ -242,3 +242,10 @@ clear TODOs this time. work every day
 why would we want to construct a PRF from a PRP
 * oh okay, AES is clearly invertible if we know the key, and "is" a PRF?
 * TODO: read adam's code, send email to matt
+
+11/15/15
+* nothing
+
+11/16/16
+* explained the hybrid argument to jean
+* glanced at goldreich's book
