@@ -246,6 +246,12 @@ why would we want to construct a PRF from a PRP
 11/15/15
 * nothing
 
-11/16/16
+11/16/15
 * explained the hybrid argument to jean
 * glanced at goldreich's book
+
+11/17/15
+* meeting with andrew, lennart, naphat
+* talked about streams <-> sampling 
+* should I write more of the functional spec?
+* tried reasoning about the key changing. not sure what to do
