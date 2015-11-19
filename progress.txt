@@ -255,3 +255,6 @@ why would we want to construct a PRF from a PRP
 * talked about streams <-> sampling 
 * should I write more of the functional spec?
 * tried reasoning about the key changing. not sure what to do
+
+11/18/15
+* nothing (sent grad-school-related emails)
