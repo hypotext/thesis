@@ -258,3 +258,20 @@ why would we want to construct a PRF from a PRP
 
 11/18/15
 * nothing (sent grad-school-related emails)
+
+11/19
+* went over step 4
+* wrote backtracking resistance def
+
+11/20
+* meeting with matt
+* transcribed notes
+
+11/21
+* "paired" with rose
+
+11/22
+* ??? nothing?
+
+11/23
+* emailed matt and adam
