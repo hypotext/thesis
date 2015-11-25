@@ -275,3 +275,13 @@ why would we want to construct a PRF from a PRP
 
 11/23
 * emailed matt and adam
+
+11/24
+* good progress on reasoning about key changes. seems to reduce to the same collision-in-list argument. could re-seeding be the same argument?
+  * TODO: transcribe notes
+  * TODO: email matt and adam
+  * TODO: study the math behind that argument
+* good meeting with andrew and naphat
+* transcribed notes
+  * TODO: proof about non-dependence on entropy / deterministic calculability of # entropy bits needed as fn of generate
+  * TODO: ask adam questions, ping matt
