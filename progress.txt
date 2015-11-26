@@ -285,3 +285,9 @@ why would we want to construct a PRF from a PRP
 * transcribed notes
   * TODO: proof about non-dependence on entropy / deterministic calculability of # entropy bits needed as fn of generate
   * TODO: ask adam questions, ping matt
+
+11/25
+* opened some files
+* forget to work on thesis due to ELE lab
+* fixed build?
+* really need to email adam

@@ -1,0 +1,39 @@
+Outline
+
+Setup
+=====
+We define indistinguishability as 
+We define the PRG as 
+
+Step 1
+======
+Inline definitions and simplify
+
+Step 2
+======
+Use the PRF as an oracle, since the random function is an oracle.
+
+Step 3
+======
+Replace the PRF with a random function.
+
+Preserve duplicate inputs using an oracle that keeps track of all the queries.
+
+Step 4
+======
+Replace the random function with random values. This is the same as long as there are no duplicates in the list of random function inputs. (Otherwise, the random function would output the same thing, making it more likely that the adversary would think that it was a RF.)
+
+Step 4a.
+--------
+Identical until bad.
+
+Step 4b. 
+--------
+Compute the probability of the bad event.
+
+Show that games 3 and 4 are close.
+
+Step 5.
+=======
+Show the final result: that the advantage of the adversary against the DRBG is at most the advantage of the constructed adversary (?) against the PRF (?), and some negligible value.
+
