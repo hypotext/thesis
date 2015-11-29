@@ -289,5 +289,25 @@ why would we want to construct a PRF from a PRP
 11/25
 * opened some files
 * forget to work on thesis due to ELE lab
-* fixed build?
+* fixed build
 * really need to email adam
+
+11/26
+* thesis work
+* read FCF paper, learned about denotational semantics (actually understand the brackets) and some PRHL/PRPL, stuck on comp_spec definition
+* read and re-did a lot of step 3! first proofs!
+* note to self: stay up late two nights before the meeting, not one night
+
+11/27
+* thesis meeting
+* matt: talked in skype about matt's new key change hybrid argument
+  * (Instantiate, Generate, Update, Generate, Update, …) -> (Ideal_seed, Gen, Update, Gen, Update, …) -> (Ideal_seed, Gen, Ideal_seed, Gen, Ideal_seed …) 
+  * trying to get concrete about the probabilities, a bit confused here
+* adam: talked verbally about comp_spec
+  * went over step 3 in fine-grained detail, which was very helpful
+  * some magic with comp tactics using the induction hypotheses
+  * also talked about the stream -> comp problems. turns out he did this with lists, also a cool proof relating semantics. TODO look at this
+
+11/28
+* not much. opened notes, realized i still need to transcribe notes, email matt, work steadily on step 4
+* transcribed some progress
