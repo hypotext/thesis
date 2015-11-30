@@ -311,3 +311,19 @@ why would we want to construct a PRF from a PRP
 11/28
 * not much. opened notes, realized i still need to transcribe notes, email matt, work steadily on step 4
 * transcribed some progress
+
+11/29
+* nothing
+
+11/30
+* meeting with matt, half an hour
+  * even in the ideal world, still have bad events. aldo going from updatedrbg to choosekey will also have bad events (PRF_advantage and THEN random function to random bits)
+* TODO: ping him about email/detailed arguments
+* TODO: ** look into how to do the hybrid arguments **
+  * rewrite to have a separate function to randomly sample K and V (so we can use it) (and see notes in Skype)
+  * how to do the "every other" inductive replacement?
+  * does adam have the hybrid library? does he use it?
+  * is RndInList OK? adversary picks the # calls, so different?
+  * TODO how to start this? i have no idea. how to model call interleaving? adversary gets poly number of calls? games?
+* TODO: respond to adam's email
+* TODO: do step 4!
