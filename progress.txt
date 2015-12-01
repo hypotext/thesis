@@ -324,6 +324,14 @@ why would we want to construct a PRF from a PRP
   * how to do the "every other" inductive replacement?
   * does adam have the hybrid library? does he use it?
   * is RndInList OK? adversary picks the # calls, so different?
+
+* also responded to adam's email, re-made fcf
+* TODO fix merge conflicts
+
   * TODO how to start this? i have no idea. how to model call interleaving? adversary gets poly number of calls? games?
 * TODO: respond to adam's email
 * TODO: do step 4!
+
+* TODO: look at naphat's spec, figure out proof on paper, and figure out how to compile
+
+11/31
