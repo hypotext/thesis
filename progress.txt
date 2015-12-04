@@ -335,4 +335,16 @@ why would we want to construct a PRF from a PRP
 * emailed naphat
 * TODO: look at naphat's spec, figure out proof on paper, and figure out how to compile
 
-11/31
+11/30
+* meeting with andrew, naphat, and lennart
+* meeting with jean yang (see notes)
+* emailed matt about RNG
+
+12/1
+* i think i did something but i don't remember
+
+12/2
+* nothing
+
+12/3
+* nothing
