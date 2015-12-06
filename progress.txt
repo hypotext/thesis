@@ -348,3 +348,10 @@ why would we want to construct a PRF from a PRP
 
 12/3
 * nothing
+
+12/4
+* re-did step 3 proofs, started step 4
+
+12/5
+* went through step 4 in detail. important: list of inputs is being gotten from oracle state. also, identical until bad
+* instead of emailing adam, emailed matt
