@@ -1,0 +1,69 @@
+step 4 notes
+12/6/15
+
+-------
+
+G3: replace PRF with random function
+
+G3_1: preserve duplicate inputs
+
+G3_2: expose the bad event to the game (return whether there are duplicates)
+
+G3_3: obtain a new random value output for all inputs. this game is only equal to the previous game (which returns whether there are duplicates) when there are no duplicates in the inputs.
+
+-------
+
+to go from game 3_2 to game 3_3, we do:
+  - same badness: they both have the same probability of a dup input (what is that probability? the adversary doesn't literally get to query the RF. this probability is the RndInList stuff calculated later)
+  - equal until bad (duplicate) -- done with evalDist? anything after the bad event is ignored
+  - distance between them is bounded by (the probability of bad event) actually the probability of G3 (?) which uses the fundamental lemma
+
+TODO ask adam about proof of eq_until_bad
+TODO ask adam about what the adversary actually gets to query
+
+-------
+
+three specifications: 
+
+PRF_A_randomFunc_eq_until_bad: identical until bad (inputs to both randomFunc and random bits are equal, and adversary cannot distinguish randomfunc and random bits if there are no input duplicates)
+
+PRF_DRBG_f_bad_spec: with 1) the normal DRBG and the f-oracle just returning random bits and 2) the DRBG that just returns the list of inputs, show that both of the list of inputs that they return are the "same" (permutations)
+
+PRF_DRBG_f_bad_2_equiv: minor, TODO shift everything over by one in input list
+
+-------
+
+G3_bad_1: remove f (rand func's state) from DRBG; on the list of inputs only (injected into D) (because that's the only thing we care about for calculating the probability of the bad event), return whether that has duplicates
+
+G3_bad_2: remove the initial v from DRBG; on the list of random bits only (then injected into D with map), return whether that has duplicates
+
+G3_bad_3: replace DRBG's recursion with using compMap, then on the list of random bits, injecting them into D, then returning whether that has duplicates
+
+G3_bad_4: no injection into D for inputs, just random bits (v. similar to random values as desired)
+  
+  probability of distinguishing here is <= (l^2 / 2^eta)
+  dupProb_constant
+
+G4: replace random function with random values
+(from G3_3: throw away state and just keep the random values)
+
+-------
+
+reasoning about lists (vs. using hybrid argument): preserves the list of all inputs/outputs as the list that is the oracle's state, and expose that in comp_spec / write a relation over that.
+
+e.g. PRF_DRBG_f_bad_spec: we write a relation between two lists of input values, one from the oracle's state (returned by OracleComp) and one built up recursively. 
+then we use that in PRF_DRBG_G3_bad_equiv to move from the ga
+
+how are we doing the identical until bad ON this list?
+
+we reduce the game to something of this form:
+- only the inputs matter
+- returning a bit that indicates whether the bad event happened in the input
+
+   Definition PRF_DRBG_G3_bad_4 :=
+     ls <-$ compMap _ (fun _ => {0, 1}^eta) (forNats (pred l));
+     ret (hasDups _ (r_init :: ls)).
+
+then we reason the following:
+      Pr[PRF_DRBG_G3_bad_4] <= (l ^ 2 / 2 ^ eta).
+where the probability of a game is the probability that result = 1

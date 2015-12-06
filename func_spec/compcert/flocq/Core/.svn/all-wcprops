@@ -1,0 +1,89 @@
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/appel/!svn/ver/5739/vst/compcert/flocq/Core
+END
+Fcore_Raux.v
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/appel/!svn/ver/5739/vst/compcert/flocq/Core/Fcore_Raux.v
+END
+Fcore.v
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/appel/!svn/ver/5739/vst/compcert/flocq/Core/Fcore.v
+END
+Fcore_ulp.v
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/appel/!svn/ver/5739/vst/compcert/flocq/Core/Fcore_ulp.v
+END
+Fcore_defs.v
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/appel/!svn/ver/5739/vst/compcert/flocq/Core/Fcore_defs.v
+END
+Fcore_generic_fmt.v
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/appel/!svn/ver/5739/vst/compcert/flocq/Core/Fcore_generic_fmt.v
+END
+Fcore_FTZ.v
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/appel/!svn/ver/5739/vst/compcert/flocq/Core/Fcore_FTZ.v
+END
+Fcore_digits.v
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/appel/!svn/ver/5739/vst/compcert/flocq/Core/Fcore_digits.v
+END
+Fcore_rnd.v
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/appel/!svn/ver/5739/vst/compcert/flocq/Core/Fcore_rnd.v
+END
+Fcore_FLT.v
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/appel/!svn/ver/5739/vst/compcert/flocq/Core/Fcore_FLT.v
+END
+Fcore_float_prop.v
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/appel/!svn/ver/5739/vst/compcert/flocq/Core/Fcore_float_prop.v
+END
+Fcore_rnd_ne.v
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/appel/!svn/ver/5739/vst/compcert/flocq/Core/Fcore_rnd_ne.v
+END
+Fcore_FIX.v
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/appel/!svn/ver/5739/vst/compcert/flocq/Core/Fcore_FIX.v
+END
+Fcore_Zaux.v
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/appel/!svn/ver/5739/vst/compcert/flocq/Core/Fcore_Zaux.v
+END
+Fcore_FLX.v
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/appel/!svn/ver/5739/vst/compcert/flocq/Core/Fcore_FLX.v
+END
