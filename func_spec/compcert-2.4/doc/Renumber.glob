@@ -1,0 +1,111 @@
+DIGEST NO
+Fcompcert.backend.Renumber
+R888:893 compcert.lib.Coqlib <> <> lib
+R911:914 compcert.lib.Maps <> <> lib
+R932:940 compcert.lib.Postorder <> <> lib
+R958:960 compcert.backend.RTL <> <> lib
+sec 1567:1574 <> RENUMBER
+var 1587:1590 RENUMBER pnum
+R1593:1599 compcert.lib.Maps PTree t def
+R1601:1608 Coq.Numbers.BinNums <> positive ind
+def 1655:1662 <> renum_pc
+R1669:1672 compcert.backend.RTL <> node def
+R1677:1680 compcert.backend.RTL <> node def
+R1697:1697 compcert.lib.Maps <> ::x_'!'_x not
+R1698:1699 compcert.backend.Renumber <> pc var
+R1693:1696 compcert.backend.Renumber <> RENUMBER.pnum var
+R1710:1713 Coq.Init.Datatypes <> Some constr
+R1730:1733 Coq.Init.Datatypes <> None constr
+def 1818:1828 <> renum_instr
+R1834:1844 compcert.backend.RTL <> instruction ind
+R1849:1859 compcert.backend.RTL <> instruction ind
+R1872:1872 compcert.backend.Renumber <> i var
+R1883:1886 compcert.backend.RTL <> Inop constr
+R1893:1896 compcert.backend.RTL <> Inop constr
+R1899:1906 compcert.backend.Renumber <> renum_pc def
+R1915:1917 compcert.backend.RTL <> Iop constr
+R1936:1938 compcert.backend.RTL <> Iop constr
+R1953:1960 compcert.backend.Renumber <> renum_pc def
+R1969:1973 compcert.backend.RTL <> Iload constr
+R2000:2004 compcert.backend.RTL <> Iload constr
+R2027:2034 compcert.backend.Renumber <> renum_pc def
+R2043:2048 compcert.backend.RTL <> Istore constr
+R2075:2080 compcert.backend.RTL <> Istore constr
+R2103:2110 compcert.backend.Renumber <> renum_pc def
+R2119:2123 compcert.backend.RTL <> Icall constr
+R2146:2150 compcert.backend.RTL <> Icall constr
+R2169:2176 compcert.backend.Renumber <> renum_pc def
+R2185:2193 compcert.backend.RTL <> Itailcall constr
+R2210:2210 compcert.backend.Renumber <> i var
+R2216:2223 compcert.backend.RTL <> Ibuiltin constr
+R2242:2249 compcert.backend.RTL <> Ibuiltin constr
+R2264:2271 compcert.backend.Renumber <> renum_pc def
+R2280:2284 compcert.backend.RTL <> Icond constr
+R2305:2309 compcert.backend.RTL <> Icond constr
+R2336:2343 compcert.backend.Renumber <> renum_pc def
+R2322:2329 compcert.backend.Renumber <> renum_pc def
+R2353:2362 compcert.backend.RTL <> Ijumptable constr
+R2375:2384 compcert.backend.RTL <> Ijumptable constr
+R2391:2398 Coq.Lists.List <> map def
+R2400:2407 compcert.backend.Renumber <> renum_pc def
+R2418:2424 compcert.backend.RTL <> Ireturn constr
+R2432:2432 compcert.backend.Renumber <> i var
+def 2453:2462 <> renum_node
+R2469:2472 compcert.backend.RTL <> code def
+R2480:2483 compcert.backend.RTL <> node def
+R2490:2500 compcert.backend.RTL <> instruction ind
+R2505:2508 compcert.backend.RTL <> code def
+R2525:2525 compcert.lib.Maps <> ::x_'!'_x not
+R2526:2527 compcert.backend.Renumber <> pc var
+R2521:2524 compcert.backend.Renumber <> RENUMBER.pnum var
+R2538:2541 Coq.Init.Datatypes <> None constr
+R2546:2547 compcert.backend.Renumber <> c' var
+R2553:2556 Coq.Init.Datatypes <> Some constr
+R2565:2573 compcert.lib.Maps PTree set def
+R2595:2596 compcert.backend.Renumber <> c' var
+R2580:2590 compcert.backend.Renumber <> renum_instr def
+R2592:2592 compcert.backend.Renumber <> i var
+def 2617:2625 <> renum_cfg
+R2631:2634 compcert.backend.RTL <> code def
+R2639:2642 compcert.backend.RTL <> code def
+R2649:2658 compcert.lib.Maps PTree fold def
+R2674:2684 compcert.lib.Maps PTree empty def
+R2686:2696 compcert.backend.RTL <> instruction ind
+R2671:2671 compcert.backend.Renumber <> c var
+R2660:2669 compcert.backend.Renumber <> renum_node def
+R2705:2712 compcert.backend.Renumber RENUMBER <> sec
+def 2727:2741 <> transf_function
+R2747:2754 compcert.backend.RTL <> function rec
+R2759:2766 compcert.backend.RTL <> function rec
+R2785:2793 compcert.lib.Postorder <> postorder def
+R2817:2829 compcert.backend.RTL <> fn_entrypoint proj
+R2814:2814 compcert.backend.Renumber <> f var
+R2796:2809 compcert.backend.RTL <> successors_map def
+R2811:2811 compcert.backend.Renumber <> f var
+R2837:2846 compcert.backend.RTL <> mkfunction constr
+R2940:2947 compcert.backend.Renumber <> renum_pc def
+R2957:2969 compcert.backend.RTL <> fn_entrypoint proj
+R2954:2954 compcert.backend.Renumber <> f var
+R2949:2952 compcert.backend.Renumber <> pnum var
+R2907:2915 compcert.backend.Renumber <> renum_cfg def
+R2925:2931 compcert.backend.RTL <> fn_code proj
+R2922:2922 compcert.backend.Renumber <> f var
+R2917:2920 compcert.backend.Renumber <> pnum var
+R2888:2899 compcert.backend.RTL <> fn_stacksize proj
+R2885:2885 compcert.backend.Renumber <> f var
+R2870:2878 compcert.backend.RTL <> fn_params proj
+R2867:2867 compcert.backend.Renumber <> f var
+R2855:2860 compcert.backend.RTL <> fn_sig proj
+R2852:2852 compcert.backend.Renumber <> f var
+def 2986:2998 <> transf_fundef
+R3005:3010 compcert.backend.RTL <> fundef def
+R3015:3020 compcert.backend.RTL <> fundef def
+R3027:3043 compcert.common.AST <> transf_fundef def
+R3061:3062 compcert.backend.Renumber <> fd var
+R3045:3059 compcert.backend.Renumber <> transf_function def
+def 3077:3090 <> transf_program
+R3096:3102 compcert.backend.RTL <> program def
+R3107:3113 compcert.backend.RTL <> program def
+R3120:3140 compcert.common.AST <> transform_program def
+R3156:3156 compcert.backend.Renumber <> p var
+R3142:3154 compcert.backend.Renumber <> transf_fundef def

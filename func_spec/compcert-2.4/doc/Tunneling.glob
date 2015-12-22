@@ -1,0 +1,90 @@
+DIGEST NO
+Fcompcert.backend.Tunneling
+R895:900 compcert.lib.Coqlib <> <> lib
+R918:921 compcert.lib.Maps <> <> lib
+R939:947 compcert.lib.UnionFind <> <> lib
+R965:967 compcert.common.AST <> <> lib
+R985:987 compcert.backend.LTL <> <> lib
+R2767:2778 compcert.lib.UnionFind UF <> modtype
+R2780:2784 compcert.lib.Maps PTree <> modtype
+mod 2762:2762 <> U
+def 2800:2810 <> record_goto
+R2817:2819 compcert.backend.Tunneling U t defax
+R2827:2830 compcert.backend.LTL <> node def
+R2837:2842 compcert.backend.LTL <> bblock def
+R2847:2849 compcert.backend.Tunneling U t defax
+R2862:2862 compcert.backend.Tunneling <> b var
+R2882:2885 Coq.Init.Datatypes <> :list_scope:x_'::'_x not
+R2873:2879 compcert.backend.LTL <> Lbranch constr
+R2891:2897 compcert.backend.Tunneling U union defax
+R2902:2903 compcert.backend.Tunneling <> pc var
+R2899:2900 compcert.backend.Tunneling <> uf var
+R2916:2917 compcert.backend.Tunneling <> uf var
+def 2938:2949 <> record_gotos
+R2955:2966 compcert.backend.LTL <> function rec
+R2971:2973 compcert.backend.Tunneling U t defax
+R2980:2989 compcert.lib.Maps PTree fold def
+R3015:3021 compcert.backend.Tunneling U empty defax
+R3006:3012 compcert.backend.LTL <> fn_code proj
+R3003:3003 compcert.backend.Tunneling <> f var
+R2991:3001 compcert.backend.Tunneling <> record_goto def
+def 3237:3248 <> tunnel_instr
+R3255:3257 compcert.backend.Tunneling U t defax
+R3264:3274 compcert.backend.LTL <> instruction ind
+R3279:3289 compcert.backend.LTL <> instruction ind
+R3302:3302 compcert.backend.Tunneling <> i var
+R3313:3319 compcert.backend.LTL <> Lbranch constr
+R3326:3332 compcert.backend.LTL <> Lbranch constr
+R3335:3340 compcert.backend.Tunneling U repr defax
+R3342:3343 compcert.backend.Tunneling <> uf var
+R3352:3356 compcert.backend.LTL <> Lcond constr
+R3377:3381 compcert.backend.LTL <> Lcond constr
+R3409:3414 compcert.backend.Tunneling U repr defax
+R3416:3417 compcert.backend.Tunneling <> uf var
+R3394:3399 compcert.backend.Tunneling U repr defax
+R3401:3402 compcert.backend.Tunneling <> uf var
+R3427:3436 compcert.backend.LTL <> Ljumptable constr
+R3449:3458 compcert.backend.LTL <> Ljumptable constr
+R3465:3472 Coq.Lists.List <> map def
+R3475:3480 compcert.backend.Tunneling U repr defax
+R3482:3483 compcert.backend.Tunneling <> uf var
+R3500:3500 compcert.backend.Tunneling <> i var
+def 3521:3532 <> tunnel_block
+R3539:3541 compcert.backend.Tunneling U t defax
+R3548:3553 compcert.backend.LTL <> bblock def
+R3558:3563 compcert.backend.LTL <> bblock def
+R3570:3577 Coq.Lists.List <> map def
+R3597:3597 compcert.backend.Tunneling <> b var
+R3580:3591 compcert.backend.Tunneling <> tunnel_instr def
+R3593:3594 compcert.backend.Tunneling <> uf var
+def 3612:3626 <> tunnel_function
+R3632:3643 compcert.backend.LTL <> function rec
+R3648:3659 compcert.backend.LTL <> function rec
+R3676:3687 compcert.backend.Tunneling <> record_gotos def
+R3689:3689 compcert.backend.Tunneling <> f var
+R3696:3705 compcert.backend.LTL <> mkfunction constr
+R3795:3800 compcert.backend.Tunneling U repr defax
+R3806:3818 compcert.backend.LTL <> fn_entrypoint proj
+R3820:3820 compcert.backend.Tunneling <> f var
+R3802:3803 compcert.backend.Tunneling <> uf var
+R3748:3757 compcert.lib.Maps PTree map1 def
+R3778:3784 compcert.backend.LTL <> fn_code proj
+R3786:3786 compcert.backend.Tunneling <> f var
+R3760:3771 compcert.backend.Tunneling <> tunnel_block def
+R3773:3774 compcert.backend.Tunneling <> uf var
+R3727:3738 compcert.backend.LTL <> fn_stacksize proj
+R3740:3740 compcert.backend.Tunneling <> f var
+R3712:3717 compcert.backend.LTL <> fn_sig proj
+R3719:3719 compcert.backend.Tunneling <> f var
+def 3837:3849 <> tunnel_fundef
+R3855:3864 compcert.backend.LTL <> fundef def
+R3869:3878 compcert.backend.LTL <> fundef def
+R3885:3897 compcert.common.AST <> transf_fundef def
+R3915:3915 compcert.backend.Tunneling <> f var
+R3899:3913 compcert.backend.Tunneling <> tunnel_function def
+def 3930:3943 <> tunnel_program
+R3949:3959 compcert.backend.LTL <> program def
+R3964:3974 compcert.backend.LTL <> program def
+R3981:3997 compcert.common.AST <> transform_program def
+R4013:4013 compcert.backend.Tunneling <> p var
+R3999:4011 compcert.backend.Tunneling <> tunnel_fundef def

@@ -1,0 +1,57 @@
+DIGEST NO
+Fcompcert.backend.Registers
+R1094:1099 compcert.lib.Coqlib <> <> lib
+R1117:1119 compcert.common.AST <> <> lib
+R1137:1140 compcert.lib.Maps <> <> lib
+R1158:1164 compcert.lib.Ordered <> <> lib
+R1175:1181 Coq.FSets.FSetAVL <> <> lib
+def 1196:1198 <> reg
+R1209:1216 Coq.Numbers.BinNums <> positive ind
+mod 1227:1229 <> Reg
+def 1244:1245 Reg eq
+R1250:1252 compcert.lib.Coqlib <> peq def
+def 1267:1272 Reg typenv
+R1277:1282 compcert.lib.Maps PMap t def
+R1284:1286 compcert.common.AST <> typ ind
+R1294:1296 compcert.backend.Registers Reg <> mod
+R1363:1366 compcert.lib.Maps PMap <> modtype
+mod 1353:1358 <> Regmap
+def 1406:1418 <> regmap_optget
+R1439:1444 Coq.Init.Datatypes <> option ind
+R1446:1448 compcert.backend.Registers <> reg def
+R1457:1457 compcert.backend.Registers <> A var
+R1465:1472 compcert.backend.Registers Regmap t def
+R1474:1474 compcert.backend.Registers <> A var
+R1479:1479 compcert.backend.Registers <> A var
+R1492:1493 compcert.backend.Registers <> or var
+R1504:1507 Coq.Init.Datatypes <> None constr
+R1512:1514 compcert.backend.Registers <> dfl var
+R1520:1523 Coq.Init.Datatypes <> Some constr
+R1530:1539 compcert.backend.Registers Regmap get def
+R1543:1544 compcert.backend.Registers <> rs var
+def 1565:1577 <> regmap_optset
+R1598:1603 Coq.Init.Datatypes <> option ind
+R1605:1607 compcert.backend.Registers <> reg def
+R1614:1614 compcert.backend.Registers <> A var
+R1622:1629 compcert.backend.Registers Regmap t def
+R1631:1631 compcert.backend.Registers <> A var
+R1636:1643 compcert.backend.Registers Regmap t def
+R1645:1645 compcert.backend.Registers <> A var
+R1658:1659 compcert.backend.Registers <> or var
+R1670:1673 Coq.Init.Datatypes <> None constr
+R1678:1679 compcert.backend.Registers <> rs var
+R1685:1688 Coq.Init.Datatypes <> Some constr
+R1695:1704 compcert.backend.Registers Regmap set def
+R1710:1711 compcert.backend.Registers <> rs var
+R1708:1708 compcert.backend.Registers <> v var
+R1742:1751 compcert.backend.Registers Regmap get def
+not 1730 <> ::x_'#'_x
+R1794:1801 Coq.Lists.List <> map def
+R1813:1822 compcert.backend.Registers Regmap get def
+R1824:1824 compcert.backend.Registers <> r var
+not 1781 <> ::x_'##'_x
+R1872:1881 compcert.backend.Registers Regmap set def
+not 1855 <> ::x_'#'_x_'<-'_x
+R1965:1976 Coq.FSets.FSetAVL Make <> modtype
+R1978:1992 compcert.lib.Ordered OrderedPositive <> modtype
+mod 1955:1960 <> Regset

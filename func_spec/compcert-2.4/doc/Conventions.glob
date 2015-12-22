@@ -1,0 +1,101 @@
+DIGEST NO
+Fcompcert.backend.Conventions
+R950:955 compcert.lib.Coqlib <> <> lib
+R973:975 compcert.common.AST <> <> lib
+R993:1001 compcert.backend.Locations <> <> lib
+R1019:1030 compcert.ia32.Conventions1 <> <> lib
+def 1540:1560 <> parameter_of_argument
+R1566:1568 compcert.backend.Locations <> loc ind
+R1573:1575 compcert.backend.Locations <> loc ind
+R1588:1588 compcert.backend.Conventions <> l var
+R1599:1599 compcert.backend.Locations <> S constr
+R1601:1608 compcert.backend.Locations <> Outgoing constr
+R1618:1618 compcert.backend.Locations <> S constr
+R1620:1627 compcert.backend.Locations <> Incoming constr
+R1643:1643 compcert.backend.Conventions <> l var
+def 1664:1677 <> loc_parameters
+R1683:1691 compcert.common.AST <> signature rec
+R1699:1706 Coq.Lists.List <> map def
+R1731:1743 compcert.ia32.Conventions1 <> loc_arguments def
+R1745:1745 compcert.backend.Conventions <> s var
+R1708:1728 compcert.backend.Conventions <> parameter_of_argument def
+prf 1756:1782 <> incoming_slot_in_parameters
+R1855:1856 Coq.Lists.List <> In def
+R1879:1891 compcert.ia32.Conventions1 <> loc_arguments def
+R1893:1894 compcert.backend.Conventions <> sg var
+R1859:1859 compcert.backend.Locations <> S constr
+R1874:1875 compcert.backend.Conventions <> ty var
+R1870:1872 compcert.backend.Conventions <> ofs var
+R1861:1868 compcert.backend.Locations <> Outgoing constr
+R1807:1808 Coq.Lists.List <> In def
+R1831:1844 compcert.backend.Conventions <> loc_parameters def
+R1846:1847 compcert.backend.Conventions <> sg var
+R1811:1811 compcert.backend.Locations <> S constr
+R1826:1827 compcert.backend.Conventions <> ty var
+R1822:1824 compcert.backend.Conventions <> ofs var
+R1813:1820 compcert.backend.Locations <> Incoming constr
+R1924:1937 compcert.backend.Conventions <> loc_parameters def
+R1981:2001 compcert.backend.Conventions <> parameter_of_argument def
+R2004:2004 compcert.backend.Locations <> S constr
+R2006:2013 compcert.backend.Locations <> Outgoing constr
+R1956:1956 compcert.backend.Locations <> S constr
+R1958:1965 compcert.backend.Locations <> Incoming constr
+R1956:1956 compcert.backend.Locations <> S constr
+R1958:1965 compcert.backend.Locations <> Incoming constr
+R1981:2001 compcert.backend.Conventions <> parameter_of_argument def
+R2004:2004 compcert.backend.Locations <> S constr
+R2006:2013 compcert.backend.Locations <> Outgoing constr
+R2040:2054 compcert.lib.Coqlib <> list_in_map_inv thm
+R2107:2130 compcert.ia32.Conventions1 <> loc_arguments_acceptable thm
+R2147:2169 compcert.ia32.Conventions1 <> loc_argument_acceptable def
+def 2537:2553 <> tailcall_possible
+R2559:2567 compcert.common.AST <> signature rec
+R2626:2626 compcert.backend.Conventions <> l var
+R2633:2633 compcert.backend.Locations <> R constr
+R2640:2643 Coq.Init.Logic <> True ind
+R2647:2647 compcert.backend.Locations <> S constr
+R2658:2662 Coq.Init.Logic <> False ind
+R2592:2593 Coq.Lists.List <> In def
+R2598:2610 compcert.ia32.Conventions1 <> loc_arguments def
+R2612:2612 compcert.backend.Conventions <> s var
+R2595:2595 compcert.backend.Conventions <> l var
+def 2728:2747 <> tailcall_is_possible
+R2754:2762 compcert.common.AST <> signature rec
+R2767:2770 Coq.Init.Datatypes <> bool ind
+R2795:2798 Coq.Init.Datatypes <> list ind
+R2800:2802 compcert.backend.Locations <> loc ind
+R2818:2818 compcert.backend.Conventions <> l var
+R2831:2833 Coq.Init.Datatypes <> nil constr
+R2838:2841 Coq.Init.Datatypes <> true constr
+R2852:2855 Coq.Init.Datatypes <> :list_scope:x_'::'_x not
+R2849:2849 compcert.backend.Locations <> R constr
+R2862:2866 compcert.backend.Conventions <> tcisp var
+R2884:2887 Coq.Init.Datatypes <> :list_scope:x_'::'_x not
+R2877:2877 compcert.backend.Locations <> S constr
+R2894:2898 Coq.Init.Datatypes <> false constr
+R2913:2917 compcert.backend.Conventions <> tcisp var
+R2920:2932 compcert.ia32.Conventions1 <> loc_arguments def
+R2934:2935 compcert.backend.Conventions <> sg var
+prf 2946:2973 <> tailcall_is_possible_correct
+R3021:3037 compcert.backend.Conventions <> tailcall_possible def
+R3039:3039 compcert.backend.Conventions <> s var
+R3010:3012 Coq.Init.Logic <> :type_scope:x_'='_x not
+R2988:3007 compcert.backend.Conventions <> tailcall_is_possible def
+R3009:3009 compcert.backend.Conventions <> s var
+R3013:3016 Coq.Init.Datatypes <> true constr
+R3067:3086 compcert.backend.Conventions <> tailcall_is_possible def
+R3089:3105 compcert.backend.Conventions <> tailcall_possible def
+R3122:3134 compcert.ia32.Conventions1 <> loc_arguments def
+R3122:3134 compcert.ia32.Conventions1 <> loc_arguments def
+prf 3274:3310 <> zero_size_arguments_tailcall_possible
+R3351:3367 compcert.backend.Conventions <> tailcall_possible def
+R3369:3370 compcert.backend.Conventions <> sg var
+R3343:3345 Coq.Init.Logic <> :type_scope:x_'='_x not
+R3326:3339 compcert.ia32.Conventions1 <> size_arguments def
+R3341:3342 compcert.backend.Conventions <> sg var
+R3411:3434 compcert.ia32.Conventions1 <> loc_arguments_acceptable thm
+R3454:3476 compcert.ia32.Conventions1 <> loc_argument_acceptable def
+R3568:3588 compcert.ia32.Conventions1 <> loc_arguments_bounded thm
+R3568:3588 compcert.ia32.Conventions1 <> loc_arguments_bounded thm
+R3615:3626 compcert.backend.Locations <> typesize_pos thm
+R3615:3626 compcert.backend.Locations <> typesize_pos thm

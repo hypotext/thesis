@@ -1,0 +1,286 @@
+DIGEST NO
+Fcompcert.backend.CSEdomain
+R925:930 compcert.lib.Coqlib <> <> lib
+R948:951 compcert.lib.Maps <> <> lib
+R969:971 compcert.common.AST <> <> lib
+R989:994 compcert.common.Values <> <> lib
+R1012:1017 compcert.common.Memory <> <> lib
+R1035:1036 compcert.ia32.Op <> <> lib
+R1054:1062 compcert.backend.Registers <> <> lib
+R1080:1082 compcert.backend.RTL <> <> lib
+def 1402:1407 <> valnum
+R1412:1419 Coq.Numbers.BinNums <> positive ind
+ind 1433:1435 <> rhs
+constr 1451:1452 <> Op
+constr 1491:1494 <> Load
+R1483:1485 compcert.backend.CSEdomain <> rhs ind
+R1468:1471 Coq.Init.Datatypes <> list ind
+R1473:1478 compcert.backend.CSEdomain <> valnum def
+R1455:1463 compcert.ia32.Op <> operation ind
+R1542:1544 compcert.backend.CSEdomain <> rhs ind
+R1527:1530 Coq.Init.Datatypes <> list ind
+R1532:1537 compcert.backend.CSEdomain <> valnum def
+R1513:1522 compcert.ia32.Op <> addressing ind
+R1497:1508 compcert.common.AST <> memory_chunk ind
+ind 1558:1565 <> equation
+constr 1581:1582 <> Eq
+R1588:1593 compcert.backend.CSEdomain <> valnum def
+R1605:1608 Coq.Init.Datatypes <> bool ind
+R1615:1617 compcert.backend.CSEdomain <> rhs ind
+R1619:1619 compcert.backend.CSEdomain <> equation ind
+def 1633:1641 <> eq_valnum
+R1657:1662 compcert.backend.CSEdomain <> valnum def
+R1666:1666 Coq.Init.Specif <> :type_scope:'{'_x_'}'_'+'_'{'_x_'}' not
+R1670:1672 Coq.Init.Specif <> :type_scope:'{'_x_'}'_'+'_'{'_x_'}' not
+R1677:1677 Coq.Init.Specif <> :type_scope:'{'_x_'}'_'+'_'{'_x_'}' not
+R1668:1668 Coq.Init.Logic <> :type_scope:x_'='_x not
+R1667:1667 compcert.backend.CSEdomain <> x var
+R1669:1669 compcert.backend.CSEdomain <> y var
+R1674:1675 Coq.Init.Logic <> :type_scope:x_'<>'_x not
+R1673:1673 compcert.backend.CSEdomain <> x var
+R1676:1676 compcert.backend.CSEdomain <> y var
+R1682:1684 compcert.lib.Coqlib <> peq def
+def 1699:1712 <> eq_list_valnum
+R1728:1731 Coq.Init.Datatypes <> list ind
+R1733:1738 compcert.backend.CSEdomain <> valnum def
+R1742:1742 Coq.Init.Specif <> :type_scope:'{'_x_'}'_'+'_'{'_x_'}' not
+R1746:1748 Coq.Init.Specif <> :type_scope:'{'_x_'}'_'+'_'{'_x_'}' not
+R1753:1753 Coq.Init.Specif <> :type_scope:'{'_x_'}'_'+'_'{'_x_'}' not
+R1744:1744 Coq.Init.Logic <> :type_scope:x_'='_x not
+R1743:1743 compcert.backend.CSEdomain <> x var
+R1745:1745 compcert.backend.CSEdomain <> y var
+R1750:1751 Coq.Init.Logic <> :type_scope:x_'<>'_x not
+R1749:1749 compcert.backend.CSEdomain <> x var
+R1752:1752 compcert.backend.CSEdomain <> y var
+R1758:1768 Coq.Lists.List <> list_eq_dec thm
+R1770:1772 compcert.lib.Coqlib <> peq def
+def 1787:1792 <> eq_rhs
+R1800:1802 compcert.backend.CSEdomain <> rhs ind
+R1807:1807 Coq.Init.Specif <> :type_scope:'{'_x_'}'_'+'_'{'_x_'}' not
+R1811:1813 Coq.Init.Specif <> :type_scope:'{'_x_'}'_'+'_'{'_x_'}' not
+R1818:1818 Coq.Init.Specif <> :type_scope:'{'_x_'}'_'+'_'{'_x_'}' not
+R1809:1809 Coq.Init.Logic <> :type_scope:x_'='_x not
+R1808:1808 compcert.backend.CSEdomain <> x var
+R1810:1810 compcert.backend.CSEdomain <> y var
+R1815:1816 Coq.Init.Logic <> :type_scope:x_'<>'_x not
+R1814:1814 compcert.backend.CSEdomain <> x var
+R1817:1817 compcert.backend.CSEdomain <> y var
+R1841:1848 compcert.common.AST <> chunk_eq def
+R1850:1861 compcert.ia32.Op <> eq_operation def
+R1863:1875 compcert.ia32.Op <> eq_addressing def
+R1877:1885 compcert.backend.CSEdomain <> eq_valnum def
+R1887:1900 compcert.backend.CSEdomain <> eq_list_valnum def
+R1841:1848 compcert.common.AST <> chunk_eq def
+R1850:1861 compcert.ia32.Op <> eq_operation def
+R1863:1875 compcert.ia32.Op <> eq_addressing def
+R1877:1885 compcert.backend.CSEdomain <> eq_valnum def
+R1887:1900 compcert.backend.CSEdomain <> eq_list_valnum def
+constr 2368:2378 <> mknumbering
+rec 2348:2356 <> numbering
+proj 2384:2391 <> num_next
+proj 2455:2461 <> num_eqs
+proj 2516:2522 <> num_reg
+proj 2588:2594 <> num_val
+R2394:2399 compcert.backend.CSEdomain <> valnum def
+R2464:2467 Coq.Init.Datatypes <> list ind
+R2469:2476 compcert.backend.CSEdomain <> equation ind
+R2525:2531 compcert.lib.Maps PTree t def
+R2533:2538 compcert.backend.CSEdomain <> valnum def
+R2597:2602 compcert.lib.Maps PMap t def
+R2605:2608 Coq.Init.Datatypes <> list ind
+R2610:2612 compcert.backend.Registers <> reg def
+def 2691:2705 <> empty_numbering
+R2715:2822 compcert.backend.CSEdomain <> mknumbering constr
+R2810:2818 compcert.lib.Maps PMap init def
+R2820:2822 Coq.Init.Datatypes <> nil constr
+R2778:2788 compcert.lib.Maps PTree empty def
+R2756:2758 Coq.Init.Datatypes <> nil constr
+def 3027:3037 <> valnums_rhs
+R3043:3045 compcert.backend.CSEdomain <> rhs ind
+R3049:3052 Coq.Init.Datatypes <> list ind
+R3054:3059 compcert.backend.CSEdomain <> valnum def
+R3072:3072 compcert.backend.CSEdomain <> r var
+R3083:3084 compcert.backend.CSEdomain <> Op constr
+R3102:3105 compcert.backend.CSEdomain <> Load constr
+def 3146:3151 <> wf_rhs
+R3160:3165 compcert.backend.CSEdomain <> valnum def
+R3172:3174 compcert.backend.CSEdomain <> rhs ind
+R3221:3223 compcert.lib.Coqlib <> Plt def
+R3227:3230 compcert.backend.CSEdomain <> next var
+R3225:3225 compcert.backend.CSEdomain <> v var
+R3197:3198 Coq.Lists.List <> In def
+R3203:3213 compcert.backend.CSEdomain <> valnums_rhs def
+R3215:3215 compcert.backend.CSEdomain <> r var
+R3200:3200 compcert.backend.CSEdomain <> v var
+def 3247:3257 <> wf_equation
+R3266:3271 compcert.backend.CSEdomain <> valnum def
+R3278:3285 compcert.backend.CSEdomain <> equation ind
+R3306:3306 compcert.backend.CSEdomain <> e var
+R3313:3314 compcert.backend.CSEdomain <> Eq constr
+R3337:3340 Coq.Init.Logic <> :type_scope:x_'/\'_x not
+R3327:3329 compcert.lib.Coqlib <> Plt def
+R3333:3336 compcert.backend.CSEdomain <> next var
+R3341:3346 compcert.backend.CSEdomain <> wf_rhs def
+R3348:3351 compcert.backend.CSEdomain <> next var
+rec 3368:3379 <> wf_numbering
+proj 3410:3419 <> wf_num_eqs
+proj 3488:3497 <> wf_num_reg
+proj 3576:3585 <> wf_num_val
+R3385:3393 compcert.backend.CSEdomain <> numbering rec
+R3458:3468 compcert.backend.CSEdomain <> wf_equation def
+R3483:3483 compcert.backend.CSEdomain <> e var
+R3473:3480 compcert.backend.CSEdomain <> num_next proj
+R3470:3470 compcert.backend.CSEdomain <> n var
+R3438:3439 Coq.Lists.List <> In def
+R3446:3452 compcert.backend.CSEdomain <> num_eqs proj
+R3443:3443 compcert.backend.CSEdomain <> n var
+R3441:3441 compcert.backend.CSEdomain <> e var
+R3554:3556 compcert.lib.Coqlib <> Plt def
+R3563:3570 compcert.backend.CSEdomain <> num_next proj
+R3560:3560 compcert.backend.CSEdomain <> n var
+R3558:3558 compcert.backend.CSEdomain <> v var
+R3541:3543 Coq.Init.Logic <> :type_scope:x_'='_x not
+R3518:3526 compcert.lib.Maps PTree get def
+R3533:3539 compcert.backend.CSEdomain <> num_reg proj
+R3530:3530 compcert.backend.CSEdomain <> n var
+R3528:3528 compcert.backend.CSEdomain <> r var
+R3544:3547 Coq.Init.Datatypes <> Some constr
+R3549:3549 compcert.backend.CSEdomain <> v var
+R3662:3664 Coq.Init.Logic <> :type_scope:x_'='_x not
+R3639:3647 compcert.lib.Maps PTree get def
+R3654:3660 compcert.backend.CSEdomain <> num_reg proj
+R3651:3651 compcert.backend.CSEdomain <> n var
+R3649:3649 compcert.backend.CSEdomain <> r var
+R3665:3668 Coq.Init.Datatypes <> Some constr
+R3670:3670 compcert.backend.CSEdomain <> v var
+R3606:3607 Coq.Lists.List <> In def
+R3612:3619 compcert.lib.Maps PMap get def
+R3626:3632 compcert.backend.CSEdomain <> num_val proj
+R3623:3623 compcert.backend.CSEdomain <> n var
+R3621:3621 compcert.backend.CSEdomain <> v var
+R3609:3609 compcert.backend.CSEdomain <> r var
+R3689:3698 compcert.backend.CSEdomain <> wf_num_eqs proj
+R3700:3709 compcert.backend.CSEdomain <> wf_num_reg proj
+R3711:3720 compcert.backend.CSEdomain <> wf_num_val proj
+def 3963:3971 <> valuation
+R3986:3988 compcert.common.Values <> val ind
+R3976:3981 compcert.backend.CSEdomain <> valnum def
+ind 4002:4012 <> rhs_eval_to
+constr 4142:4151 <> op_eval_to
+constr 4276:4287 <> load_eval_to
+R4021:4029 compcert.backend.CSEdomain <> valuation def
+R4037:4040 compcert.backend.RTL <> genv def
+R4048:4050 compcert.common.Values <> val ind
+R4057:4059 compcert.common.Memory <> mem syndef
+R4123:4125 compcert.common.Values <> val ind
+R4116:4118 compcert.backend.CSEdomain <> rhs ind
+R4234:4244 compcert.backend.CSEdomain <> rhs_eval_to ind
+R4270:4270 compcert.backend.CSEdomain <> v var
+R4260:4261 compcert.backend.CSEdomain <> Op constr
+R4266:4267 compcert.backend.CSEdomain <> vl var
+R4263:4264 compcert.backend.CSEdomain <> op var
+R4215:4217 Coq.Init.Logic <> :type_scope:x_'='_x not
+R4176:4189 compcert.ia32.Op <> eval_operation def
+R4201:4203 Coq.Lists.List <> map def
+R4210:4211 compcert.backend.CSEdomain <> vl var
+R4197:4198 compcert.backend.CSEdomain <> op var
+R4218:4221 Coq.Init.Datatypes <> Some constr
+R4223:4223 compcert.backend.CSEdomain <> v var
+R4419:4429 compcert.backend.CSEdomain <> rhs_eval_to ind
+R4465:4465 compcert.backend.CSEdomain <> v var
+R4445:4448 compcert.backend.CSEdomain <> Load constr
+R4461:4462 compcert.backend.CSEdomain <> vl var
+R4456:4459 compcert.backend.CSEdomain <> addr var
+R4450:4454 compcert.backend.CSEdomain <> chunk var
+R4400:4402 Coq.Init.Logic <> :type_scope:x_'='_x not
+R4381:4389 compcert.common.Memory Mem loadv def
+R4399:4399 compcert.backend.CSEdomain <> a var
+R4391:4395 compcert.backend.CSEdomain <> chunk var
+R4403:4406 Coq.Init.Datatypes <> Some constr
+R4408:4408 compcert.backend.CSEdomain <> v var
+R4362:4364 Coq.Init.Logic <> :type_scope:x_'='_x not
+R4322:4336 compcert.ia32.Op <> eval_addressing def
+R4350:4352 Coq.Lists.List <> map def
+R4359:4360 compcert.backend.CSEdomain <> vl var
+R4344:4347 compcert.backend.CSEdomain <> addr var
+R4365:4368 Coq.Init.Datatypes <> Some constr
+R4370:4370 compcert.backend.CSEdomain <> a var
+ind 4479:4492 <> equation_holds
+constr 4621:4635 <> eq_holds_strict
+constr 4747:4762 <> eq_holds_lessdef
+R4501:4509 compcert.backend.CSEdomain <> valuation def
+R4517:4520 compcert.backend.RTL <> genv def
+R4528:4530 compcert.common.Values <> val ind
+R4537:4539 compcert.common.Memory <> mem syndef
+R4597:4604 compcert.backend.CSEdomain <> equation ind
+R4701:4714 compcert.backend.CSEdomain <> equation_holds ind
+R4730:4731 compcert.backend.CSEdomain <> Eq constr
+R4740:4740 compcert.backend.CSEdomain <> r var
+R4735:4738 Coq.Init.Datatypes <> true constr
+R4733:4733 compcert.backend.CSEdomain <> l var
+R4656:4666 compcert.backend.CSEdomain <> rhs_eval_to ind
+R4689:4689 compcert.backend.CSEdomain <> l var
+R4681:4681 compcert.backend.CSEdomain <> r var
+R4849:4862 compcert.backend.CSEdomain <> equation_holds ind
+R4878:4879 compcert.backend.CSEdomain <> Eq constr
+R4889:4889 compcert.backend.CSEdomain <> r var
+R4883:4887 Coq.Init.Datatypes <> false constr
+R4881:4881 compcert.backend.CSEdomain <> l var
+R4817:4827 compcert.common.Values Val lessdef ind
+R4837:4837 compcert.backend.CSEdomain <> l var
+R4829:4829 compcert.backend.CSEdomain <> v var
+R4785:4795 compcert.backend.CSEdomain <> rhs_eval_to ind
+R4812:4812 compcert.backend.CSEdomain <> v var
+R4810:4810 compcert.backend.CSEdomain <> r var
+rec 4901:4915 <> numbering_holds
+proj 5030:5041 <> num_holds_wf
+proj 5067:5078 <> num_holds_eq
+proj 5152:5164 <> num_holds_reg
+R4924:4932 compcert.backend.CSEdomain <> valuation def
+R4940:4943 compcert.backend.RTL <> genv def
+R4951:4953 compcert.common.Values <> val ind
+R4984:4989 compcert.backend.RTL <> regset def
+R4996:4998 compcert.common.Memory <> mem syndef
+R5005:5013 compcert.backend.CSEdomain <> numbering rec
+R5049:5060 compcert.backend.CSEdomain <> wf_numbering rec
+R5062:5062 compcert.backend.CSEdomain <> n var
+R5118:5131 compcert.backend.CSEdomain <> equation_holds ind
+R5146:5147 compcert.backend.CSEdomain <> eq var
+R5144:5144 compcert.backend.CSEdomain <> m var
+R5141:5142 compcert.backend.CSEdomain <> sp var
+R5138:5139 compcert.backend.CSEdomain <> ge var
+R5133:5136 compcert.backend.CSEdomain <> valu var
+R5097:5098 Coq.Lists.List <> In def
+R5106:5112 compcert.backend.CSEdomain <> num_eqs proj
+R5103:5103 compcert.backend.CSEdomain <> n var
+R5100:5101 compcert.backend.CSEdomain <> eq var
+R5214:5216 Coq.Init.Logic <> :type_scope:x_'='_x not
+R5212:5212 compcert.backend.Registers <> ::x_'#'_x not
+R5213:5213 compcert.backend.CSEdomain <> r var
+R5210:5211 compcert.backend.CSEdomain <> rs var
+R5217:5220 compcert.backend.CSEdomain <> valu var
+R5222:5222 compcert.backend.CSEdomain <> v var
+R5197:5199 Coq.Init.Logic <> :type_scope:x_'='_x not
+R5195:5195 compcert.lib.Maps <> ::x_'!'_x not
+R5196:5196 compcert.backend.CSEdomain <> r var
+R5187:5193 compcert.backend.CSEdomain <> num_reg proj
+R5184:5184 compcert.backend.CSEdomain <> n var
+R5200:5203 Coq.Init.Datatypes <> Some constr
+R5205:5205 compcert.backend.CSEdomain <> v var
+R5241:5252 compcert.backend.CSEdomain <> num_holds_wf proj
+R5254:5265 compcert.backend.CSEdomain <> num_holds_eq proj
+R5267:5279 compcert.backend.CSEdomain <> num_holds_reg proj
+prf 5294:5314 <> empty_numbering_holds
+R5345:5359 compcert.backend.CSEdomain <> numbering_holds rec
+R5377:5391 compcert.backend.CSEdomain <> empty_numbering def
+R5375:5375 compcert.backend.CSEdomain <> m var
+R5372:5373 compcert.backend.CSEdomain <> rs var
+R5369:5370 compcert.backend.CSEdomain <> sp var
+R5366:5367 compcert.backend.CSEdomain <> ge var
+R5361:5364 compcert.backend.CSEdomain <> valu var
+R5488:5499 compcert.lib.Maps PTree gempty thm
+R5488:5499 compcert.lib.Maps PTree gempty thm
+R5533:5539 compcert.lib.Maps PMap gi thm
+R5533:5539 compcert.lib.Maps PMap gi thm
+R5589:5600 compcert.lib.Maps PTree gempty thm
+R5589:5600 compcert.lib.Maps PTree gempty thm

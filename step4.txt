@@ -35,6 +35,8 @@ PRF_DRBG_f_bad_2_equiv: minor, TODO shift everything over by one in input list
 
 G3_bad_1: remove f (rand func's state) from DRBG; on the list of inputs only (injected into D) (because that's the only thing we care about for calculating the probability of the bad event), return whether that has duplicates
 
+>> how come we can remove the dependency/chaining? because the inputs aren't chained? no, they're the same as outputs but off-by-one due to v_init. why can we remove f? because we removed it in G3_3, and bounded the distance between G3_3 and G3_2 using the identical-until-bad argument.
+
 G3_bad_2: remove the initial v from DRBG; on the list of random bits only (then injected into D with map), return whether that has duplicates
 
 G3_bad_3: replace DRBG's recursion with using compMap, then on the list of random bits, injecting them into D, then returning whether that has duplicates

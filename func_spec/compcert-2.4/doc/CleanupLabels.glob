@@ -1,0 +1,86 @@
+DIGEST NO
+Fcompcert.backend.CleanupLabels
+R1318:1322 Coq.FSets.FSets <> <> lib
+R1333:1339 Coq.FSets.FSetAVL <> <> lib
+R1357:1362 compcert.lib.Coqlib <> <> lib
+R1380:1386 compcert.lib.Ordered <> <> lib
+R1404:1409 compcert.backend.Linear <> <> lib
+R1432:1443 Coq.FSets.FSetAVL Make <> modtype
+R1445:1459 compcert.lib.Ordered OrderedPositive <> modtype
+mod 1420:1427 <> Labelset
+def 1552:1572 <> add_label_branched_to
+R1579:1588 compcert.backend.CleanupLabels Labelset t def
+R1595:1605 compcert.backend.Linear <> instruction ind
+R1619:1619 compcert.backend.CleanupLabels <> i var
+R1630:1634 compcert.backend.Linear <> Lgoto constr
+R1643:1654 compcert.backend.CleanupLabels Labelset add def
+R1660:1661 compcert.backend.CleanupLabels <> ls var
+R1667:1671 compcert.backend.Linear <> Lcond constr
+R1690:1701 compcert.backend.CleanupLabels Labelset add def
+R1707:1708 compcert.backend.CleanupLabels <> ls var
+R1714:1723 compcert.backend.Linear <> Ljumptable constr
+R1736:1750 Coq.Lists.List <> fold_right def
+R1765:1766 compcert.backend.CleanupLabels <> ls var
+R1752:1763 compcert.backend.CleanupLabels Labelset add def
+R1781:1782 compcert.backend.CleanupLabels <> ls var
+def 1803:1820 <> labels_branched_to
+R1826:1829 compcert.backend.Linear <> code def
+R1834:1843 compcert.backend.CleanupLabels Labelset t def
+R1850:1863 Coq.Lists.List <> fold_left def
+R1889:1902 compcert.backend.CleanupLabels Labelset empty def
+R1887:1887 compcert.backend.CleanupLabels <> c var
+R1865:1885 compcert.backend.CleanupLabels <> add_label_branched_to def
+def 2011:2023 <> remove_unused
+R2031:2040 compcert.backend.CleanupLabels Labelset t def
+R2047:2057 compcert.backend.Linear <> instruction ind
+R2064:2067 compcert.backend.Linear <> code def
+R2072:2075 compcert.backend.Linear <> code def
+R2088:2088 compcert.backend.CleanupLabels <> i var
+R2099:2104 compcert.backend.Linear <> Llabel constr
+R2122:2133 compcert.backend.CleanupLabels Labelset mem def
+R2139:2141 compcert.backend.CleanupLabels <> bto var
+R2160:2160 compcert.backend.CleanupLabels <> k var
+R2149:2152 Coq.Init.Datatypes <> :list_scope:x_'::'_x not
+R2148:2148 compcert.backend.CleanupLabels <> i var
+R2153:2153 compcert.backend.CleanupLabels <> k var
+R2178:2181 Coq.Init.Datatypes <> :list_scope:x_'::'_x not
+R2177:2177 compcert.backend.CleanupLabels <> i var
+R2182:2182 compcert.backend.CleanupLabels <> k var
+def 2203:2222 <> remove_unused_labels
+R2230:2239 compcert.backend.CleanupLabels Labelset t def
+R2246:2249 compcert.backend.Linear <> code def
+R2254:2257 compcert.backend.Linear <> code def
+R2264:2278 compcert.lib.Coqlib <> list_fold_right def
+R2302:2304 Coq.Init.Datatypes <> nil constr
+R2300:2300 compcert.backend.CleanupLabels <> c var
+R2281:2293 compcert.backend.CleanupLabels <> remove_unused def
+R2295:2297 compcert.backend.CleanupLabels <> bto var
+def 2319:2332 <> cleanup_labels
+R2338:2341 compcert.backend.Linear <> code def
+R2349:2368 compcert.backend.CleanupLabels <> remove_unused_labels def
+R2393:2393 compcert.backend.CleanupLabels <> c var
+R2371:2388 compcert.backend.CleanupLabels <> labels_branched_to def
+R2390:2390 compcert.backend.CleanupLabels <> c var
+def 2429:2443 <> transf_function
+R2449:2456 compcert.backend.Linear <> function rec
+R2461:2468 compcert.backend.Linear <> function rec
+R2475:2484 compcert.backend.Linear <> mkfunction constr
+R2530:2543 compcert.backend.CleanupLabels <> cleanup_labels def
+R2546:2552 compcert.backend.Linear <> fn_code proj
+R2554:2554 compcert.backend.CleanupLabels <> f var
+R2508:2519 compcert.backend.Linear <> fn_stacksize proj
+R2521:2521 compcert.backend.CleanupLabels <> f var
+R2492:2497 compcert.backend.Linear <> fn_sig proj
+R2499:2499 compcert.backend.CleanupLabels <> f var
+def 2571:2583 <> transf_fundef
+R2589:2594 compcert.backend.Linear <> fundef def
+R2599:2604 compcert.backend.Linear <> fundef def
+R2611:2627 compcert.common.AST <> transf_fundef def
+R2645:2645 compcert.backend.CleanupLabels <> f var
+R2629:2643 compcert.backend.CleanupLabels <> transf_function def
+def 2660:2673 <> transf_program
+R2679:2685 compcert.backend.Linear <> program def
+R2690:2696 compcert.backend.Linear <> program def
+R2703:2723 compcert.common.AST <> transform_program def
+R2739:2739 compcert.backend.CleanupLabels <> p var
+R2725:2737 compcert.backend.CleanupLabels <> transf_fundef def

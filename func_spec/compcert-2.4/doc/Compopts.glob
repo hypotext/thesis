@@ -1,0 +1,20 @@
+DIGEST NO
+Fcompcert.driver.Compopts
+ax 1145:1158 <> optim_for_size
+R1169:1172 Coq.Init.Datatypes <> bool ind
+R1161:1164 Coq.Init.Datatypes <> unit ind
+ax 1266:1290 <> propagate_float_constants
+R1301:1304 Coq.Init.Datatypes <> bool ind
+R1293:1296 Coq.Init.Datatypes <> unit ind
+ax 1317:1340 <> generate_float_constants
+R1351:1354 Coq.Init.Datatypes <> bool ind
+R1343:1346 Coq.Init.Datatypes <> unit ind
+ax 1420:1428 <> va_strict
+R1439:1442 Coq.Init.Datatypes <> bool ind
+R1431:1434 Coq.Init.Datatypes <> unit ind
+ax 1510:1528 <> eliminate_tailcalls
+R1539:1542 Coq.Init.Datatypes <> bool ind
+R1531:1534 Coq.Init.Datatypes <> unit ind
+ax 1600:1604 <> thumb
+R1615:1618 Coq.Init.Datatypes <> bool ind
+R1607:1610 Coq.Init.Datatypes <> unit ind

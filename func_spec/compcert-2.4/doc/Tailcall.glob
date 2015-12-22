@@ -1,0 +1,97 @@
+DIGEST NO
+Fcompcert.backend.Tailcall
+R865:870 compcert.lib.Coqlib <> <> lib
+R888:891 compcert.lib.Maps <> <> lib
+R909:916 compcert.driver.Compopts <> <> lib
+R934:936 compcert.common.AST <> <> lib
+R954:962 compcert.backend.Registers <> <> lib
+R980:981 compcert.ia32.Op <> <> lib
+R999:1001 compcert.backend.RTL <> <> lib
+R1019:1029 compcert.backend.Conventions <> <> lib
+def 2185:2193 <> is_return
+R2199:2201 Coq.Init.Datatypes <> nat ind
+R2208:2215 compcert.backend.RTL <> function rec
+R2223:2226 compcert.backend.RTL <> node def
+R2236:2238 compcert.backend.Registers <> reg def
+R2273:2276 Coq.Init.Datatypes <> bool ind
+R2289:2289 compcert.backend.Tailcall <> n var
+R2300:2300 Coq.Init.Datatypes <> O constr
+R2305:2309 Coq.Init.Datatypes <> false constr
+R2315:2315 Coq.Init.Datatypes <> S constr
+R2346:2346 compcert.lib.Maps <> ::x_'!'_x not
+R2347:2348 compcert.backend.Tailcall <> pc var
+R2338:2344 compcert.backend.RTL <> fn_code proj
+R2335:2335 compcert.backend.Tailcall <> f var
+R2363:2366 Coq.Init.Datatypes <> Some constr
+R2368:2374 compcert.backend.RTL <> Ireturn constr
+R2376:2379 Coq.Init.Datatypes <> None constr
+R2385:2388 Coq.Init.Datatypes <> true constr
+R2398:2401 Coq.Init.Datatypes <> Some constr
+R2403:2409 compcert.backend.RTL <> Ireturn constr
+R2412:2415 Coq.Init.Datatypes <> Some constr
+R2424:2429 compcert.backend.Registers Reg eq def
+R2433:2436 compcert.backend.Tailcall <> rret var
+R2446:2449 Coq.Init.Datatypes <> Some constr
+R2451:2454 compcert.backend.RTL <> Inop constr
+R2462:2470 compcert.backend.Tailcall <> is_return def
+R2479:2482 compcert.backend.Tailcall <> rret var
+R2475:2475 compcert.backend.Tailcall <> f var
+R2492:2495 Coq.Init.Datatypes <> Some constr
+R2497:2499 compcert.backend.RTL <> Iop constr
+R2535:2551 compcert.ia32.Op <> is_move_operation def
+R2578:2581 Coq.Init.Datatypes <> None constr
+R2586:2590 Coq.Init.Datatypes <> false constr
+R2604:2607 Coq.Init.Datatypes <> Some constr
+R2633:2638 compcert.backend.Registers Reg eq def
+R2640:2643 compcert.backend.Tailcall <> rret var
+R2708:2712 Coq.Init.Datatypes <> false constr
+R2668:2676 compcert.backend.Tailcall <> is_return def
+R2681:2681 compcert.backend.Tailcall <> f var
+R2741:2745 Coq.Init.Datatypes <> false constr
+def 2958:2962 <> niter
+def 3367:3378 <> transf_instr
+R3384:3391 compcert.backend.RTL <> function rec
+R3399:3402 compcert.backend.RTL <> node def
+R3413:3423 compcert.backend.RTL <> instruction ind
+R3437:3441 compcert.backend.Tailcall <> instr var
+R3452:3456 compcert.backend.RTL <> Icall constr
+R3546:3555 Coq.Init.Datatypes <> :bool_scope:x_'&&'_x not
+R3512:3521 Coq.Init.Datatypes <> :bool_scope:x_'&&'_x not
+R3489:3497 compcert.backend.Tailcall <> is_return def
+R3505:3505 compcert.backend.Tailcall <> f var
+R3499:3503 compcert.backend.Tailcall <> niter def
+R3522:3541 compcert.backend.Conventions <> tailcall_is_possible def
+R3556:3565 compcert.common.AST <> opt_typ_eq def
+R3593:3599 compcert.common.AST <> sig_res proj
+R3584:3589 compcert.backend.RTL <> fn_sig proj
+R3581:3581 compcert.backend.Tailcall <> f var
+R3572:3578 compcert.common.AST <> sig_res proj
+R3647:3651 compcert.backend.Tailcall <> instr var
+R3613:3621 compcert.backend.RTL <> Itailcall constr
+R3662:3666 compcert.backend.Tailcall <> instr var
+def 3845:3859 <> transf_function
+R3865:3872 compcert.backend.RTL <> function rec
+R3877:3884 compcert.backend.RTL <> function rec
+R3916:3919 Coq.Init.Datatypes <> :bool_scope:x_'&&'_x not
+R3894:3896 compcert.lib.Coqlib <> zeq def
+R3901:3912 compcert.backend.RTL <> fn_stacksize proj
+R3898:3898 compcert.backend.Tailcall <> f var
+R3920:3938 compcert.driver.Compopts <> eliminate_tailcalls defax
+R3940:3941 Coq.Init.Datatypes <> tt constr
+R3996:3996 compcert.backend.Tailcall <> f var
+R3950:3968 compcert.backend.RTL <> transf_function def
+R3987:3987 compcert.backend.Tailcall <> f var
+R3971:3982 compcert.backend.Tailcall <> transf_instr def
+R3984:3984 compcert.backend.Tailcall <> f var
+def 4011:4023 <> transf_fundef
+R4030:4035 compcert.backend.RTL <> fundef def
+R4040:4045 compcert.backend.RTL <> fundef def
+R4052:4068 compcert.common.AST <> transf_fundef def
+R4086:4087 compcert.backend.Tailcall <> fd var
+R4070:4084 compcert.backend.Tailcall <> transf_function def
+def 4102:4115 <> transf_program
+R4121:4127 compcert.backend.RTL <> program def
+R4132:4138 compcert.backend.RTL <> program def
+R4145:4161 compcert.common.AST <> transform_program def
+R4177:4177 compcert.backend.Tailcall <> p var
+R4163:4175 compcert.backend.Tailcall <> transf_fundef def
