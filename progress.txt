@@ -355,3 +355,16 @@ why would we want to construct a PRF from a PRP
 12/5
 * went through step 4 in detail. important: list of inputs is being gotten from oracle state. also, identical until bad
 * instead of emailing adam, emailed matt
+
+---
+
+in between:
+* defined main games, adversaries, and theorems
+* did the first main proof (equivalent output after moving v-updating to beginning of next oracle call)
+
+---
+
+1/23/16
+* opened files, merged changes in oraclehybrid
+
+
