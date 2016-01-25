@@ -367,4 +367,9 @@ in between:
 1/23/16
 * opened files, merged changes in oraclehybrid
 
-
+1/24/16
+* skimmed Naphat's paper
+* HMAC file wouldn't check FCF; build problem; got stuck on debugging and emailed Adam
+* updated TODO list, commented HMAC, deleted unnecessary code, and fixed off-by-one error
+* notes to self: `make clean` and COMMENT YOUR CODE
+* ~4 hours
