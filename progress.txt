@@ -373,3 +373,8 @@ in between:
 * updated TODO list, commented HMAC, deleted unnecessary code, and fixed off-by-one error
 * notes to self: `make clean` and COMMENT YOUR CODE
 * ~4 hours
+
+1/25/16
+* replied to adam's email about coq version problems; replied to lennart's email; emailed matt about meeting
+* looked at Gi_prf_rf proof. adam says it's wrong because numbering is backward, but i discharged it via reflexivity (how?) by assuming all (PRF_Advantage i) were equal.
+* splitting up that statement into lemmas: the second lemma seems to not be true? also the number of PRF calls doesn't matter? need to unfold the games A and B and understand them
