@@ -378,3 +378,10 @@ in between:
 * replied to adam's email about coq version problems; replied to lennart's email; emailed matt about meeting
 * looked at Gi_prf_rf proof. adam says it's wrong because numbering is backward, but i discharged it via reflexivity (how?) by assuming all (PRF_Advantage i) were equal.
 * splitting up that statement into lemmas: the second lemma seems to not be true? also the number of PRF calls doesn't matter? need to unfold the games A and B and understand them
+
+1/26/16
+* understand hybrid game indices a lot better: (S numCalls) games numbered from 0 through numCalls; numCalls calls numbered from 0 through (numCalls - 1)
+* write out the game A/game B relationships
+* fix PRF advantage lemmas; these seem correct to me. 
+TODO: prove them! exciting! (this is a Main Lemma)
+TODO: write out games for other Main Lemma (collisions)
