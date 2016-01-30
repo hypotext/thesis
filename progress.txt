@@ -404,3 +404,13 @@ TODO: write out games for other Main Lemma (collisions)
 TODO: put these lemmas in code
 TODO: clean these up, write email to matt about them
 TODO: start proving PRF_Adv lemma
+
+1/28/16
+* emailed matt
+* met with matt, transcribed notes
+
+1/29/16
+* thought about thesis for a few minutes. long list of TODOs 
+* it's not clear how even to express the "easiest" lemma (length-extended key must not be in RF state) in terms of the game
+* need to figure out how to "zoom in" on game i
+* wow, did we meet *yesterday*?? it feels like i haven't worked on my thesis in 2-3 days.
