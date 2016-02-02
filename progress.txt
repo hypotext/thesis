@@ -419,3 +419,16 @@ TODO: start proving PRF_Adv lemma
 * worked on thesis for ~30 min: simplified PRF_Adv_0 proof, need to prove about oracleCompMap_inner
 * wish i could do these proofs better because there's a LOT of them!
 * much as i want to build confidence/learn FCF by doing relatively easier PRF_A proofs, i think i need to tackle the RF slicing stuff...
+
+1/31/16
+* nothing directly on thesis
+* read the probability parts of foundations of crypto and did exercise 1a
+* han supports my thought that the question has a typo
+
+2/1/16
+* copied needed steps for collision proof
+* TODO: can write equivalence about splitting out the RB stuff and doing it first
+* TODO: identical until bad stuff in PRF_DRBG
+* did second part of prf adv sublemma
+* filled out 2nd reader form
+* need to email matt, andrew abt meeting
