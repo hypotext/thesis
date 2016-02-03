@@ -432,3 +432,10 @@ TODO: start proving PRF_Adv lemma
 * did second part of prf adv sublemma
 * filled out 2nd reader form
 * need to email matt, andrew abt meeting
+
+2/2/16
+* not much progress today. realized i definitely need to use identical until bad and reduce it to the previous identical until bad, but how?
+* need to "expose the bad event" with new games using fst and snd
+* need to study how adam does it
+* ?? have to work on thesis in room ??
+* meet on tuesday mornng and friday afternoon?
