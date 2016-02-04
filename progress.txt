@@ -439,3 +439,13 @@ TODO: start proving PRF_Adv lemma
 * need to study how adam does it
 * ?? have to work on thesis in room ??
 * meet on tuesday mornng and friday afternoon?
+
+2/3/16
+* tackled identical until bad: read proof in bellare, understood and re-did it, didn't understand the coins construction (some stuff about differing lengths -- but does it matter?)
+* unfortunately I still don't understand intuitively WHY the lemma is true. 
+* statement: 
+  Pr[G^A = 1] - Pr[G^B = 1] <= Pr[G^A sets bad]
+along with several related statements.
+i don't understand why the probabilities of 1 should be related to the bad of the first game (what about the second game)? -- well the proof says why...
+* i even worked through several concrete games and confirmed the upper/lower bound. don't see why
+* spent too much time on it (and fell asleep on it), time to move on and apply it
