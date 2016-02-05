@@ -449,3 +449,14 @@ along with several related statements.
 i don't understand why the probabilities of 1 should be related to the bad of the first game (what about the second game)? -- well the proof says why...
 * i even worked through several concrete games and confirmed the upper/lower bound. don't see why
 * spent too much time on it (and fell asleep on it), time to move on and apply it
+
+2/4/16
+* went back through the sublemmas needed to to prove G3_G4_close and commented them
+* figured out the assumptions needed to prove identical until bad 
+  (doable even if the games are not exactly in bellare's id-until-bad form)
+* need to attack the big bad PRF_A_randomFunc_eq_until_bad
+  how was it proved? what does it mean? where is it used?
+* wrote out outline of how i should be breaking up my theorem
+  TOMORROW: write out the fst/snd stuff, maybe some comp_specs
+  dups on ith list of output?
+  does id-until-bad deal with preceding or following output??
