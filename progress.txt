@@ -460,3 +460,11 @@ i don't understand why the probabilities of 1 should be related to the bad of th
   TOMORROW: write out the fst/snd stuff, maybe some comp_specs
   dups on ith list of output?
   does id-until-bad deal with preceding or following output??
+
+2/5/16 (actually some of 2/6/16)
+* wrote games exposing bad events (changing PRF to using RB oracle that saves its inputs)
+* ^ wait is what i wrote even correct? (the nth i nil stuff)
+* fixed numbering (only true for S i -- phew)
+* broke the step 2 into id-until-bad-related lemmas
+* now what? is this true? how do i reduce it to adam's case?
+  * what of his work can i re-use?
