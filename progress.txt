@@ -468,3 +468,10 @@ i don't understand why the probabilities of 1 should be related to the bad of th
 * broke the step 2 into id-until-bad-related lemmas
 * now what? is this true? how do i reduce it to adam's case?
   * what of his work can i re-use?
+
+2/7/16
+* think more about the identical until bad breakdown. 
+* it seems to ignore things that happen after "bad"? does this mean we don't need to deal with the PRF output? 
+* because one requirement of applying fcf_fundamental_lemma is that the distribution is identical between RF and RB when bad does not happen -- INCLUDING rekeying with RB vs. rekeying with RF (the input is a length-extended key)). v is updated in the next call with the PRF for both of them. and their outputs are indistinguishable (when the bad event does not happen) (still need to show this indistinguishable) because ...? by def of PRF?
+* OK, so i need to deal with the PRF output here. 
+* what happens to the rekeying? do we need to deal with it? have we already dealt with it? is this breakdown wrong? ok, i think i just answered my question above
