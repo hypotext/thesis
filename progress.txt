@@ -475,3 +475,14 @@ i don't understand why the probabilities of 1 should be related to the bad of th
 * because one requirement of applying fcf_fundamental_lemma is that the distribution is identical between RF and RB when bad does not happen -- INCLUDING rekeying with RB vs. rekeying with RF (the input is a length-extended key)). v is updated in the next call with the PRF for both of them. and their outputs are indistinguishable (when the bad event does not happen) (still need to show this indistinguishable) because ...? by def of PRF?
 * OK, so i need to deal with the PRF output here. 
 * what happens to the rekeying? do we need to deal with it? have we already dealt with it? is this breakdown wrong? ok, i think i just answered my question above
+
+2/8/16
+* cleaned up code and pulled out lemmas
+* emailed adam about identical until bad -- my breakdown and my proof questions
+
+2/9/16
+* didn't work on thesis, did crypto pset
+
+2/10/16
+* meeting didn't work out, worked a little on Gi_rf_rb_close (fixed the numbering)
+* responded to adam's email
