@@ -486,3 +486,24 @@ i don't understand why the probabilities of 1 should be related to the bad of th
 2/10/16
 * meeting didn't work out, worked a little on Gi_rf_rb_close (fixed the numbering)
 * responded to adam's email
+
+2/11
+* bit of work on breaking down the collision game
+
+2/12 (friday)
+* met with andrew and lennart
+* breaking down the collision game, want to write an intermediate game for the inputs to RF / ith oracle only. first throw away inputs
+* see meeting notes
+
+2/13
+* ?
+
+2/14 (sunday)
+* problems: 
+1. can't reduce bad event to the outputs; the bad event is a collision on the inputs 
+2. the inputs to RF are a list, not segmented like the output 
+3. do we even track the inputs? 
+3a. the adversary isn't supposed to get the state?? how does it work for PRF_DRBG then? 
+3b. i can't figure out who's tracking the oracle input/output state. oracleCompMap_inner returns (nat, KV) which isn't right. is it OC_query? where do i get it?
+
+a lot of problems... meet tuesday?! can i fix this AND break down the other lemmas AND do a proof by then?
