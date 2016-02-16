@@ -507,3 +507,18 @@ i don't understand why the probabilities of 1 should be related to the bad of th
 3b. i can't figure out who's tracking the oracle input/output state. oracleCompMap_inner returns (nat, KV) which isn't right. is it OC_query? where do i get it?
 
 a lot of problems... meet tuesday?! can i fix this AND break down the other lemmas AND do a proof by then?
+
+2/15 (monday)
+* resolve problems with inputs: 
+1. figure out how to get state from oracle 
+2. realize that in oraclecomp, by definition, you can't get state from an oracle 
+3. attempt to write segment function several different ways but can't prove termination 
+4. fix the bad events
+* write some intermediate games for collisions
+- next: GenUpdate_OC sub rb
+* trying to figure out how to apply adam's collision bound:
+specifically figure out how much of it i can reuse. 
+- can i only use the very last one? 
+- at what point can i plug into the intermediate games? 
+- the PRF_DRBG oracle constructions are slightly different
+- can i even instantiate his module's types?
