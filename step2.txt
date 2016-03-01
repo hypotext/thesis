@@ -1,0 +1,48 @@
+Hi Matt,
+
+Here are my thoughts on how we should structure the second main theorem (replacing the random function call with random bits).
+
+We want to prove:
+
+Lemma Gi_rf_rb_close : forall (i : nat),
+  | Pr[Gi_prg_rf i] - Pr[Gi_prg i] | <= Pr_collisions.
+
+  (where Pr_collisions is a function of (blocksPerCall + 1))
+
+Picture:
+
+Let i = 3, numCalls = 5, blocksPerCall = c. RB = random bits.
+Gi_prg_rf i:        RB RB RF PRF PRF
+Gi_prg i:           RB RB RB PRF PRF 
+Gi_prg_prf (i + 1): RB RB RB PRF PRF (same as above)
+
+Considering the (K,V) input and output of each call, as well as its block output.
+
+-------
+
+Main lemmas:
+
+0. We can move from the normal adversary to the PRF adversary, to get a game in a closer form:
+   forall i, Pr[Gi_prg i] == Pr[Gi_prg_prf (i + 1)]
+
+1. All previous RB output is indistinguishable (if it exists, that is, i > 0). 
+1a. The (K, V) input to the RF are randomly sampled. (Why do we need this again?)
+
+2. The probability of distinguishing the output if we update v once more at the beginning is exactly (or upper-bounded by) the probability of collisions if we ask for one more block.
+   That is, | Pr[Gi_prf (S i)] - Pr[Gi_rf i] | = Pr_collisions via identical until bad (not sure how to use this), or by re-using Adam's argument.
+2a. Exact upper bound: Pr_collisions = (blocksPerCall + 1)^2 / 2^eta
+   (something like that; might be off by one)
+
+3. Dealing with the updated k: since the key is the output of a length-extended input, it is unique from all previously-seen inputs (which are all of length eta), and thus is randomly sampled.
+
+4. All following PRF output is indistinguishable (if it exists). Just considering the next PRF call:
+4a. The new keys for the PRF are both randomly sampled (by lemma 3)
+4b. Unsure: one of the Vs is randomly sampled, the other might be "in a cycle," but it doesn't matter because since we have PRFs with keys unknown to the adversary, this output is indistinguishable?
+4c. "All future PRF output indistinguishable": the adversary would know both of the Vs going in. Induction? Hybrid argument?
+
+5. Combining lemmas 1 and 3, the probability of distinguishing the preceding RB output or the following PRF output is zero. So, we just need to examine the probability of distinguishing the RF vs. RB output. The key is randomly sampled for both, so since we updated v once more, we just care about the probability of collisions on a list of length (blocksPerCall + 1). This can reuse Adam's work. -- How to show this vua "zooming in"? Multiple adversaries? Identical until bad?
+
+Let me know what you think.
+
+Best,
+Katherine

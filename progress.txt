@@ -522,3 +522,13 @@ specifically figure out how much of it i can reuse.
 - at what point can i plug into the intermediate games? 
 - the PRF_DRBG oracle constructions are slightly different
 - can i even instantiate his module's types?
+
+2/16 (tuesday)
+- meeting with matt
+- wrote out another intermediate game for collisions
+
+2/17 (wednesday)
+- nothing -- crypto pset
+
+2/18 (thursday)
+- ? ?

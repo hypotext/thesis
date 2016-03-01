@@ -1,0 +1,508 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% writeLaTeX Example: Academic Paper Template
+%
+% Source: http://www.writelatex.com
+% 
+% Feel free to distribute this example, but please keep the referral
+% to writelatex.com
+% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[twocolumn,showpacs,%
+  nofootinbib,aps,superscriptaddress,%
+  eqsecnum,prd,notitlepage,showkeys,10pt]{revtex4-1}
+
+\usepackage{natbib}
+% \usepackage[square,numbers]{natbib} % TODO
+\bibliographystyle{unsrtnat}
+
+% displays all math in sans-serif font TODO  
+\usepackage[cm]{sfmath}
+  
+\usepackage{graphicx}
+\usepackage{verbatim} % for comments
+\graphicspath{ {images/} }
+
+\usepackage{listings}
+\lstset{
+basicstyle=\small\ttfamily,
+%basicstyle=\ttfamily,
+columns=flexible,
+breaklines=true
+}
+%\lstset{language=Coq}
+
+\usepackage [english]{babel}
+\usepackage [autostyle, english = american]{csquotes}
+\MakeOuterQuote{"}
+
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{dcolumn}
+\usepackage{hyperref}
+
+% \newcommand{name}[num]{definition}
+\newcommand{\eqn}[1] {\begin{gather*}#1\end{gather*}}
+\newcommand{\spc} {\textrm{ }}
+\newcommand{\s} {\textrm{ }}
+%\newcommand{\code}[1] {\begin{lstlisting}#1\end{lstlisting}}
+\newcommand{\bv} {\begin{verbatim}}
+\newcommand{\ev} {\end{verbatim}}
+%\newcommand{\bl} {\begin{lstlisting}}
+%\newcommand{\el} {\end{lstlisting}}
+%\newcommand{\ct}[1]{}
+\newcommand{\ct}[2]{\hspace{0in}#2}
+
+\begin{document}
+
+\title{Formally verifying a pseudo-random number generator}
+\author{Katherine Ye, advised by Prof. Andrew W. Appel}
+\affiliation{Princeton University}
+\author{and Prof. Matthew Green}
+\affiliation{Johns Hopkins University}
+
+\begin{abstract}
+We have proved, with machine-checked proofs, that the pseudorandom output produced by HMAC-DRBG is indistinguishable from random by a computationally bounded adversary. We proved this (@?) about a high-level specification of HMAC-DRBG, (@in what language?) provided by the Foundational Cryptography Framework (FCF), which is embedded in the Coq proof assistant. We also plan to prove that HMAC-DRBG is backtracking-resistant and prediction-resistant. After these proofs are done, we will prove equivalence between our high-level specification of HMAC-DRBG and a different specification used to prove its functional correctness of the mBED TLS C implementation of HMAC-DRBG. This will allow our proofs of cryptographic security properties to transfer to the C implementation of HMAC-DRBG.
+\end{abstract}
+
+\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Introduction}
+
+Most modern cryptosystems rely on random numbers, which they use to generate secrets that need to be known to users and unknown and unpredictable to attackers. Reducing the entropy of a cryptosystem's pseudo-random number generator (PRNG) is an easy way to break the entire cryptosystem. The PRNG will generate output predictable to an attacker, allowing her to guess private keys, yet the bits may still “look” random. Plus, the rest of the cryptosystem will function normally, since PRNGs tend to be single self-contained components. These two factors make PRNGs very attractive targets to attackers.
+
+The attack has indeed happened in practice (through due to a programming error and not malice), and with devastating consequences. Luciano Bello discovered that the random number generator in Debian OpenSSL, a widely-used cryptographic library, was predictable, allowing attackers to easily guess keys. Debian advised all users to regenerate keys, though some high-profile users didn't. For example, compromised SSH keys were used to access Spotify, Yandex, and gov.uk's public repositories on GitHub.
+
+Despite the importance of PRNGs, surprisingly little work exists on proving them secure, either by proving on paper that certain widely-used PRNGs are secure, or by verifying with computer-checked proofs that implementations of these PRNGs satisfy their specifications.
+
+Our project aims to do both. We aim prove correctness and security of an OpenSSL implementations of two widely-used PRNGs, CTR-DRBG and HMAC-DRBG. We will do this by proving that the implementation satisfies a functional specification (a high-level implementation in code) of the random number generator, which we trust satisfies its paper specification. Then we will prove that the functional specification guarantees the expected cryptographic properties, most notably that a computationally bounded attacker cannot distinguish generated bits from random bits. These properties will “flow” from the functional spec down to the compiled code via a verified compiler, CompCert. The entire verification will be machine-checked by Coq, a trusted proof assistant.
+
+This thesis attacks the cryptographic aspect of the problem. We hope to prove that PRNGs called CTR-DRBG and HMAC-DBG generate bits that are indistinguishable from random, that the PRGs are backtracking-resistant, that they eventually recover from compromises of internal state, and other important properties. We will write functional specifications of these PRGs in the environment of the Coq proof assistant, then prove that they possess the desired properties by using the Foundational Cryptography Framework in Coq.
+
+(@@@ revise last paragraphs)
+
+% @ delete this section
+\section{Statement of main result}
+
+Thing
+
+\section{Problem background and related work}
+
+(@fix these citations)
+
+Andrew Appel's group has done the most significant related work in the area. Appel (2015) [1] presents a “full formal machine-checked verification of a C program: the OpenSSL implementation of SHA-256.” Appel et al. (2015) [2] build on this work to do the same for HMAC, adding a proof of security that relies on the security of SHA. We plan to use the same approach for CTR-DRBG and HMAC-DRBG.
+
+In addition, there exist paper proofs of the security of CTR-DRBG [3] and HMAC-DRBG [4], though they haven't appeared in peer-reviewed venues.
+
+In the area of checking game-based proofs of cryptographic security within a proof assistant, there are two main tools: EasyCrypt and its cousin CertiCrypt (neither of which is foundational), and the Foundational Cryptography Framework. [5]
+
+In the general area of formalizing PRNGs, several crypto papers analyze the security of PRNGs and propose new security properties, e.g. Dodis et al. [6] who propose the “robustness” property and show that the built-in Linux PRNG, /dev/random, is not robust.
+
+There's not much prior work on formal verification of PRNGs in our style. Dörre and Klebanov (2015) [7] focus on verifying that a PRNG uses all its entropy. They perform this logic-based information flow verification using the KeY system for Java, which uses symbolic execution. This only defends against one particular attack (that of “squandering entropy”) and does not guarantee functional correctness or other security properties we may care about, such as indistinguishability from randomness and backtracking resistance.
+
+Affeldt (2009) [8] do include game-playing proofs of provable security in Coq. However, they focus on doing so directly on an assembly implementation of a PRNG, not on a high-level functional specification. They also verified their own assembly implementation, not a widely-used existing one. One advantage of this approach is that it avoids mismatches between the functional specification of the C code and the functional specification used for cryptographic proofs.
+
+Our approach is unique because it provides an end-to-end and foundational verification that guarantees both correctness and security. Our stack consists of Coq, the Foundational Cryptography Framework, the Verified Software Toolchain (using separation logic), and CompCert (a verified C compiler). In addition, we verify an existing widely-used PRG implementation in C, making our approach more useful in practice. 
+
+\section{HMAC-DRBG overview}
+
+A pseudorandom number generator is used to stretch a small amount of randomness into a large amount of pseudo-randomness, often for use in cryptosystems. HMAC-DRBG, formalized in NIST SP 800-90A [cite], is one such pseudorandom number generator. It generates output by iterating HMAC, a keyed-hash message authentication function widely believed to be difficult to invert [cite] and proven to be a pseudo-random function (PRF) given that HMAC’s internal hash function is a PRF. [mention key?]
+
+HMAC-DRBG possesses an internal state consisting of four elements:
+
+The working state, consisting of an internal value V which 
+
+HMAC-DRBG definition.
+
+State: Secret (K, V), Public (?, prediction resistance, reseed counter)
+
+Instantiate:
+\begin{lstlisting}
+K <- …
+V <- ...
+\end{lstlisting}
+
+Generate
+
+
+Update
+
+
+Reseed
+
+Entropy
+
+\section{Informal proof}
+
+Informal theorem.
+
+Proof.
+
+\section{FCF summary}
+
+Embedding into Coq
+Game-based crypto proofs
+Comp monad (probabilistic computations)
+Relating pairs of games using probabilistic relational Hoare logic (postconditions, $comp\_spec$)
+Oracles, OracleComp
+Adversary as abstract probabilistic polynomial time algorithm
+Writing games
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Formal proof outline}
+
+\subsection{Starting HMAC-DRBG definitions}
+
+\begin{verbatim}Gen_loop\end{verbatim}
+\begin{verbatim}GenUpdate\end{verbatim}
+
+\begin{lstlisting}
+Definition GenUpdate_original (state : KV) (n : nat) :
+  Comp (list (Bvector eta) * KV) :=
+  [k, v] <-2 state;
+  [bits, v'] <-2 Gen_loop k v n;
+  k' <- f k (to_list v' ++ zeroes);
+  v'' <- f k' (to_list v');
+  ret (bits, (k', v'')).
+\end{lstlisting}
+
+% @ where should this go?
+\subsection{Prior work on abstract PRF-DRBG}
+
+Definition
+
+\begin{lstlisting}
+  Fixpoint PRF_DRBG_f (v : D)(n : nat)(k : Key) :=
+    match n with
+        | O => nil
+        | S n' => 
+          r <- (f k v);
+            r :: (PRF_DRBG_f (injD r) n' k)
+    end.
+\end{lstlisting}
+
+\begin{lstlisting}
+  Fixpoint PRF_DRBG_f (v : D)(n : nat)(k : Key) :=
+    match n with
+        | O => nil
+        | S n' => 
+          r <- (f k v);
+            r :: (PRF_DRBG_f (injD r) n' k)
+    end.
+\end{lstlisting}
+
+\begin{lstlisting}
+(* save the last v and output it as part of the state *)
+Fixpoint Gen_loop (k : Bvector eta) (v : Bvector eta) (n : nat)
+  : list (Bvector eta) * Bvector eta :=
+  match n with
+  | O => (nil, v)
+  | S n' =>
+    let v' := f k (Vector.to_list v) in
+    let (bits, v'') := Gen_loop k v' n' in
+    (v' :: bits, v'')
+  end.
+\end{lstlisting}
+
+Random bits to random function
+
+Random function to collision
+
+% @ don't need all these section headers
+\subsection{Extending prior work}
+
+To deal with multiple calls
+Non-adaptive adversary
+V updating
+Key updating
+Instantiate
+
+\subsection{Formal theorem}
+
+\begin{lstlisting}
+Theorem G1_G2_close :
+  | Pr[G1_prg_original] - Pr[G2_prg] | <= 
+  (numCalls / 1) * Gi_Gi_plus_1_bound.
+Proof.
+  rewrite G1_Gi_O_equal.
+  rewrite G2_Gi_n_equal.
+  (* inductive argument *)
+  specialize (distance_le_prod_f 
+  	(fun i => Pr[Gi_prg i]) 
+	Gi_Gi_plus_1_close numCalls).
+  intuition.
+Qed.
+\end{lstlisting}
+
+Pseudorandom functions, random functions, random bits
+
+Indistinguishability definition
+
+\subsection{Hybrid argument}
+
+\subsection{Main games}
+
+V updating
+
+\begin{lstlisting}
+(* [GenUpdate_original, GenUpdate_original, ...] = [GenUpdate_noV, GenUpdate, Genupdate, ...] *)
+  (* use this for the first call *)
+Definition GenUpdate_noV (state : KV) (n : nat) :
+  Comp (list (Bvector eta) * KV) :=
+  [k, v] <-2 state;
+  [bits, v'] <-2 Gen_loop k v n;
+  k' <- f k (to_list v' ++ zeroes);
+  ret (bits, (k', v')).
+
+Definition GenUpdate (state : KV) (n : nat) :
+  Comp (list (Bvector eta) * KV) :=
+  [k, v] <-2 state;
+  v' <- f k (to_list v);
+  [bits, v''] <-2 Gen_loop k v' n;
+  k' <- f k (to_list v'' ++ zeroes);
+  ret (bits, (k', v'')).
+\end{lstlisting}
+
+Adversary
+
+\begin{lstlisting}
+(* Non-adaptive adversary. *)
+Variable A : list (list (Bvector eta)) -> Comp bool.
+Hypothesis A_wf: forall ls, well_formed_comp (A ls).
+\end{lstlisting}
+
+Game 1
+
+\begin{lstlisting}
+(* blocks generated by GenLoop *)
+Variable blocksPerCall : nat.      
+(* number of calls to GenUpdate *) 
+Variable numCalls : nat.        
+Hypothesis H_numCalls : numCalls > 0. 
+
+Definition maxCallsAndBlocks : list nat := replicate numCalls blocksPerCall.
+
+(* only first call uses GenUpdate_noV; assumes numCalls > 0 *)
+Definition G1_prg : Comp bool :=
+  [k, v] <-$2 Instantiate;
+  [head_bits, state'] <-$2 GenUpdate_noV (k, v) blocksPerCall;
+  (* call the oracle numCalls times, each time requesting blocksPerCall blocks *)
+  [tail_bits, _] <-$2 oracleMap _ _ GenUpdate state' (tail maxCallsAndBlocks);
+  A (head_bits :: tail_bits).
+\end{lstlisting}
+
+Game 2
+
+\begin{lstlisting}
+(* simpler version of GenUpdate only requires compMap. prove the two games equivalent *)
+Definition G2_prg : Comp bool :=
+  [k, v] <-$2 Instantiate;
+  bits <-$ compMap _ GenUpdate_rb maxCallsAndBlocks;
+  A bits.
+\end{lstlisting}
+
+Game i
+
+Oracle i: decides which oracle to use on the ith call
+
+Hybrid argument notation
+
+Replace PRF with random function
+
+Replace random function with random bits
+
+\subsection{List of lemmas}
+
+From the top down (roughly breadth-first traversal of the proof tree).
+
+For the main result, $G1\_G2\_close$:
+\begin{enumerate}
+% @ not in code yet
+\item $GenUpdate\_v\_output\_probability : \\ Pr[G1\_prg\_original] == Pr[G1\_prg].$ 
+
+If we move each v-update to the beginning of the next $GenUpdate$ call, the games are equivalent, since the output the adversary sees is exactly the same. The rest of the proof will be done on the modified $GenUpdate$s.
+\item $G1\_Gi\_O\_equal : \\ Pr[G1\_prg] == Pr[Gi\_prg \s O].$ 
+
+Recall that $G1$ is the first game we defined. It simulates "worst-case" real-world use of HMAC-DRBG by a non-adaptive adversary by calling $GenUpdate$ the maximum number of times, requesting the maximum number of blocks, and passing the output to the adversary. Since this is modeling real-world use, every call to $GenUpdate$ uses HMAC (abstracted to be any PRF). This game is equivalent to the first hybrid, where every call to the $GenUpdate_oc$ oracle uses the PRF.
+\item $G2\_Gi\_n\_equal : \\   Pr[G2\_prg] == Pr[Gi\_prg \s numCalls].$
+
+Recall that $G2$ is the second game we defined. It simulates how we would ideally like HMAC-DRBG to behave. It calls $GenUpdate\_rb$ the maximum number of times, requesting the maximum number of blocks, and passing the output to the adversary. $GenUpdate\_rb$ is a version of $GenUpdate$ with every call to HMAC (the PRF) replaced by uniformly sampling a random bitvector. This game is equivalent to the last hybrid, where every call to the $GenUpdate\_oc$ oracle uses uniform random sampling.
+\item $Gi\_Gi\_plus\_1\_close : \\   forall \s (n : nat), \\
+  | Pr[Gi\_prg \s n] - Pr[Gi\_prg (S \s n)] | <= Gi\_Gi\_plus\_1\_bound.$
+
+
+
+$ Gi\_Gi\_plus\_1\_bound := \\ PRF\_Advantage\_i + Pr\_collisions.$
+\end{enumerate} 
+
+%@ Moving v-updating: (proved) $GenUpdate\_v\_output\_probability$
+
+For $Gi\_Gi\_plus\_1\_close$:
+\begin{enumerate}
+\item $Gi\_normal\_prf\_eq$: 
+\item $Gi\_prf\_rf\_close$: 
+\item $Gi\_rf\_rb\_close$: 
+\end{enumerate}
+
+PRF Advantage ($Gi\_prf\_rf\_close$): 
+\begin{enumerate}
+\item $Gi\_prf\_rf\_close\_i$:
+\item $PRF\_Advantages\_lt$:
+\end{enumerate}
+
+Note on "identical until bad."
+
+Bad event, collisions, or $Gi\_rf\_rb\_close$: 
+\begin{enumerate}
+\item $Gi\_normal\_rb\_eq$: put Gi\_prg into the same form using RB oracle *)
+\item $Gi\_rf\_return\_bad\_eq$: 
+\item $Gi\_rb\_return\_bad\_eq$:  
+\item $Gi\_rb\_rf\_identical\_until\_bad$: 
+\item $Gi\_rb\_bad\_collisions$: 
+\end{enumerate} 
+
+$Gi\_rb\_rf\_identical\_until\_bad$: 
+
+Bad event:
+
+Assumption 1: two games have same probability of returning bad
+Assumption 2: if bad event does not happen, the distributions of the outputs are identical
+Oracle identical until bad
+%@cite bellare
+
+Calculating probability of bad event:
+Applying Adam's collision bound
+
+\subsection{Proof graph}
+
+Thing
+
+\subsection{Current limitations of the formal proof}
+
+Parts of HMAC-DRBG we abstracted and ignored
+
+Instantiate (randomly-sampled key; entropy extractor)
+Reseeding (prediction resistance)
+Adaptive adversary
+Additional input
+Entropy failure
+
+\subsection{Comparison to existing proof of HMAC-DRBG security}
+
+Hirose stuff
+
+how does it compare to our paper proof? our computer proof?
+Why is formalizing our proof so much work? (Number of hours and lines of code?)
+
+\subsection{Comments on HMAC-DRBG's design}
+
+Re-keying the PRF with a length-extended input: good
+Updating the v after re-keying the PRF: bad
+(++ [v]) instead of (v ::) bad
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Additional properties to prove about HMAC-DRBG}
+
+Backtracking resistance
+
+Prediction resistance
+
+\section{Linking our crypto spec with the functional spec}
+
+Prove equivalence
+VST overview
+Summarize Naphat’s proof
+Relating (Adam’s) sampling uniformly at random to (Naphat’s) entropy stream that includes failure
+Core loop equivalence (prediction resistance)
+Diagram of work
+
+\section{Plan for the next two months}
+
+Finish proofs (how many? 15+)
+Backtracking resistance, then equivalence proof
+Deadline table
+
+\section{Future work}
+
+HMAC is slow, AES is fast
+How does this generalize to other DRBGs, say AES-DRBG (CTR mode)?
+
+\section{Conclusion}
+
+%@ more stuff about motivation
+
+%@ should this go in the introduction? what's the difference between the introduction and the conclusion?
+We have presented the first machine-checked proof of a crucial cryptographic security property of a pseudo-random number generator. That is, we have written a precise specification of HMAC-DRBG's main functions in Coq, then we have proved that the probability that a non-adaptive probabilistic polynomial time adversary can distinguish HMAC-DRBG's output from uniformly-sampled random bits is negligible. We have also proved a concrete bound on the probability that the adversary can distinguish the two. 
+
+%@ cite and add names
+There exist only two prior proofs of security of HMAC-DRBG. The first\ct{@cite}, Champagna YEAR, assumes that HMAC is a random oracle, which is a very strong assumption. Thus, cryptographers generally don't trust proofs written in this model. \ct{@cite, add specific quote} Additionally, this paper is not peer-reviewed. The second, Hirose YEAR, was peer-reviewed, but its proof is lengthy and involved. Neither paper's proofs has been machine-checked or linked to an implementation of HMAC-DRBG.
+
+We plan to extend our proof to deal with \ct{@fix} features of HMAC-DRBG that we have omitted, such as \ct{@}. After this, we plan to prove 
+
+No DRBG has been verified before
+HMAC-DRBG has never been end-to-end verified before (for security (indistinguishability) and correctness)
+No paper proof for HMAC-DRBG’s backtracking resistance exists
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{acknowledgments}
+
+I'd like to thank Adam Petcher, Matt Green, Andrew Appel, Naphat Sanguansin, and Lennart Beringer for their help.
+
+\end{acknowledgments}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% \section{References}
+
+\bibliographystyle{plainnat}
+
+\begin{thebibliography}{99}
+
+\bibitem{namedate}
+Last, First, Middle. \emph{Title.} Source
+
+
+\end{thebibliography}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\appendix
+
+\section{Title}
+
+Stuff
+
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
