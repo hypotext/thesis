@@ -16,6 +16,8 @@
 % \usepackage[square,numbers]{natbib} % TODO
 \bibliographystyle{unsrtnat}
 
+% \usepackage{lstlangcoq} TODO
+
 % displays all math in sans-serif font TODO  
 \usepackage[cm]{sfmath}
   
@@ -304,9 +306,53 @@ Definition G2_prg : Comp bool :=
   A bits.
 \end{lstlisting}
 
-Game i
+Game i and PRF adversary
+(see long comment above this section) %@
+
+\begin{lstlisting}
+Definition PRF_Adversary (i : nat) : OracleComp Blist (Bvector eta) bool :=
+  bits <--$ oracleCompMap_outer _ _ (Oi_oc' i) maxCallsAndBlocks;
+  $ A bits.
+
+(* ith game: use RF oracle *)
+Definition Gi_rf (i : nat) : Comp bool :=
+  [b, _] <-$2 PRF_Adversary i _ _ (randomFunc ({0,1}^eta) eqdbl) nil;
+  ret b.
+\end{lstlisting}
 
 Oracle i: decides which oracle to use on the ith call
+
+\begin{lstlisting}
+(* same as Oi_prg but each GenUpdate in it has been converted to OracleComp *)
+(* number of calls starts at 0 and ends at q. e.g.
+G1:      RB  PRF PRF
+Gi_rf 1: RB  RF  PRF (i = 1 here)
+G2:      RB  RB  PRF *)
+(* number of calls: first call is 0, last call is (numCalls - 1) for numCalls calls total
+G0: PRF PRF PRF <-- Gi_prf 0
+    RF  PRF PRF <-- Gi_rf 0
+G1: RB  PRF PRF <-- Gi_prf 1
+    RB  RF  PRF <-- Gi_rf 1
+G2: RB  RB  PRF
+    RB  RB  RF
+G3: RB  RB  RB  <-- note that there is no oracle slot to replace here
+    RB  RB  RB  <-- likewise
+there should be (S numCalls) games, so games are numbered from 0 through numCalls *)
+Definition Oi_oc' (i : nat) (sn : nat * KV) (n : nat) 
+  : OracleComp Blist (Bvector eta) (list (Bvector eta) * (nat * KV)) :=
+  [callsSoFar, state] <-2 sn;
+  [k, v] <-2 state;
+  let GenUpdate_choose := 
+      if lt_dec callsSoFar i (* callsSoFar < i *)
+      then GenUpdate_rb_intermediate_oc
+      else if beq_nat callsSoFar i (* callsSoFar = i *)
+           then GenUpdate_oc    (* uses provided oracle (PRF or RF) *)
+      else if beq_nat callsSoFar O 
+           then GenUpdate_noV_oc  (* first call does not update v *)
+      else GenUpdate_PRF_oc in        (* uses PRF with (k,v) updating *)
+  [bits, state'] <--$2 GenUpdate_choose (k, v) n;
+  $ ret (bits, (S callsSoFar, state')).
+  \end{lstlisting}
 
 Hybrid argument notation
 
@@ -318,63 +364,188 @@ Replace random function with random bits
 
 From the top down (roughly breadth-first traversal of the proof tree).
 
-For the main result, $G1\_G2\_close$:
+For the top-level theorem, 
+\begin{lstlisting}
+G1_G2_close : | Pr[G1_prg] - Pr[G2_prg] | <= 
+   (numCalls / 1) * Gi_Gi_plus_1_bound.
+\end{lstlisting}
 \begin{enumerate}
 % @ not in code yet
-\item $GenUpdate\_v\_output\_probability : \\ Pr[G1\_prg\_original] == Pr[G1\_prg].$ 
-
+\par
+\item \begin{lstlisting}
+GenUpdate_v_output_probability :
+  Pr[G1_prg_original] == Pr[G1_prg].
+  \end{lstlisting}
 If we move each v-update to the beginning of the next $GenUpdate$ call, the games are equivalent, since the output the adversary sees is exactly the same. The rest of the proof will be done on the modified $GenUpdate$s.
-\item $G1\_Gi\_O\_equal : \\ Pr[G1\_prg] == Pr[Gi\_prg \s O].$ 
+
+\par
+\item \begin{lstlisting}
+G1_Gi_O_equal :
+  Pr[G1_prg] == Pr[Gi_prg O].
+\end{lstlisting}   
 
 Recall that $G1$ is the first game we defined. It simulates "worst-case" real-world use of HMAC-DRBG by a non-adaptive adversary by calling $GenUpdate$ the maximum number of times, requesting the maximum number of blocks, and passing the output to the adversary. Since this is modeling real-world use, every call to $GenUpdate$ uses HMAC (abstracted to be any PRF). This game is equivalent to the first hybrid, where every call to the $GenUpdate_oc$ oracle uses the PRF.
-\item $G2\_Gi\_n\_equal : \\   Pr[G2\_prg] == Pr[Gi\_prg \s numCalls].$
+
+\par
+\item \begin{lstlisting}
+ G2_Gi_n_equal :
+   Pr[G2_prg] == Pr[Gi_prg numCalls].
+  \end{lstlisting}
 
 Recall that $G2$ is the second game we defined. It simulates how we would ideally like HMAC-DRBG to behave. It calls $GenUpdate\_rb$ the maximum number of times, requesting the maximum number of blocks, and passing the output to the adversary. $GenUpdate\_rb$ is a version of $GenUpdate$ with every call to HMAC (the PRF) replaced by uniformly sampling a random bitvector. This game is equivalent to the last hybrid, where every call to the $GenUpdate\_oc$ oracle uses uniform random sampling.
-\item $Gi\_Gi\_plus\_1\_close : \\   forall \s (n : nat), \\
-  | Pr[Gi\_prg \s n] - Pr[Gi\_prg (S \s n)] | <= Gi\_Gi\_plus\_1\_bound.$
 
+\par 
+\item \begin{lstlisting}
+Gi_Gi_plus_1_close :
+  forall (n : nat),
+  | Pr[Gi_prg n] - Pr[Gi_prg (S n)] | <= Gi_Gi_plus_1_bound.
+  \end{lstlisting}
 
+This is the important part of the proof. We prove that the difference between each adjacent hybrid is bounded by some constant, defined as such:
 
-$ Gi\_Gi\_plus\_1\_bound := \\ PRF\_Advantage\_i + Pr\_collisions.$
+\begin{lstlisting}
+Gi_Gi_plus_1_bound := PRF_Advantage_i + Pr_collisions.
+\end{lstlisting}
+
+Adam's existing lemma handles the rest of the work, yielding the result that the difference between the first and the last hybrid is at most this bound times the number of hybrids.
+
 \end{enumerate} 
 
 %@ Moving v-updating: (proved) $GenUpdate\_v\_output\_probability$
 
-For $Gi\_Gi\_plus\_1\_close$:
+For $Gi\_Gi\_plus\_1\_close$, number four above:
 \begin{enumerate}
-\item $Gi\_normal\_prf\_eq$: 
-\item $Gi\_prf\_rf\_close$: 
-\item $Gi\_rf\_rb\_close$: 
+\par
+\item \begin{lstlisting}
+Gi_normal_prf_eq : forall (i : nat),
+    Pr[Gi_prg i] == Pr[Gi_prf i].
+    \end{lstlisting}
+\par
+\item \begin{lstlisting}
+Gi_prf_rf_close_i : forall (i : nat),
+  | Pr[Gi_prf i] - Pr[Gi_rf i] | <= PRF_Advantage_Game i.
+  \end{lstlisting}
+\par
+\item \begin{lstlisting}
+forall (i : nat), (* not true for i = 0 (and not needed) *)
+  | Pr[Gi_rf i] - Pr[Gi_prg (S i)] | <= Pr_collisions.
+  \end{lstlisting} % see comment above this thm for example
 \end{enumerate}
 
-PRF Advantage ($Gi\_prf\_rf\_close$): 
+For PRF Advantage (\lstinline|Gi_prf_rf_close|), number two above:
+
 \begin{enumerate}
-\item $Gi\_prf\_rf\_close\_i$:
-\item $PRF\_Advantages\_lt$:
+\par
+\item 
+\begin{lstlisting}
+  Gi_prf_rf_close_i : forall (i : nat), 
+  | Pr[Gi_prf i] - Pr[Gi_rf i] | <= PRF_Advantage_Game i. 
+  \end{lstlisting}
+  
+  \par
+\item 
+\begin{lstlisting}
+    PRF_Advantages_lt :  forall (i : nat), 
+    PRF_Advantage_Game i <= PRF_Advantage_Game 0.
+    \end{lstlisting}
 \end{enumerate}
 
 Note on "identical until bad."
 
-Bad event, collisions, or $Gi\_rf\_rb\_close$: 
+For the Bad event, collisions, or \lstinline|Gi_rf_rb_close|, number three for \lstinline|Gi_Gi_plus_1_close| above:
 \begin{enumerate}
-\item $Gi\_normal\_rb\_eq$: put Gi\_prg into the same form using RB oracle *)
-\item $Gi\_rf\_return\_bad\_eq$: 
-\item $Gi\_rb\_return\_bad\_eq$:  
-\item $Gi\_rb\_rf\_identical\_until\_bad$: 
-\item $Gi\_rb\_bad\_collisions$: 
+\par
+\item \begin{lstlisting}
+Gi_normal_rb_eq : forall (i : nat),
+    Pr[Gi_prg (S i)] == Pr[Gi_rb i].
+    \end{lstlisting} 
+Put Gi\_prg into the same form using RB oracle 
+
+\par
+\item \begin{lstlisting} 
+Gi_rf_return_bad_eq : forall (i : nat),
+Pr[Gi_rf i] == Pr[x <-$ Gi_rf_bad i; ret fst x].
+  \end{lstlisting}
+  
+  Expose the bad event
+
+\par
+\item \begin{lstlisting}
+Gi_rb_return_bad_eq : forall (i : nat),
+    Pr[Gi_rb i] == Pr[x <-$ Gi_rb_bad i; ret fst x].
+\end{lstlisting}
+
+Expose the bad event
+
+\par
+\item \begin{lstlisting}
+Gi_rb_rf_identical_until_bad : forall (i:nat), 
+| Pr[x <-$ Gi_rf_bad i; ret fst x] 
+  - Pr[x <-$ Gi_rb_bad i; ret fst x] | 
+<= Pr[x <-$ Gi_rb_bad i; ret snd x]
+\end{lstlisting}                                              
+ Applying the fundamental lemma here                                               
+                                              
+\par
+\item \begin{lstlisting}
+Gi_rb_bad_collisions : forall (i : nat),
+Pr  [x <-$ Gi_rb_bad i; ret snd x ] <= 
+   Pr_collisions.
+\end{lstlisting}
+
+The probability of bad event happening in RB game is bounded by the probability of collisions in a list of length (n+1) of randomly-sampled (Bvector eta)
+
+Calculating probability of bad event: Applying Adam's collision bound
+
 \end{enumerate} 
 
-$Gi\_rb\_rf\_identical\_until\_bad$: 
+To prove \lstinline|Gi_rb_rf_identical_until_bad| (number two above):
+
+\begin{enumerate}
+\par
+\item \begin{lstlisting}
+fundamental_lemma_h : forall (A : Set) 
+   (eqda : EqDec A) (c1 c2 : Comp (A * bool)),
+   
+   Pr  [x <-$ c1; ret snd x ] == 
+   Pr  [x <-$ c2; ret snd x ] ->
+   
+   (forall a : A, evalDist c1 (a, false) == 
+                      evalDist c2 (a, false)) ->
+                      
+   forall a : A,
+   | evalDist (x <-$ c1; ret fst x) a - 
+     evalDist (x <-$ c2; ret fst x) a |
+      <= Pr  [x <-$ c1; ret snd x ].
+\end{lstlisting}
+
+Cite Bellare
+
+dupsInIthInputCalls
 
 Bad event:
 
+\par
+\item \begin{lstlisting}
+ Gi_rb_rf_return_bad_same :  forall (i : nat),
+    Pr  [x <-$ Gi_rb_bad i; ret snd x ] ==
+    Pr  [x <-$ Gi_rf_bad i; ret snd x ].
+\end{lstlisting}
+
+See comments on this theorem
 Assumption 1: two games have same probability of returning bad
+
+\par
+\item \begin{lstlisting}
+ Gi_rb_rf_no_bad_same : forall (i : nat) (a : bool),
+   evalDist (Gi_rb_bad i) (a, false) == 
+   evalDist (Gi_rf_bad i) (a, false).
+\end{lstlisting}
+
 Assumption 2: if bad event does not happen, the distributions of the outputs are identical
 Oracle identical until bad
-%@cite bellare
 
-Calculating probability of bad event:
-Applying Adam's collision bound
+\end{enumerate}
 
 \subsection{Proof graph}
 
