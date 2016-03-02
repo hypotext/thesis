@@ -55,6 +55,7 @@ breaklines=true
 %\newcommand{\el} {\end{lstlisting}}
 %\newcommand{\ct}[1]{}
 \newcommand{\ct}[2]{\hspace{0in}#2}
+\newcommand{\li} {\lstinline}
 
 \begin{document}
 
@@ -306,7 +307,37 @@ Definition G2_prg : Comp bool :=
   A bits.
 \end{lstlisting}
 
-Game i and PRF adversary
+Game i and oracle i
+
+\begin{lstlisting}
+
+(* oracle i *)
+(* number of calls: first call is 0, last call is (numCalls - 1) for numCalls calls total
+G0: PRF PRF PRF
+G1: RB  PRF PRF
+G2: RB  RB  PRF
+G3: RB  RB  RB 
+there should be (S numCalls) games, so games are numbered from 0 through numCalls *)
+Definition Oi_prg (i : nat) (sn : nat * KV) (n : nat)
+  : Comp (list (Bvector eta) * (nat * KV)) :=
+  [callsSoFar, state] <-2 sn;
+  let GenUpdate_choose := if lt_dec callsSoFar i (* callsSoFar < i *)
+                          then GenUpdate_rb_intermediate
+                          (* first call does not update v, to make proving equiv. easier*)
+                          else if beq_nat callsSoFar O then GenUpdate_noV
+                               else GenUpdate in
+  (* note: have to use intermediate, not final GenUpdate_rb here *)
+  [bits, state'] <-$2 GenUpdate_choose state n;
+  ret (bits, (S callsSoFar, state')).
+
+(* game i (Gi 0 = G1 and Gi q = G2) *)
+Definition Gi_prg (i : nat) : Comp bool :=
+  [k, v] <-$2 Instantiate;
+  [bits, _] <-$2 oracleMap _ _ (Oi_prg i) (O, (k, v)) maxCallsAndBlocks;
+  A bits.
+\end{lstlisting}  
+
+PRF adversary. Why do we need this? To go from PRF to RF
 (see long comment above this section) %@
 
 \begin{lstlisting}
@@ -384,7 +415,7 @@ G1_Gi_O_equal :
   Pr[G1_prg] == Pr[Gi_prg O].
 \end{lstlisting}   
 
-Recall that $G1$ is the first game we defined. It simulates "worst-case" real-world use of HMAC-DRBG by a non-adaptive adversary by calling $GenUpdate$ the maximum number of times, requesting the maximum number of blocks, and passing the output to the adversary. Since this is modeling real-world use, every call to $GenUpdate$ uses HMAC (abstracted to be any PRF). This game is equivalent to the first hybrid, where every call to the $GenUpdate_oc$ oracle uses the PRF.
+Recall that $G1$ is the first game we defined. It simulates "worst-case" real-world use of HMAC-DRBG by a non-adaptive adversary by calling $GenUpdate$ the maximum number of times, requesting the maximum number of blocks, and passing the output to the adversary. Since this is modeling real-world use, every call to $GenUpdate$ uses HMAC (abstracted to be any PRF). This game is equivalent to the first hybrid, where every call to the $GenUpdate\_oc$ oracle uses the PRF.
 
 \par
 \item \begin{lstlisting}
@@ -420,16 +451,54 @@ For $Gi\_Gi\_plus\_1\_close$, number four above:
 Gi_normal_prf_eq : forall (i : nat),
     Pr[Gi_prg i] == Pr[Gi_prf i].
     \end{lstlisting}
+    
+    We write the $i$th hybrid in terms of the $i$th oracle-replaced hybrid using the PRF oracle. Outputting random bits on calls $< i$ and the PRF afterward is equivalent to outputting random bits on calls $< i$, using the PRF oracle on call $i$, and using the PRF oracle afterward. 
+    \begin{lstlisting}
+   n = 4, i = 2
+   call #   : 0   1   2   3
+   Gi_prg 2: RB RB PRF PRF
+   Gi_prf 2: RB RB PRF PRF
+    \end{lstlisting}
+    
 \par
 \item \begin{lstlisting}
 Gi_prf_rf_close_i : forall (i : nat),
   | Pr[Gi_prf i] - Pr[Gi_rf i] | <= PRF_Advantage_Game i.
   \end{lstlisting}
+  
+	In the $i$th call to the $GenUpdate$ oracle, replace the pseudorandom function (PRF) oracle used with the random function (RF) oracle. 
+	
+      \begin{lstlisting}
+   n = 4, i = 1
+   call #   : 0   1   2   3
+   Gi_prf 2: RB RB PRF PRF
+   Gi_rf 2:   RB RB   RF PRF
+    \end{lstlisting}
+	
+	The difference in probability that a new adversary, the PRF adversary, realizes this has happened is defined by cryptographers to be \lstinline|PRF_Advantage|. 
+	
+\begin{lstlisting}
+Definition PRF_Advantage_Game i : Rat := 
+  PRF_Advantage RndK ({0,1}^eta) f eqdbl eqdbv (PRF_Adversary i).
+  \end{lstlisting}
+  
+	The PRF adversary is allowed to choose an input, then with equal probability it is given the output of either the PRF or the RF applied to the input, and it has to guess which function it was.
+    
+    \begin{lstlisting}
+    PRF_Advantage = 
+fun (D R Key : Set) (RndKey : Comp Key) (RndR : Comp R) 
+  (f : Key -> D -> R) (A : OracleComp D R bool) =>
+| Pr  [PRF_G_A RndKey f A ] - Pr  [PRF_G_B RndR A ] |
+\end{lstlisting}
+
+	Questionable: this difference in probability (\lstinline|PRF_Advantage|) is defined the same no matter how many times the oracle in question is called within \li|GenUpdate| (and it is called $2 + numBlocks$ times, not just once).
+  
 \par
 \item \begin{lstlisting}
 forall (i : nat), (* not true for i = 0 (and not needed) *)
   | Pr[Gi_rf i] - Pr[Gi_prg (S i)] | <= Pr_collisions.
   \end{lstlisting} % see comment above this thm for example
+  
 \end{enumerate}
 
 For PRF Advantage (\lstinline|Gi_prf_rf_close|), number two above:
@@ -593,7 +662,10 @@ Diagram of work
 
 \section{Plan for the next two months}
 
-Finish proofs (how many? 15+)
+There are 21 admitted lemmas left to prove that I'm confident about, and 1 lemma left that I'm sure is true, but am not sure how to prove (\lstinline|hi|).
+
+
+
 Backtracking resistance, then equivalence proof
 Deadline table
 
