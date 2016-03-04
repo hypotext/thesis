@@ -94,7 +94,7 @@ Despite the importance of PRNGs, surprisingly little work exists on proving them
 We present the first machine-checked proof of a crucial cryptographic security property of a pseudo-random number generator. That is, we have written a precise specification of HMAC-DRBG's main functions in Coq, then we have proved that the probability that a non-adaptive probabilistic polynomial time adversary can distinguish HMAC-DRBG's output from uniformly-sampled random bits is negligible. We have also proved a concrete bound on the probability that the adversary can distinguish the two. 
 
 %@ cite and add names
-There exist only two prior proofs of security of HMAC-DRBG. The first, by Champagna, assumes that HMAC is a random oracle, which is a very strong assumption. Thus, cryptographers generally don't trust proofs written in this model. \ct{@cite, add specific quote} Additionally, this paper is not peer-reviewed. The second, by Hirose, was peer-reviewed, but its proof is lengthy and involved. Neither paper's proofs has been machine-checked or linked to an implementation of HMAC-DRBG.
+There exist only two prior proofs of security of HMAC-DRBG. The first, by Campagna (2006), is not peer-reviewed. The second, by Hirose (2008), was peer-reviewed, but its proof is lengthy and involved. Neither paper's proofs has been machine-checked or linked to an implementation of HMAC-DRBG.
 
 After this, we plan to prove additional cryptographic properties of HMAC-DRBG, including backtracking resistance. No paper proofs exist for any of these additional properties. 
 
@@ -104,17 +104,17 @@ TODO: include precise theorem statement
 
 \section{Problem background and related work}
 
-Andrew Appel's group has done the most significant related work in the area. Appel (2015) [1] presents a “full formal machine-checked verification of a C program: the OpenSSL implementation of SHA-256.” Appel et al. (2015) [2] build on this work to do the same for HMAC, adding a proof of security that relies on the security of SHA. We plan to use the same approach for CTR-DRBG and HMAC-DRBG.
+Andrew Appel's group has done the most significant related work in the area. Appel (2015) presents a “full formal machine-checked verification of a C program: the OpenSSL implementation of SHA-256.” Beringer et al. (2015) build on this work to do the same for HMAC, adding a proof of security that relies on the security of SHA. We plan to use the same approach for CTR-DRBG and HMAC-DRBG.
 
-In addition, there exist paper proofs of the security of CTR-DRBG [3] and HMAC-DRBG [4], though they haven't appeared in peer-reviewed venues.
+In addition, there exist paper proofs of the security of CTR-DRBG and HMAC-DRBG (Campagna (2006), Hirose (2008)), though the former hasn't appeared in a peer-reviewed venue and the latter is very complicated.
 
-In the area of checking game-based proofs of cryptographic security within a proof assistant, there are two main tools: EasyCrypt and its cousin CertiCrypt (neither of which is foundational), and the Foundational Cryptography Framework. [5]
+In the area of checking game-based proofs of cryptographic security within a proof assistant, there are two main tools: EasyCrypt and its cousin CertiCrypt (neither of which is foundational), and the Foundational Cryptography Framework (Barthe (2011)).
 
-In the general area of formalizing PRNGs, several crypto papers analyze the security of PRNGs and propose new security properties, e.g. Dodis et al. [6] who propose the “robustness” property and show that the built-in Linux PRNG, /dev/random, is not robust.
+In the general area of formalizing PRNGs, several crypto papers analyze the security of PRNGs and propose new security properties, e.g. Dodis et al. (2013) who propose the “robustness” property and show that the built-in Linux PRNG, /dev/random, is not robust.
 
-There's not much prior work on formal verification of PRNGs in our style. Dorre and Klebanov (2015) [7] focus on verifying that a PRNG uses all its entropy. They perform this logic-based information flow verification using the KeY system for Java, which uses symbolic execution. This only defends against one particular attack (that of “squandering entropy”) and does not guarantee functional correctness or other security properties we may care about, such as indistinguishability from randomness and backtracking resistance.
+There's not much prior work on formal verification of PRNGs in our style. Dorre and Klebanov (2015)  focus on verifying that a PRNG uses all its entropy. They perform this logic-based information flow verification using the KeY system for Java, which uses symbolic execution. This only defends against one particular attack (that of “squandering entropy”) and does not guarantee functional correctness or other security properties we may care about, such as indistinguishability from randomness and backtracking resistance.
 
-Affeldt (2009) [8] do include game-playing proofs of provable security in Coq. However, they focus on doing so directly on an assembly implementation of a PRNG, not on a high-level functional specification. They also verified their own assembly implementation, not a widely-used existing one. One advantage of this approach is that it avoids mismatches between the functional specification of the C code and the functional specification used for cryptographic proofs.
+Affeldt (2009) do include game-playing proofs of provable security in Coq. However, they focus on doing so directly on an assembly implementation of a PRNG, not on a high-level functional specification. They also verified their own assembly implementation, not a widely-used existing one. One advantage of this approach is that it avoids mismatches between the functional specification of the C code and the functional specification used for cryptographic proofs.
 
 Our approach is unique because it provides an end-to-end and foundational verification that guarantees both correctness and security. Our stack consists of Coq, the Foundational Cryptography Framework, the Verified Software Toolchain (using separation logic), and CompCert (a verified C compiler). In addition, we verify an existing widely-used PRG implementation in C, making our approach more useful in practice. 
 
@@ -122,7 +122,7 @@ Our approach is unique because it provides an end-to-end and foundational verifi
 
 \section{HMAC-DRBG overview}
 
-A pseudorandom number generator is used to stretch a small amount of randomness into a large amount of pseudo-randomness, often for use in cryptosystems. HMAC-DRBG, formalized in NIST SP 800-90A [cite], is one such pseudorandom number generator. It generates output by iterating HMAC, a keyed-hash message authentication function widely believed to be difficult to invert [cite] and proven to be a pseudo-random function (PRF) given that HMAC’s internal hash function is a PRF. [mention key?]
+A pseudorandom number generator is used to stretch a small amount of randomness into a large amount of pseudo-randomness, often for use in cryptosystems. HMAC-DRBG, formalized in NIST SP 800-90A, is one such pseudorandom number generator. It generates output by iterating HMAC, a keyed-hash message authentication function widely believed to be difficult to invert [cite] and proven to be a pseudo-random function (PRF) given that HMAC’s internal hash function is a PRF. [mention key?]
 
 HMAC-DRBG possesses an internal state consisting of four elements:
 
@@ -757,7 +757,7 @@ We plan to prove that HMAC-DRBG possesses backtracking resistance. That is, if i
 %@cite
 NIST also specifies that HMAC-DRBG possesses the complementary property of prediction resistance. That is, if it is compromised at time $T$, the adversary will find it difficult to distinguish HMAC-DRBG's future output from ideal random strings. Naively, if given $(K, V)$ at time $T$, the adversary should be able to compute all future DRBG output and thus distinguish. Thus, the $Reseed$ function is supposed to ensure prediction resistance by injecting fresh entropy into the DRBG that is unknown to the adversary. (It refreshes the $(K,V)$ by re-HMACing them with some entropy appended to the previous $(K,V)$)
 
-However, proving things about this is difficult. Dodis et al. proved that the Linux PRNG was insecure and did not possess prediction resistance. However, they had to do tricky reasoning about how much entropy was injected at once and where. They had to reason about, for example, the difference between injecting entropy as five bits per call over ten calls, versus fifty bits in one call, and relative difficulties for the adversary.
+However, proving things about this is difficult. Dodis et al. (2013) proved that the Linux PRNG was insecure and did not possess prediction resistance. However, they had to do tricky reasoning about how much entropy was injected at once and where. They had to reason about, for example, the difference between injecting entropy as five bits per call over ten calls, versus fifty bits in one call, and relative difficulties for the adversary.
 
 %@cite
 
@@ -816,10 +816,41 @@ I'd like to thank Adam Petcher, Matt Green, Andrew Appel, Lennart Beringer, and 
 
 \begin{thebibliography}{99}
 
-\bibitem{namedate}
-(TODO: add citations.) Last, First, Middle. \emph{Title.} Source
+%\bibitem{byrd2009}
+%Byrd, William E. \emph{Relational programming in minikanren: Techniques, applications, and implementations.} Diss. faculty of the University Graduate School in partial fulfillment of the requirements for the degree Doctor of Philosophy in the Department of Computer Science, Indiana University, 2009.
 
+\bibitem{affeldt2009}
+Affeldt, Reynald, David Nowak, and Kiyoshi Yamada. "Certifying assembly with formal cryptographic proofs: the case of BBS." \emph{Electronic Communications of the EASST} 23 (2009).
 
+\bibitem{appel2015}
+Appel, Andrew W. "Verification of a cryptographic primitive: SHA-256." \emph{ACM Transactions on Programming Languages and Systems (TOPLAS)} 37, no. 2 (2015): 7.
+
+\bibitem{barker2012}
+Barker, Elaine, and John Kelsey. "NIST Special Publication 800-90A: Recommendation for random number generation using deterministic random bit generators." (2012).
+
+\bibitem{barthe2011}
+Barthe, Gilles, Benjamin Grégoire, Sylvain Heraud, and Santiago Zanella Béguelin. "Computer-aided security proofs for the working cryptographer." In \emph{Advances in Cryptology–CRYPTO} 2011, pp. 71-90. Springer Berlin Heidelberg, 2011.
+
+\bibitem{beringer2015}
+Beringer, Lennart, Adam Petcher, Katherine Q. Ye, and Andrew W. Appel. "Verified correctness and security of OpenSSL HMAC." In \emph{24th USENIX Security Symposium (USENIX Security 15)}, pp. 207-221. 2015.
+
+\bibitem{campagna2006}
+Campagna, Matthew J. "Security Bounds for the NIST Codebook-based Deterministic Random Bit Generator." \emph{IACR Cryptology ePrint Archive 2006} (2006): 379.
+
+\bibitem{dodis2013}
+Dodis, Yevgeniy, David Pointcheval, Sylvain Ruhault, Damien Vergniaud, and Daniel Wichs. "Security analysis of pseudo-random number generators with input:/dev/random is not robust." In \emph{Proceedings of the 2013 ACM SIGSAC conference on Computer and Communications Security}, pp. 647-658. ACM, 2013.
+
+\bibitem{dorre2015}
+Dörre, Felix, and Vladimir Klebanov. "Pseudo-Random Number Generator Verification: A Case Study." \emph{Proceedings, Verified Software: Theories, Tools, and Experiments (VSTTE)} (2015).
+
+\bibitem{hirose2008}
+Hirose, Shoichi. "Security analysis of DRBG using HMAC in NIST SP 800-90." In \emph{Information Security Applications}, pp. 278-291. Springer Berlin Heidelberg, 2008.
+
+\bibitem{petcher2015}
+Petcher, Adam, and Greg Morrisett. "The foundational cryptography framework." \emph{In Principles of Security and Trust}, pp. 53-72. Springer Berlin Heidelberg, 2015.
+
+\bibitem{sanguansin2016}
+Sanguansin, Naphat. "Verification of a Deterministic Random Bits Generator." Independent work paper, Princeton University. 2016.
 \end{thebibliography}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
