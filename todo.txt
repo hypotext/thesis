@@ -1,0 +1,6 @@
+TODO 4/7/16
+
+- prove Gi_normal_rb_eq (?)
+  - does this one require an induction??
+
+- move thesis to new template

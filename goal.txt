@@ -1,0 +1,46 @@
+Goals for this week
+
+- Figure out how hard it is to generalize to an arbitrary list, and commit
+  - Need it for the two below
+  - Stuff that breaks: v-update move equivalence, defining bad event (segment (blocksPerCall + 2...), [possibly more]
+  - Besides that, we need an adversary that outputs numCalls
+
+
+- Prove Gi_normal_prf_eq
+  - Depends both on i (hybrid #) and on # adversary GenUpdate calls (n) and blocks per call.
+    Showed true for small examples.
+    Is there inductive structure? Destruct what? Need to think about the ith call
+
+    This involves oracleCompMap_inner, can I rephrase in terms of ocCompMap
+  - "Zoom in" on oracle technique. Can I use oracle_eq_until_bad?
+  - Double induction?
+
+- Define and prove backtracking resistance with one more game (attempted)
+  - Email Matt ***
+
+- Prove oracleCompMap__oracle_eq_until_bad
+  - Do a small example for hasDups
+  - Prove the assumption
+  - Do a small example of the implication (hasDups -> dupsInIth)
+  - Prove the implication
+  - Propagate randomFunc_withDups
+  - Email Adam ***
+
+More
+
+- Prove like 10 more lemmas
+- Crypto: read rest of Brak paper's proof, new definitions
+- Write paper
+
+============
+
+Problems:
+
+- might need to push it through oracleCompMap_inner, Oi_oc', [GenUpdate, Gen_loop]?
+  and then relate dupsInIthInputs to hasDups
+
+Notes:
+
+- it's not that high-assurance crypto is necessarily hard; it's that reasoning about hybrids is REALLY hard. can you even imagine reasoning about GGM and trees??!?
+
+

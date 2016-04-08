@@ -1,27 +1,12 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% writeLaTeX Example: Academic Paper Template
-%
-% Source: http://www.writelatex.com
-% 
-% Feel free to distribute this example, but please keep the referral
-% to writelatex.com
-% 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[pageno]{jpaper}
 
-\documentclass[twocolumn,showpacs,%
-  nofootinbib,aps,superscriptaddress,%
-  eqsecnum,prd,notitlepage,showkeys,10pt]{revtex4-1}
+\newcommand{\IWreport}{2015}
 
-\usepackage{natbib}
-% \usepackage[square,numbers]{natbib} % TODO
-\bibliographystyle{unsrtnat}
+\usepackage[normalem]{ulem}
 
-% \usepackage{lstlangcoq} TODO
-
-% displays all math in sans-serif font TODO  
-\usepackage[cm]{sfmath}
+%\usepackage[cm]{sfmath}
   
-\usepackage{graphicx}
+%\usepackage{graphicx}
 \usepackage{verbatim} % for comments
 \graphicspath{ {images/} }
 
@@ -34,15 +19,17 @@ breaklines=true
 }
 %\lstset{language=Coq}
 
+%\usepackage[applemac]{inputenc} % for Macs
+
 \usepackage [english]{babel}
 \usepackage [autostyle, english = american]{csquotes}
 \MakeOuterQuote{"}
 
 \usepackage{amssymb}
 \usepackage{amsmath}
-\usepackage{graphicx}
-\usepackage{dcolumn}
-\usepackage{hyperref}
+%\usepackage{graphicx}
+%\usepackage{dcolumn}
+%\usepackage{hyperref}
 
 % \newcommand{name}[num]{definition}
 \newcommand{\eqn}[1] {\begin{gather*}#1\end{gather*}}
@@ -60,29 +47,32 @@ breaklines=true
 
 \begin{document}
 
-\title{Formally verifying a pseudo-random number generator}
-\author{Katherine Ye, advised by Prof. Andrew W. Appel}
-\affiliation{Princeton University}
-\author{and Prof. Matthew Green}
-\affiliation{Johns Hopkins University}
+%\title{
+%A Latex Template for Independent Work Reports\\
+%Version 20151109v1}
 
+\title{Formally verifying a pseudo-random number generator}
+\author{Katherine Q. Ye\\Advisers:\\
+ Andrew W. Appel, Princeton University\\Matthew Green, Johns Hopkins University}
+
+\date{}
+\maketitle
+
+\thispagestyle{empty}
+\doublespacing
 \begin{abstract}
 We have proved, with machine-checked proofs, that the pseudorandom output produced by HMAC-DRBG is indistinguishable from random by a computationally bounded adversary. We proved this about a high-level specification of HMAC-DRBG written in the probabilistic language provided by the Foundational Cryptography Framework (FCF), which is embedded in the Coq proof assistant. We also plan to prove that HMAC-DRBG is backtracking-resistant and prediction-resistant. After these proofs are done, we will prove equivalence between our high-level specification of HMAC-DRBG and a different specification used to prove its functional correctness of the mBED TLS C implementation of HMAC-DRBG. This will allow our proofs of cryptographic security properties to transfer to the C implementation of HMAC-DRBG.
 \end{abstract}
 
-\maketitle
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \section{Introduction}
 
-Most modern cryptosystems rely on random numbers, which they use to generate secrets that need to be known to users and unknown and unpredictable to attackers. Reducing the entropy of a cryptosystem's pseudo-random number generator (PRNG) is an easy way to break the entire cryptosystem. The PRNG will generate output predictable to an attacker, allowing her to guess private keys, yet the bits may still ÒlookÓ random. Plus, the rest of the cryptosystem will function normally, since PRNGs tend to be single self-contained components. These two factors make PRNGs very attractive targets to attackers.
+Most modern cryptosystems rely on random numbers, which they use to generate secrets that need to be known to users and unknown and unpredictable to attackers. Reducing the entropy of a cryptosystem's pseudo-random number generator (PRNG) is an easy way to break the entire cryptosystem. The PRNG will generate output predictable to an attacker, allowing her to guess private keys, yet the bits may still "look" random. Plus, the rest of the cryptosystem will function normally, since PRNGs tend to be single self-contained components. These two factors make PRNGs very attractive targets to attackers.
 
 The attack has indeed happened in practice (through due to a programming error and not malice), and with devastating consequences. Luciano Bello discovered that the random number generator in Debian OpenSSL, a widely-used cryptographic library, was predictable, allowing attackers to easily guess keys. Debian advised all users to regenerate keys, though some high-profile users didn't. For example, compromised SSH keys were used to access Spotify, Yandex, and gov.uk's public repositories on GitHub.
 
 Despite the importance of PRNGs, surprisingly little work exists on proving them secure, either by proving on paper that certain widely-used PRNGs are secure, or by verifying with computer-checked proofs that implementations of these PRNGs satisfy their specifications.
 
-%Our project aims to do both. We aim prove correctness and security of an OpenSSL implementations of  HMAC-DRBG. We will do this by proving that the implementation satisfies a functional specification (a high-level implementation in code) of the random number generator, which we trust satisfies its paper specification. Then we will prove that the functional specification guarantees the expected cryptographic properties, most notably that a computationally bounded attacker cannot distinguish generated bits from random bits. These properties will ÒflowÓ from the functional spec down to the compiled code via a verified compiler, CompCert. The entire verification will be machine-checked by Coq, a trusted proof assistant.
+%Our project aims to do both. We aim prove correctness and security of an OpenSSL implementations of  HMAC-DRBG. We will do this by proving that the implementation satisfies a functional specification (a high-level implementation in code) of the random number generator, which we trust satisfies its paper specification. Then we will prove that the functional specification guarantees the expected cryptographic properties, most notably that a computationally bounded attacker cannot distinguish generated bits from random bits. These properties will "flow" from the functional spec down to the compiled code via a verified compiler, CompCert. The entire verification will be machine-checked by Coq, a trusted proof assistant.
 
 %This thesis attacks the cryptographic aspect of the problem. We hope to prove that PRNGs called CTR-DRBG and HMAC-DBG generate bits that are indistinguishable from random, that the PRGs are backtracking-resistant, that they eventually recover from compromises of internal state, and other important properties. We will write functional specifications of these PRGs in the environment of the Coq proof assistant, then prove that they possess the desired properties by using the Foundational Cryptography Framework in Coq.
 
@@ -94,7 +84,7 @@ Despite the importance of PRNGs, surprisingly little work exists on proving them
 We present the first machine-checked proof of a crucial cryptographic security property of a pseudo-random number generator. That is, we have written a precise specification of HMAC-DRBG's main functions in Coq, then we have proved that the probability that a non-adaptive probabilistic polynomial time adversary can distinguish HMAC-DRBG's output from uniformly-sampled random bits is negligible. We have also proved a concrete bound on the probability that the adversary can distinguish the two. 
 
 %@ cite and add names
-There exist only two prior proofs of security of HMAC-DRBG. The first, by Champagna, assumes that HMAC is a random oracle, which is a very strong assumption. Thus, cryptographers generally don't trust proofs written in this model. \ct{@cite, add specific quote} Additionally, this paper is not peer-reviewed. The second, by Hirose, was peer-reviewed, but its proof is lengthy and involved. Neither paper's proofs has been machine-checked or linked to an implementation of HMAC-DRBG.
+There exist only two prior proofs of security of HMAC-DRBG. The first, by Campagna (2006), is not peer-reviewed. The second, by Hirose (2008), was peer-reviewed, but its proof is lengthy and involved. Neither paper's proofs has been machine-checked or linked to an implementation of HMAC-DRBG.
 
 After this, we plan to prove additional cryptographic properties of HMAC-DRBG, including backtracking resistance. No paper proofs exist for any of these additional properties. 
 
@@ -104,17 +94,17 @@ TODO: include precise theorem statement
 
 \section{Problem background and related work}
 
-Andrew Appel's group has done the most significant related work in the area. Appel (2015) [1] presents a Òfull formal machine-checked verification of a C program: the OpenSSL implementation of SHA-256.Ó Appel et al. (2015) [2] build on this work to do the same for HMAC, adding a proof of security that relies on the security of SHA. We plan to use the same approach for CTR-DRBG and HMAC-DRBG.
+Andrew Appel's group has done the most significant related work in the area. Appel (2015) presents a "full formal machine-checked verification of a C program: the OpenSSL implementation of SHA-256." Beringer et al. (2015) build on this work to do the same for HMAC, adding a proof of security that relies on the security of SHA. We plan to use the same approach for CTR-DRBG and HMAC-DRBG.
 
-In addition, there exist paper proofs of the security of CTR-DRBG [3] and HMAC-DRBG [4], though they haven't appeared in peer-reviewed venues.
+In addition, there exist paper proofs of the security of CTR-DRBG and HMAC-DRBG (Campagna (2006), Hirose (2008)), though the former hasn't appeared in a peer-reviewed venue and the latter is very complicated.
 
-In the area of checking game-based proofs of cryptographic security within a proof assistant, there are two main tools: EasyCrypt and its cousin CertiCrypt (neither of which is foundational), and the Foundational Cryptography Framework. [5]
+In the area of checking game-based proofs of cryptographic security within a proof assistant, there are two main tools: EasyCrypt and its cousin CertiCrypt (neither of which is foundational), and the Foundational Cryptography Framework (Barthe (2011)).
 
-In the general area of formalizing PRNGs, several crypto papers analyze the security of PRNGs and propose new security properties, e.g. Dodis et al. [6] who propose the ÒrobustnessÓ property and show that the built-in Linux PRNG, /dev/random, is not robust.
+In the general area of formalizing PRNGs, several crypto papers analyze the security of PRNGs and propose new security properties, e.g. Dodis et al. (2013) who propose the "robustness" property and show that the built-in Linux PRNG, /dev/random, is not robust.
 
-There's not much prior work on formal verification of PRNGs in our style. Dorre and Klebanov (2015) [7] focus on verifying that a PRNG uses all its entropy. They perform this logic-based information flow verification using the KeY system for Java, which uses symbolic execution. This only defends against one particular attack (that of Òsquandering entropyÓ) and does not guarantee functional correctness or other security properties we may care about, such as indistinguishability from randomness and backtracking resistance.
+There's not much prior work on formal verification of PRNGs in our style. Dorre and Klebanov (2015)  focus on verifying that a PRNG uses all its entropy. They perform this logic-based information flow verification using the KeY system for Java, which uses symbolic execution. This only defends against one particular attack (that of "squandering entropy") and does not guarantee functional correctness or other security properties we may care about, such as indistinguishability from randomness and backtracking resistance.
 
-Affeldt (2009) [8] do include game-playing proofs of provable security in Coq. However, they focus on doing so directly on an assembly implementation of a PRNG, not on a high-level functional specification. They also verified their own assembly implementation, not a widely-used existing one. One advantage of this approach is that it avoids mismatches between the functional specification of the C code and the functional specification used for cryptographic proofs.
+Affeldt (2009) do include game-playing proofs of provable security in Coq. However, they focus on doing so directly on an assembly implementation of a PRNG, not on a high-level functional specification. They also verified their own assembly implementation, not a widely-used existing one. One advantage of this approach is that it avoids mismatches between the functional specification of the C code and the functional specification used for cryptographic proofs.
 
 Our approach is unique because it provides an end-to-end and foundational verification that guarantees both correctness and security. Our stack consists of Coq, the Foundational Cryptography Framework, the Verified Software Toolchain (using separation logic), and CompCert (a verified C compiler). In addition, we verify an existing widely-used PRG implementation in C, making our approach more useful in practice. 
 
@@ -122,7 +112,7 @@ Our approach is unique because it provides an end-to-end and foundational verifi
 
 \section{HMAC-DRBG overview}
 
-A pseudorandom number generator is used to stretch a small amount of randomness into a large amount of pseudo-randomness, often for use in cryptosystems. HMAC-DRBG, formalized in NIST SP 800-90A [cite], is one such pseudorandom number generator. It generates output by iterating HMAC, a keyed-hash message authentication function widely believed to be difficult to invert [cite] and proven to be a pseudo-random function (PRF) given that HMACÕs internal hash function is a PRF. [mention key?]
+A pseudorandom number generator is used to stretch a small amount of randomness into a large amount of pseudo-randomness, often for use in cryptosystems. HMAC-DRBG, formalized in NIST SP 800-90A, is one such pseudorandom number generator. It generates output by iterating HMAC, a keyed-hash message authentication function widely believed to be difficult to invert [cite] and proven to be a pseudo-random function (PRF) given that HMAC's internal hash function is a PRF. [mention key?]
 
 HMAC-DRBG possesses an internal state consisting of four elements:
 
@@ -537,8 +527,6 @@ Gi_prg 3:    RB  RB  RB PRF
 
   The analogous proof in \li|PRF_DRBG| is \li|PRF_DRBG_G3_G4_close|.
   
-  TODO: Talk about the 8 reductions/equivalences in \li|Gi_rb_bad_collisions|
-  
 \end{enumerate}
 
 For PRF Advantage (\lstinline|Gi_prf_rf_close|), number two above:
@@ -703,76 +691,10 @@ Concretely, this is true for \li|Gi_rb_bad| and \li|Gi_rf_bad| because the proba
 
 This is the second assumption needed to apply the fundamental lemma: given that the bad event does not happen, the distributions of the outputs of the two games are identical (that is, "identical until bad").
 
-Concretely, this is true for \li|Gi_rb_bad| and \li|Gi_rf_bad| because if there are no duplicates in the $i$th oracle call's inputs, clearly the random function behaves exactly like uniformly sampling random bitvectors. So their output should be indistinguishable (or identical, if you provide each run with the same "coins" of randomness). % TODO is this right? how does PRHL / postcondition work?
+Concretely, this is true for \li|Gi_rb_bad| and \li|Gi_rf_bad| because if there are no duplicates in the $i$th oracle call's inputs, clearly the random function behaves exactly like uniformly sampling random bitvectors. So their output should be indistinguishable (or identical, if you provide each run with the same "coins" of randomness).
 
-To prove these two, I push both of these statements up into a postcondition. I combine them into the following postcondition:
-
-\begin{lstlisting}
-Theorem PRF_Adv_eq_until_bad : forall (i : nat),
-   comp_spec 
-     (fun a b : bool * list (Blist * Bvector eta) =>
-        let (adv_rb, state_rb) := a in
-        let (adv_rf, state_rf) := b in
-        let (inputs_rb, outputs_rb) := (fst (split state_rb), snd (split state_rb)) in
-        let (inputs_rf, output_rf) := (fst (split state_rf), snd (split state_rf)) in
-        dupsInIthCallInputs i state_rb = dupsInIthCallInputs i state_rf /\
-        (dupsInIthCallInputs i state_rb = false ->
-         state_rb = state_rf /\ adv_rb = adv_rf))
-     ((PRF_Adversary i) (list (Blist * Bvector eta))
-        (list_EqDec (pair_EqDec eqdbl eqdbv)) rb_oracle nil)
-     ((PRF_Adversary i) (list (Blist * Bvector eta))
-        (list_EqDec (pair_EqDec eqdbl eqdbv))
-        (randomFunc ({ 0 , 1 }^eta) eqdbl) nil).
-\end{lstlisting}
-
-Basically, after the two \li|PRF_Adversary| runs (one with the RB oracle, one with the RF oracle), the following relation holds on their outputs:
-
-\begin{itemize}
-\item There is a duplicate in one oracle's state iff there is a duplicate in the other oracle's state, and 
-\item if there are no duplicates in either of their states, then their states are identical and their adversaries return the same guess. This is intuitively true because the output bits (given to the adversary) are the same in both cases.
-\end{itemize}
-
-Pushing this back further into the oracle computations, I have this postcondition specification on the \li|oracleCompMap_inner| computation.
-
-\begin{lstlisting}
-Theorem oracleCompMap__oracle_eq_until_bad : forall (i : nat) b b0,
-    comp_spec
-     (fun y1 y2 : list (list (Bvector eta)) * list (Blist * Bvector eta) =>
-        (* let (bits_rb, state_rb) := a0 in *)
-        (* let (bits_rf, state_rf) := b2 in *)
-        (* let (inputs_rb, outputs_rb) := (fst (split state_rb), snd (split state_rb)) in *)
-        (* let (inputs_rf, output_rf) := (fst (split state_rf), snd (split state_rf)) in *)
-        dupsInIthCallInputs_only i (fst (split (snd y1))) = dupsInIthCallInputs_only i (fst (split (snd y2))) /\
-        (dupsInIthCallInputs_only i (fst (split (snd y1))) = false -> 
-         snd y1 = snd y2 /\ fst y1 = fst y2))
-     ((z <--$
-       oracleCompMap_inner
-         (pair_EqDec (list_EqDec (list_EqDec eqdbv))
-            (pair_EqDec nat_EqDec eqDecState))
-         (list_EqDec (list_EqDec eqdbv)) (Oi_oc' i) 
-         (O, (b, b0)) maxCallsAndBlocks; [bits, _]<-2 z; $ ret bits)
-        (list (Blist * Bvector eta)) (list_EqDec (pair_EqDec eqdbl eqdbv))
-        rb_oracle nil)
-     ((z <--$
-       oracleCompMap_inner
-         (pair_EqDec (list_EqDec (list_EqDec eqdbv))
-            (pair_EqDec nat_EqDec eqDecState))
-         (list_EqDec (list_EqDec eqdbv)) (Oi_oc' i) 
-         (O, (b, b0)) maxCallsAndBlocks; [bits, _]<-2 z; $ ret bits)
-        (list (Blist * Bvector eta)) (list_EqDec (pair_EqDec eqdbl eqdbv))
-        (randomFunc ({ 0 , 1 }^eta) eqdbl) nil).
-\end{lstlisting}
-
-This says that the following postcondition holds on the result of running \li|oracleCompMap_inner| with the RB oracle or the RF oracle respectively:
-
-\begin{itemize}
-\item there are duplicates (as defined by \li|dupsInIthCallInputs_only|) in the inputs to the RB oracle iff there are duplicates in the inputs to the RF oracle. (TODO: but only on the ith call?)
-\item if there are no duplicates in the inputs to either oracle, then the output bits are the same and the states are the same between the two oracles.
-\end{itemize}
-
-To prove it, I have to use an oracle version of identical until bad, \li|fcf_oracle_eq_until_bad| applied with the postcondition (TODO). This might allow me to skip over oracle computations and just prove things about the oracle? Adam has already done this, though?
-
-hasDups? randomFunc that keeps track of all inputs/outputs?
+I'm working on breaking this theorem up into smaller lemmas; this is new work that hasn't been done in \li|PRF_DRBG| either. To prove it, I have to use an oracle version of identical until bad.
+%@
 
 \end{enumerate}
 
@@ -825,7 +747,7 @@ We plan to prove that HMAC-DRBG possesses backtracking resistance. That is, if i
 %@cite
 NIST also specifies that HMAC-DRBG possesses the complementary property of prediction resistance. That is, if it is compromised at time $T$, the adversary will find it difficult to distinguish HMAC-DRBG's future output from ideal random strings. Naively, if given $(K, V)$ at time $T$, the adversary should be able to compute all future DRBG output and thus distinguish. Thus, the $Reseed$ function is supposed to ensure prediction resistance by injecting fresh entropy into the DRBG that is unknown to the adversary. (It refreshes the $(K,V)$ by re-HMACing them with some entropy appended to the previous $(K,V)$)
 
-However, proving things about this is difficult. Dodis et al. proved that the Linux PRNG was insecure and did not possess prediction resistance. However, they had to do tricky reasoning about how much entropy was injected at once and where. They had to reason about, for example, the difference between injecting entropy as five bits per call over ten calls, versus fifty bits in one call, and relative difficulties for the adversary.
+However, proving things about this is difficult. Dodis et al. (2013) proved that the Linux PRNG was insecure and did not possess prediction resistance. However, they had to do tricky reasoning about how much entropy was injected at once and where. They had to reason about, for example, the difference between injecting entropy as five bits per call over ten calls, versus fifty bits in one call, and relative difficulties for the adversary.
 
 %@cite
 
@@ -870,24 +792,57 @@ To add.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{acknowledgments}
+\section{Acknowledgments}
 
 I'd like to thank Adam Petcher, Matt Green, Andrew Appel, Lennart Beringer, and Naphat Sanguansin for their help.
 
-\end{acknowledgments}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% \section{References}
+% TODO move to bibtex
+
+\bstctlcite{bstctl:etal, bstctl:nodash, bstctl:simpurl}
+\bibliographystyle{IEEEtranS}
+\bibliography{references}
 
 \bibliographystyle{plainnat}
 
 \begin{thebibliography}{99}
 
-\bibitem{namedate}
-(TODO: add citations.) Last, First, Middle. \emph{Title.} Source
+%\bibitem{byrd2009}
+%Byrd, William E. \emph{Relational programming in minikanren: Techniques, applications, and implementations.} Diss. faculty of the University Graduate School in partial fulfillment of the requirements for the degree Doctor of Philosophy in the Department of Computer Science, Indiana University, 2009.
 
+\bibitem{affeldt2009}
+Affeldt, Reynald, David Nowak, and Kiyoshi Yamada. "Certifying assembly with formal cryptographic proofs: the case of BBS." \emph{Electronic Communications of the EASST} 23 (2009).
 
+\bibitem{appel2015}
+Appel, Andrew W. "Verification of a cryptographic primitive: SHA-256." \emph{ACM Transactions on Programming Languages and Systems (TOPLAS)} 37, no. 2 (2015): 7.
+
+\bibitem{barker2012}
+Barker, Elaine, and John Kelsey. "NIST Special Publication 800-90A: Recommendation for random number generation using deterministic random bit generators." (2012).
+
+\bibitem{barthe2011}
+Barthe, Gilles, Benjamin Gr\'{e}goire, Sylvain Heraud, and Santiago Zanella B\'{e}guelin. "Computer-aided security proofs for the working cryptographer." In \emph{Advances in Cryptology---CRYPTO} 2011, pp. 71-90. Springer Berlin Heidelberg, 2011.
+
+\bibitem{beringer2015}
+Beringer, Lennart, Adam Petcher, Katherine Q. Ye, and Andrew W. Appel. "Verified correctness and security of OpenSSL HMAC." In \emph{24th USENIX Security Symposium (USENIX Security 15)}, pp. 207-221. 2015.
+
+\bibitem{campagna2006}
+Campagna, Matthew J. "Security Bounds for the NIST Codebook-based Deterministic Random Bit Generator." \emph{IACR Cryptology ePrint Archive 2006} (2006): 379.
+
+\bibitem{dodis2013}
+Dodis, Yevgeniy, David Pointcheval, Sylvain Ruhault, Damien Vergniaud, and Daniel Wichs. "Security analysis of pseudo-random number generators with input:/dev/random is not robust." In \emph{Proceedings of the 2013 ACM SIGSAC conference on Computer and Communications Security}, pp. 647-658. ACM, 2013.
+
+\bibitem{dorre2015}
+D\"{o}rre, Felix, and Vladimir Klebanov. "Pseudo-Random Number Generator Verification: A Case Study." \emph{Proceedings, Verified Software: Theories, Tools, and Experiments (VSTTE)} (2015).
+
+\bibitem{hirose2008}
+Hirose, Shoichi. "Security analysis of DRBG using HMAC in NIST SP 800-90." In \emph{Information Security Applications}, pp. 278-291. Springer Berlin Heidelberg, 2008.
+
+\bibitem{petcher2015}
+Petcher, Adam, and Greg Morrisett. "The foundational cryptography framework." \emph{In Principles of Security and Trust}, pp. 53-72. Springer Berlin Heidelberg, 2015.
+
+\bibitem{sanguansin2016}
+Sanguansin, Naphat. "Verification of a Deterministic Random Bits Generator." Independent work paper, Princeton University. 2016.
 \end{thebibliography}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -897,32 +852,7 @@ I'd like to thank Adam Petcher, Matt Green, Andrew Appel, Lennart Beringer, and 
 
 Will add worked examples of Coq proofs using FCF tactics.
 
- \end{document}
+%%%
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+\end{document}
 
