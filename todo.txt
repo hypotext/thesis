@@ -1,6 +1,18 @@
 TODO 4/7/16
 
+- oracleMap (compFold) ~ oc_compMap / oracleCompMap_inner (extra (nat, KV)) 
+  need to prove the equivalent of compFold_oc_equiv_h for ocmi?
+  but 
+- trying to prove the PRF-only gi_normal_rb_eq 
+  - induction breaks with noV, so take it off (calls > 1), induct on remaining, and put it back on?
+  - induction breaks with geneal init acc for compFold vs. nil acc for ocmi -- adam solves it with appending a list on front (can let both be nil in my specific case)
+- after i prove ^ (by generalizing acc, reproving compFold_oc_equiv_h but abstracting the specific computations) -- then what? try proving RB-only, then relating the individual genupdate oracles (see other TODO)?
+
 - prove Gi_normal_rb_eq (?)
   - does this one require an induction??
 
-- move thesis to new template
+- write up oraclecompmap proof before i forget it
+
+- see other TODO
+- and workflowy TODO
+
