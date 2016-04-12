@@ -1,4 +1,4 @@
-TODO 4/7/16
+TODO 4/9/16
 
 - oracleMap (compFold) ~ oc_compMap / oracleCompMap_inner (extra (nat, KV)) 
   need to prove the equivalent of compFold_oc_equiv_h for ocmi?

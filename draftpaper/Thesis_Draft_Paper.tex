@@ -699,14 +699,162 @@ Concretely, this is true for \li|Gi_rb_bad| and \li|Gi_rf_bad| because the proba
    evalDist (Gi_rf_bad i) (a, false).
 \end{lstlisting}
 
+I don't work with it probabilistically; working in the program logic (TODO explain what this means), the goal becomes this:
+
+\begin{lstlisting}
+   comp_spec (fun b1 b2 : bool * bool => b1 = (a, false) <-> b2 = (a, false))
+     (Gi_rb_bad i) (Gi_rf_dups_bad i)
+\end{lstlisting}     
+
 This is the second assumption needed to apply the fundamental lemma: given that the bad event does not happen, the distributions of the outputs of the two games are identical (that is, "identical until bad").
 
 Concretely, this is true for \li|Gi_rb_bad| and \li|Gi_rf_bad| because if there are no duplicates in the $i$th oracle call's inputs, clearly the random function behaves exactly like uniformly sampling random bitvectors. So their output should be indistinguishable (or identical, if you provide each run with the same "coins" of randomness).
 
-I'm working on breaking this theorem up into smaller lemmas; this is new work that hasn't been done in \li|PRF_DRBG| either. To prove it, I have to use an oracle version of identical until bad.
-%@
+\end{enumerate}
+
+%%%% 4/12/17
+
+% TODO this is definitely *not* a high-level overview
+
+% TODO write out what they mean
+Both \li|Gi_rb_rf_return_bad_same| and \li|Gi_rb_rf_no_bad_same|, when unfolded, essentially assert that some combined postcondition relates the \li|PRF_Adversary| executions, one using the random bits oracle and one using the random function that preserves duplicate.
+
+\li|Gi_rb_rf_return_bad_same|, when unfolded, looks like this:
+
+\begin{lstlisting}
+   comp_spec eq
+     (a <-$
+      (PRF_Adversary i) (list (Blist * Bvector eta))
+        (list_EqDec (pair_EqDec eqdbl eqdbv)) rb_oracle nil;
+      x <-$ ([b, state]<-2 a; ret (b, hasInputDups state)); ret snd x)
+     (a <-$
+      (PRF_Adversary i) (list (Blist * Bvector eta))
+        (list_EqDec (pair_EqDec eqdbl eqdbv)) randomFunc_withDups nil;
+      x <-$ ([b, state]<-2 a; ret (b, hasInputDups state)); ret snd x)
+\end{lstlisting}      
+
+The postcondition here is equality (\li|comp_spec eq|). That is, both computations return the same value for whether the bad event happened.
+
+And \li|Gi_rb_rf_no_bad_same|, when unfolded, looks like this:
+
+\begin{lstlisting}
+   comp_spec (fun b1 b2 : bool * bool => b1 = (a, false) <-> b2 = (a, false))
+     (z <-$
+      (PRF_Adversary i) (list (Blist * Bvector eta))
+        (list_EqDec (pair_EqDec eqdbl eqdbv)) rb_oracle nil;
+      [b, state]<-2 z; ret (b, hasInputDups state))
+     (z <-$
+      (PRF_Adversary i) (list (Blist * Bvector eta))
+        (list_EqDec (pair_EqDec eqdbl eqdbv)) randomFunc_withDups nil;
+      [b, state]<-2 z; ret (b, hasInputDups state))
+\end{lstlisting}      
+
+The postcondition here is that if \li|hasInputDups state = false| (that is, the bad event didn't happen), then both computations return the same output bits (the \li|a| in \li|b1 = (a, false) <-> b2 = (a, false)|).
+
+So, the combined postcondition on the \li|PRF_Adversary| computation (which returns the bits and state) simply combines the two postconditions above. Stated as a separate lemma,
+
+\begin{lstlisting}
+Theorem PRF_Adv_eq_until_bad : forall (i : nat),
+   comp_spec 
+     (fun a b : bool * list (Blist * Bvector eta) =>
+        let (adv_rb, state_rb) := a in
+        let (adv_rf, state_rf) := b in
+        let (inputs_rb, outputs_rb) := (fst (split state_rb), snd (split state_rb)) in
+        let (inputs_rf, output_rf) := (fst (split state_rf), snd (split state_rf)) in
+        hasDups _ inputs_rb = hasDups _ inputs_rf /\
+        (hasDups _ inputs_rb = false ->
+         state_rb = state_rf /\ adv_rb = adv_rf))
+         
+     ((PRF_Adversary i) (list (Blist * Bvector eta))
+        (list_EqDec (pair_EqDec eqdbl eqdbv)) rb_oracle nil)
+        
+     ((PRF_Adversary i) (list (Blist * Bvector eta))
+        (list_EqDec (pair_EqDec eqdbl eqdbv))
+        randomFunc_withDups nil).
+\end{lstlisting}
+% true -- if there are no duplicates, then the random function behaves exactly like RB, so the key is randomly sampled AND the v (going into the PRF) is also randomly sampled. so the outputs should be the same. in fact, if there are no dups, PRF_Adv rf i = PRF_Adv rb i.
+
+% TODO intuition, write out what the computation is
+The postcondition looks intimidating, but is simply the conjunction of the two postconditions discussed above. A computation has duplicates in the oracle inputs only if the other computation does. And, if there are no duplicates, then the oracle states are equal and the adversary guesses are equal. I use that lemma to prove both the identical until bad conditions, and now we only have to worry about proving the one lemma \li|PRF_Adv_eq_until_bad|.
+
+% TODO explain oraclecompmap_inner / outer
+\li|PRF_Adversary| generates the pseudorandom bits, then returns the indistinguishability adversary's guess. 
+
+\begin{lstlisting}
+Definition PRF_Adversary (i : nat) : OracleComp Blist (Bvector eta) bool :=
+  bits <--$ oracleCompMap_outer _ _ (Oi_oc' i) maxCallsAndBlocks;
+  $ A bits.
+\end{lstlisting}
+
+So, we can push the postconditions into the generation of the pseudorandom bits, specifically into $oracleCompMap_inner$, and use that to prove \li|PRF_Adv_eq_until_bad|. The inner lemma is:
+
+\begin{lstlisting}
+Theorem oracleCompMap__oracle_eq_until_bad_dups : forall (i : nat) b b0,
+    comp_spec
+     (fun y1 y2 : list (list (Bvector eta)) * list (Blist * Bvector eta) =>
+        hasDups _ (fst (split (snd y1))) = hasDups _ (fst (split (snd y2))) /\
+        (hasDups _ (fst (split (snd y1))) = false ->
+         snd y1 = snd y2 /\ fst y1 = fst y2))
+
+     ((z <--$
+       oracleCompMap_inner
+         (pair_EqDec (list_EqDec (list_EqDec eqdbv))
+            (pair_EqDec nat_EqDec eqDecState))
+         (list_EqDec (list_EqDec eqdbv)) (Oi_oc' i) 
+         (O, (b, b0)) maxCallsAndBlocks; [bits, _]<-2 z; $ ret bits)
+        (list (Blist * Bvector eta)) (list_EqDec (pair_EqDec eqdbl eqdbv))
+        rb_oracle nil)
+         
+     ((z <--$
+       oracleCompMap_inner
+         (pair_EqDec (list_EqDec (list_EqDec eqdbv))
+            (pair_EqDec nat_EqDec eqDecState))
+         (list_EqDec (list_EqDec eqdbv)) (Oi_oc' i) 
+         (O, (b, b0)) maxCallsAndBlocks; [bits, _]<-2 z; $ ret bits)
+        (list (Blist * Bvector eta)) (list_EqDec (pair_EqDec eqdbl eqdbv))
+        randomFunc_withDups nil).
+\end{lstlisting}        
+
+% TODO tape of randomness 
+The postcondition is the same as in \li|PRF_Adv_eq_until_bad|, except that instead of saying that the adversary guesses are the same, we say that the generated pseudorandom bits are the same, which clearly implies the former. (Intuitively, doing proofs relating two probabilistic programs is like proving things about the deterministic programs given the same "tape" of randomness.) 
+
+The proverbial buck stops here; we don't push the postcondition back further into \li|oracleCompMap_inner| (which iterates chosen \li|GenUpdate| oracles), \li|Oi_oc| (which chooses which \li|GenUpdate| oracle to use), the \li|GenUpdate| oracles, or \li|Gen_loop|, which uses the provided random bits or random-function-with-duplicates oracle to generate bits. If we did that, we would have to reason about many computations extraneous to the oracle, whereas we only need to reason about the properties of the oracle and how it handles bad events.
+
+% TODO too many uses of "reason"
+We use a powerful theorem called \li|fcf_oracle_eq_until_bad| to "strip away" the computations that use the oracle so we can just reason about the oracle. Informally, \li|fcf_oracle_eq_until_bad| states that postconditions in our "identical until bad" form are true if we can prove three side conditions:
+
+% TODO paste in the code for the side conditions and id-until-bad side condition
+\begin{enumerate}
+\item If the two oracles start in the same state, the bad event either did not happen or did happen in both states (meaning NOT (the bad event happened in one state and not the other), then the same identical-until-bad postcondition relates one run of the each of the oracles.
+
+\item For the first oracle, if its state starts bad, it stays bad.
+
+\item For the second oracle, if its state starts bad, it stays bad.
 
 \end{enumerate}
+
+The full statement is very long, so it is included in the appendix. The proof, done by Petcher (2015), is also included in the appendix. % TODO
+
+% TODO appendix
+
+Because this proof doesn't depend on the details of the computations, only the oracle, and our oracles here are the same as in the corresponding proof in \li|PRF_DRBG| (which is \li|PRF_A_randomFunc_eq_until_bad|), so we can simply re-use that proof. 
+
+Here's how we prove the side conditions. (Numbers correspond to above numbering.) First, we unfold the definition of \li|randomFunc_withDups|, and do a case analysis on whether the newest input is a duplicate (that is, is already in the state of the random function oracle that preserves duplicates). 
+
+\begin{lstlisting}
+
+\end{lstlisting}
+
+\begin{enumerate}
+\item 
+
+\item 
+
+\item 
+
+\end{enumerate}
+
+% TODO write out proofs of side conditions
 
 \subsection{Proof graph}
 

@@ -1,0 +1,44 @@
+4/12/16, 12:30 AM
+
+- Explain PRF_Adv_eq_until_bad, oracleCompMap__oracle_eq_until_bad_dups
+  - and the corresponding lemmas PRF_A_randomFunc_eq_until_bad and fcf_oracle_eq_until_bad (Adam's work)
+
+- Explain Gi_rb_normal
+  - Look at / count what other substantial lemmas I have, or if this is the last??
+
+- Write out the collisions intermediate games
+  - Explain Adam's proof (did I already do that?)
+ 
+- Replace dupsInIthInputCalls.* everywhere by hasDups, and explain it
+  - also rf_withDups (e.g. Gi_rb_rf_no_bad_same)
+
+- Diagram of lemma structure
+
+- Fully write out informal proof as a crypto proof
+  - Look at model papers
+
+- Add sections on "not being able to prove this helped me find these errors in my code" and "formal methods made us think about these theorems"
+
+------
+
+Later:
+
+- Explain HMAC_DRBG
+- Explain FCF
+- Explain PRHL and comp_spec
+- Write a worked example of a Coq proof
+- ACTUALLY FINISH PROOFS AND CLEAN UP CODE
+- Go through meeting notes to see what I missed
+- Comment on what was hybrid-specific work (i.e. hard induction) -- note it in the diagram
+- Read EasyCrypt https://www.easycrypt.info/downloads/tutorial/tutorial-prg.pdf
+
+------
+
+Bucket list:
+
+- We can't verify these systems because they're broken
+  - Breaking ElGamal
+- Tailor background to the conference
+- Appendix with code
+- Move to a real TODO system
+- Move to BibTeX
