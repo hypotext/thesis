@@ -825,7 +825,7 @@ We use a powerful theorem called \li|fcf_oracle_eq_until_bad| to "strip away" th
 
 % TODO paste in the code for the side conditions and id-until-bad side condition
 \begin{enumerate}
-\item If the two oracles start in the same state, the bad event either did not happen or did happen in both states (meaning NOT (the bad event happened in one state and not the other), then the same identical-until-bad postcondition relates one run of the each of the oracles.
+\item If the two oracles start in the same state, if the bad event either did not happen or did happen in both states (meaning NOT (the bad event happened in one state and not the other)), then the same identical-until-bad postcondition relates one run of the each of the oracles.
 
 \item For the first oracle, if its state starts bad, it stays bad.
 
@@ -833,28 +833,84 @@ We use a powerful theorem called \li|fcf_oracle_eq_until_bad| to "strip away" th
 
 \end{enumerate}
 
-The full statement is very long, so it is included in the appendix. The proof, done by Petcher (2015), is also included in the appendix. % TODO
+This identical until bad postcondition is (TODO write out). The full statement of the theorem is very long, so it is included in the appendix. The proof, done by Petcher (2015), is also included in the appendix. % TODO
 
 % TODO appendix
 
-Because this proof doesn't depend on the details of the computations, only the oracle, and our oracles here are the same as in the corresponding proof in \li|PRF_DRBG| (which is \li|PRF_A_randomFunc_eq_until_bad|), so we can simply re-use that proof. 
+Because this proof doesn't depend on the details of the computations, only the oracle, and our oracles here are the same as in the corresponding proof in \li|PRF_DRBG| (which is \li|PRF_A_randomFunc_eq_until_bad|), so we can simply re-use that proof to prove \li|oracleCompMap__oracle_eq_until_bad_dups|.
 
-Here's how we prove the side conditions. (Numbers correspond to above numbering.) First, we unfold the definition of \li|randomFunc_withDups|, and do a case analysis on whether the newest input is a duplicate (that is, is already in the state of the random function oracle that preserves duplicates). 
-
-\begin{lstlisting}
-
-\end{lstlisting}
+Here's how we prove the side conditions. (Numbers correspond to above numbering.) 
 
 \begin{enumerate}
-\item 
+\item To prove the first condition: first, we unfold the definition of \li|randomFunc_withDups| in the statement of the theorem.
 
-\item 
+\begin{lstlisting}
+y <-$
+      match arrayLookup D_EqDec xs a with
+      | Some y => ret y
+      | None => { 0 , 1 }^eta
+      end; ret (y, (a, y) :: xs)
+\end{lstlisting}      
 
-\item 
+Then we do a case analysis on whether the newest input is a duplicate (that is, is already in the state of the random function oracle that preserves duplicates). In the Coq tactic language, that's \li|case_eq (arrayLookup _ xs a)|.
+
+	The first case is easy. If the element \li|a| is \textbf{not} in the random function's state \li|xs|, then the random function uniformly randomly samples a bitvector, so the expression simplifies to be identical to that of \li|rb_oracle|:
+	
+	\begin{lstlisting}
+	   comp_spec
+     (fun y1 y2 : Bvector eta * list (D * Bvector eta) =>
+      hasDups D_EqDec (fst (split (snd y1))) =
+      hasDups D_EqDec (fst (split (snd y2))) /\
+      (hasDups D_EqDec (fst (split (snd y1))) = false ->
+       snd y1 = snd y2 /\ fst y1 = fst y2))
+     (y <-$ { 0 , 1 }^eta; ret (y, (a, y) :: x2))
+     (r <-$ { 0 , 1 }^eta; ret (r, (a, r) :: x2))
+     \end{lstlisting}
+     
+     We were already given the first postcondition as a hypothesis. The second postcondition holds because indeed, there are no duplicates (by the case analysis) and the return values are equal.
+
+	The second case is more involved. If the element \li|a| \textbf{is} in the random function's state \li|xs|, then we know there are duplicates in the random function's state. So, since the two oracles start with the same state, the \li|rb_oracle| also has duplicates in its state. After simplifying, our new goal is to prove this:
+	
+	\begin{lstlisting}
+	  comp_spec
+     (fun y1 y2 : Bvector eta * list (D * Bvector eta) =>
+      hasDups D_EqDec (fst (split (snd y1))) =
+      hasDups D_EqDec (fst (split (snd y2))) /\
+      (hasDups D_EqDec (fst (split (snd y1))) = false ->
+       snd y1 = snd y2 /\ fst y1 = fst y2)) (ret (b, (a, b) :: x2))
+     (ret (b0, (a, b0) :: x2))
+     \end{lstlisting}
+	
+	% TODO it's not clear what the hypotheses are in the context
+	% TODO how to explain coq proofs in a paper?? Maybe do a 2-column Coq-dev on the left, explanation on the right (with various states and hypotheses changing?)
+	
+	So, we use the tactic \li|fcf_spec_ret|, which says, "we're done manipulating the two games and now they simply return things; let's prove that the postcondition relates their two return values."
+	
+	The second part of the postcondition is easy to discharge: 
+	\begin{lstlisting}
+	(hasDups D_EqDec (fst (split (snd y1))) = false ->
+       snd y1 = snd y2 /\ fst y1 = fst y2)
+       \end{lstlisting}
+       It starts with the assumption that there are no duplicates in the entire state. But, by our case analysis earlier, we are in the case where there are duplicates in the tail of the state, which implies that there are duplicates in the entire state. So, we can eliminate this case.
+       
+       The first part of the postcondition,
+       
+       % TODO write out these postconditions properly
+       \begin{lstlisting}
+       hasDups D_EqDec (fst (split (snd y1))) =
+      hasDups D_EqDec (fst (split (snd y2)))
+      \end{lstlisting}
+      
+      requires us to prove that whether the \li|randomFunc_withDups| oracle has duplicates equals whether the \li|rb_oracle| has dups. This follows because they started with the same initial state, which has duplicates.
+       \li|hasDups (thing1 :: x2) = hasDups (thing2 :: x2)| since \li|hasDups x2|
+	
+\item For the \li|randomFunc_withDups| oracle, the state is append-only. So, if the state starts out with duplicates, no matter what we query or what we return, the state will continue to have duplicates. 
+
+\item For the \li|rb_oracle|, the state is also append-only. So, as above, if the state starts out with duplicates, no matter what we query or what we return, the state will continue to have duplicates. 
 
 \end{enumerate}
 
-% TODO write out proofs of side conditions
+The commented Coq proof of this can be found in the appendix.
 
 \subsection{Proof graph}
 

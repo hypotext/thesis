@@ -1,36 +1,58 @@
 4/12/16, 12:30 AM
+4/14/16, 2:30 AM...
 
 - Explain PRF_Adv_eq_until_bad, oracleCompMap__oracle_eq_until_bad_dups
-  - and the corresponding lemmas PRF_A_randomFunc_eq_until_bad and fcf_oracle_eq_until_bad (Adam's work)
+  - and the corresponding lemmas PRF_A_randomFunc_eq_until_bad and fcf_oracle_eq_until_bad (Adam's work) <-- 1.5 pages
 
-- Explain Gi_rb_normal
+- Explain Gi_rb_normal <-- 0.5 pages
   - Look at / count what other substantial lemmas I have, or if this is the last??
 
-- Write out the collisions intermediate games
+- Fully write out informal proof as a crypto proof <-- 1 page ***
+  - Well, first write it out on paper...
+  - Look at model papers
+  - Indistinguishability AND backtracking resistance
+
+-------
+
+- Write out the collisions intermediate games <-- 0.5 pages
   - Explain Adam's proof (did I already do that?)
  
+- Diagram of lemma structure <-- 0.5 pages
+
+==== 4 pages (which is probably fine for this Friday)
+
+- Add sections on "not being able to prove this helped me find these errors in my code" and "formal methods made us think about these theorems"
+
 - Replace dupsInIthInputCalls.* everywhere by hasDups, and explain it
   - also rf_withDups (e.g. Gi_rb_rf_no_bad_same)
 
-- Diagram of lemma structure
-
-- Fully write out informal proof as a crypto proof
-  - Look at model papers
-
-- Add sections on "not being able to prove this helped me find these errors in my code" and "formal methods made us think about these theorems"
+- Read the HMAC paper
 
 ------
 
 Later:
 
+- Explain PRHL and comp_spec
 - Explain HMAC_DRBG
 - Explain FCF
-- Explain PRHL and comp_spec
+- Comment on what was hybrid-specific work (i.e. hard induction) -- note it in the diagram
 - Write a worked example of a Coq proof
+- Talk about the DRBG complexities we glossed over
+- Lemma "table of contents" (quick summary)?
+
 - ACTUALLY FINISH PROOFS AND CLEAN UP CODE
 - Go through meeting notes to see what I missed
-- Comment on what was hybrid-specific work (i.e. hard induction) -- note it in the diagram
 - Read EasyCrypt https://www.easycrypt.info/downloads/tutorial/tutorial-prg.pdf
+- Cite Bellare/Rogaway for game playing
+- Even out the level of detail throughout the paper
+
+Presentation:
+
+- Look at Mario's paper
+- MODEL PAPER: the HMAC paper honestly
+- Look at the Oakland papers he sent me
+- Also the Bellare/Rogaway paper on block ciphers
+- Side-by-side comparison of real-world and ideal games (see papers)
 
 ------
 
@@ -38,7 +60,10 @@ Bucket list:
 
 - We can't verify these systems because they're broken
   - Breaking ElGamal
+  - Or some PRG we come up with
 - Tailor background to the conference
 - Appendix with code
 - Move to a real TODO system
 - Move to BibTeX
+- Read Naphat's paper
+- Get it printed and bound
