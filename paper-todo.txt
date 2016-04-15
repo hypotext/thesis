@@ -12,6 +12,14 @@
   - Look at model papers
   - Indistinguishability AND backtracking resistance
 
+(  - But I already wrote a bunch of stuff??
+  - The code level of detail is too great
+  - I guess I want to start at code level for the definitions for both, but then do a crypto-paper-style proof outline for the former, and a detailed Coq exposition for the latter -- and I'm not even done... 
+  - I'd just feel weird copying-and-pasting half a page of code
+  - I mean do I really have to close-read and explain the Coq??)
+
+TODO: I don't even understand PRHL... ask Lennart to explain the rules to me?
+
 -------
 
 - Write out the collisions intermediate games <-- 0.5 pages
@@ -50,6 +58,7 @@ Presentation:
 
 - Look at Mario's paper
 - MODEL PAPER: the HMAC paper honestly
+- Look at EasyCrypt paper and how people handle games
 - Look at the Oakland papers he sent me
 - Also the Bellare/Rogaway paper on block ciphers
 - Side-by-side comparison of real-world and ideal games (see papers)
