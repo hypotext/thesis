@@ -6,6 +6,7 @@
 
 - Explain Gi_rb_normal <-- 0.5 pages
   - Look at / count what other substantial lemmas I have, or if this is the last??
+  - hey! i have a proof idea for this now.
 
 - Fully write out informal proof as a crypto proof <-- 1 page ***
   - Well, first write it out on paper...
