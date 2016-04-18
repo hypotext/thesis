@@ -3,6 +3,7 @@
 
 - Explain PRF_Adv_eq_until_bad, oracleCompMap__oracle_eq_until_bad_dups
   - and the corresponding lemmas PRF_A_randomFunc_eq_until_bad and fcf_oracle_eq_until_bad (Adam's work) <-- 1.5 pages
+  - the disheartening thing about this is that adam's proof could literally be done in a day, where is the thesis's worth of work???? 
 
 - Explain Gi_rb_normal <-- 0.5 pages
   - Look at / count what other substantial lemmas I have, or if this is the last??
@@ -54,6 +55,8 @@ Later:
 - Read EasyCrypt https://www.easycrypt.info/downloads/tutorial/tutorial-prg.pdf
 - Cite Bellare/Rogaway for game playing
 - Even out the level of detail throughout the paper
+- Security parameter eta
+- Cite Coq names in crypto proofs
 
 Presentation:
 

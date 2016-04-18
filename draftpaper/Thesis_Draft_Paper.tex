@@ -696,6 +696,37 @@ Gi_normal_prf_eq : forall (i : nat),
    Gi_prf 2: RB RB PRF PRF
     \end{lstlisting}
     
+    More formally,
+    \begin{lstlisting}
+    Theorem Gi_normal_prf_eq_compspec :
+  forall (l : list nat) (i : nat) (k1 k2 v : Bvector eta),
+   comp_spec
+     (fun (x : list (list (Bvector eta)) * (nat * KV))
+        (y : list (list (Bvector eta)) * (nat * KV) * unit) =>
+      fst x = fst3 y)
+     (oracleMap (pair_EqDec nat_EqDec eqDecState) (list_EqDec eqdbv)
+        (Oi_prg i) (O, (k1, v)) l)
+        
+     ((oracleCompMap_inner
+         (pair_EqDec (list_EqDec (list_EqDec eqdbv))
+            (pair_EqDec nat_EqDec eqDecState))
+         (list_EqDec (list_EqDec eqdbv)) (Oi_oc' i) 
+         (O, (k2, v)) l) unit unit_EqDec (* note: k's differ. we aren't using this one *)
+        (f_oracle f eqdbv k1) tt).
+    \end{lstlisting}
+    
+    % TODO list l is not globally accurate
+    This theorem is quantified over two important things: the list $l$ of blocks that the adversary requests per call, and the number of the hybrid $i$. Intuitively, given that the two computations (one using \li|oracleMap|, the other using \li|oracleCompMap_inner|) output equal pseudorandom bits for a list $l$, if we make another call, the two outputs for that call will be equal too. This is true because there are three cases, according to the structure of \li|Oi_oc'|. Let $n$ denote the length of $l$.
+    \begin{enumerate}
+    \item $n+1 > i$: for the new call, we use the PRF oracle in both computations.
+    \item $n+1 = i$: for the new call, in the \li|oracleMap| computation, we use the PRF oracle, and in the \li|oracleCompMap_inner| computation, we use the provided oracle. The caller is providing \li|f_oracle|, which is the PRF oracle.
+    \item $n +1 < i$: for the new call, we use the RB oracle in both computations.
+    \end{enumerate}
+    
+    To prove this in Coq, we have to encode the insight that the theorem is inductive over \textbf{appending} to the list, rather than pre-pending (\li|cons|ing) to the beginning of the list. Thus, we induct on the reverse of the list $l$.
+    
+    We also have to deal with the special case of the first call, since we must use the special \li|GenUpdate_noV| oracle on that call. So we set $calls > 0$, perform the induction on the reverse of the list, then add the first call onto the head of the list.
+    
 \par
 \item \begin{lstlisting}
 Gi_prf_rf_close_i : forall (i : nat),
@@ -844,6 +875,8 @@ Gi_normal_rb_eq : forall (i : nat),
     \end{lstlisting} 
     
 Put \li|Gi_prg| into the form using the PRF adversary, passing it the RB oracle.
+
+The idea here is much the same as \li|Gi_normal_prf_eq|.
 
 \par
 \item \begin{lstlisting} 
