@@ -38,10 +38,14 @@ TODO: I don't even understand PRHL... ask Lennart to explain the rules to me?
 
 - Read the HMAC paper
 
+- PROPERLY NAME AND REFER TO MY LEMMAS
+
 ------
 
 Later:
 
+** - Incorporate Andrew's edits
+- Write conclusion
 - Explain PRHL and comp_spec
 - Explain HMAC_DRBG
 - Explain FCF

@@ -300,7 +300,7 @@ $\textbf{G\_real\_2} := $
 \item[] $ret \s b$ \\
 \end{game}
 
-In $G\_real\_2$, the key sampling is omitted because we have already sampled it in a global context and made it accessible to the PRG, for convenience.
+In $G\_real\_2$, the key sampling is omitted because we have already sampled it in a global context and made it accessible to the PRG, for convenience.\\
 
 $\textbf{G\_intermediate\_2} := $
 \begin{game}
@@ -326,7 +326,7 @@ $H\_{oc}(o, n, v) :=$
 \item[] else return $o.query(v) || H(o.query(v), n-1).$\\
 \end{game}
 
-\begin{lem} $|\Pr[G\_real\_2] - \Pr[G\_intermediate\_2]| \leq PRF\_Advantage.$ \end{lem}
+\begin{lem} \begin{gather*}|\Pr[G\_real\_2] - \Pr[G\_intermediate\_2]| \leq PRF\_Advantage.\end{gather*} \end{lem}
 \begin{proof} By the definition of $PRF\_Advantage$, with $D_p := PRF\_A$. \end{proof}
 
 And our two rewrites don't change the probability that the adversary returns $1$ in a particular game.
@@ -340,30 +340,141 @@ And our two rewrites don't change the probability that the adversary returns $1$
 Thus, the theorem follows:
 $$|\Pr[G\_real] - \Pr[G\_intermediate]| \leq PRF\_Advantage.$$ \end{proof}
 
-Then we bound the difference between the intermediate and the ideal-world game.
+Next, we bound the difference between the intermediate and the ideal-world game. This requires doing actual math, not just reasoning about definitions.
 
-\begin{thm} $| \Pr[G\_intermediate] - \Pr[G\_ideal]| \leq \f{n^2}{2^c} $ \end{thm}
+\begin{thm} $| \Pr[G\_intermediate] - \Pr[G\_ideal]| \leq \f{n^2}{2^c}. $ \end{thm}
 \begin{proof} 
-Identical until bad\\
-Probability of collisions \end{proof}
 
-This yields our final result, which is:
+We use Bellare's \emph{fundamental lemma of game-playing} to bound the distance between these two games.
+
+If two games are \emph{identical until bad}, they are "syntactically identical except for statements that follow the setting of a flag bad to true" (Bellare (2004)). 
+
+\begin{lem}(Fundamental lemma of game-playing) Let G and H be identical-until-bad games and
+let A be an adversary. Then 
+$$|\Pr[G^A = 1] - \Pr[H^A] = 1]| \leq Pr[H^A \s sets \s bad].$$ \end{lem} 
+\begin{proof} See Bellare (2004). \end{proof}
+
+Intuitively, the "bad event" in both $G\_intermediate$ and $G\_ideal$ is that there are duplicates in the inputs to the random function used in the former game. If there are no duplicates, then the random function behaves exactly like uniformly sampling random bits. If there are duplicates, then the random function becomes deterministic and starts to cyclically repeat outputs. Thus, we manipulate both games to expose this bad event.
+
+Instead of using $G\_intermediate$, we modify $G\_intermediate\_2$, which we had proven equivalent to $G\_intermediate$ in Lemma 3.2. We replace the random function oracle with a random function oracle $rf$ that keeps track of all (input, output) pairs, including duplicate inputs. \\
+
+$\textbf{G\_intermediate\_3} := $
+\begin{game}
+\item[] $b \leftarrow PRF\_A^{rf(\cdot)}$ 
+\item[] $ret \s b.$ \\
+\end{game}
+
+Then we expose the bad event as the second element of the output. $PRF\_A$ now outputs the state of the oracle after many calls, though $PRF\_A$ itself does not have access to the state. \\
+
+$\textbf{G\_intermediate\_4} := $
+\begin{game}
+\item[] $(b, state) \leftarrow PRF\_A^{rf(\cdot)}$ 
+\item[] $ret \s (b, hasDups(inputsOf(state))).$ \\
+\end{game}
+
+The three games are equivalent.
+
+\begin{lem} $$\Pr[G\_intermediate\_2] = \Pr[G\_intermediate\_3]$$ $= \Pr[G\_intermediate\_4].$\end{lem}
+\begin{proof}Adding state and duplicate tracking to the oracle does not change its outputs. Outputting whether the bad event happened does not change the adversary's guess. \end{proof}
+
+We similarly rewrite $G\_ideal$ in the form of $G\_intermediate\_2$. We create an oracle $rb$ that, on any input, returns a uniformly sampled bitvector, and records the (input, output) pair in its state. Then we rephrase $G\_ideal$ in terms of $PRF\_A$ using $rb$.\\
+
+$\textbf{G\_ideal\_2} := $
+\begin{game}
+\item[] $b \leftarrow PRF\_A^{rb(\cdot)}$ 
+\item[] $ret \s b$ \\
+\end{game}
+
+Then we similarly expose the bad event.\\
+
+$\textbf{G\_ideal\_3} := $
+\begin{game}
+\item[] $(b, state) \leftarrow PRF\_A^{rb(\cdot)}$ 
+\item[] $ret \s (b, hasDups(inputsOf(state)))$ 
+\end{game}
+
+The three games are equivalent.
+
+\begin{lem}$$\Pr[G\_ideal] = \Pr[G\_ideal\_2] = \Pr[G\_ideal\_3].$$\end{lem}
+\begin{proof}By unfolding the definition of $PRF\_A$ and program equivalence. Also, adding state and duplicate tracking to the oracle does not change its outputs, and outputting whether the bad event happened does not change the adversary's guess. \end{proof}
+
+The two games, with the same bad event exposed, are identical until bad. Bellare's "syntactically identical except for the bad event" definition is too vague to use, so we assert that these games are identical until bad by a definition formalized by Petcher (2015):
+
+\begin{enumerate}
+\item The probability of the bad event is the same in both games. 
+\item If the bad event does not happen, the distribution of the outputs is the same. 
+\end{enumerate}
+
+\begin{lem}$G\_intermediate\_4$ and $G\_ideal\_3$ are identical until bad.\end{lem}
+\begin{proof} The random function behaves like uniformly sampling a bitvector, until one of its outputs happens to be one of its previous inputs. \end{proof}
+
+Thus, we can apply the fundamental lemma of game-playing, which implies
+\begin{gather*}
+|\Pr[G\_intermediate\_4] - \Pr[G\_ideal\_3]| \leq \\ \Pr[G\_ideal\_3 \s sets \s bad].
+\end{gather*}
+This is convenient, because now we can just work with a single game, which allows us to apply our game-equivalence techniques. Now we only need to bound $\Pr[G\_ideal\_3 \s sets \s bad]$.
+
+More formally, we define the probability that a game $G$ sets bad as $\Pr[G\_B]$, where $G\_B$ is a version of $G$ that only returns whether the bad event occurred. Here, for example:\\
+
+$\textbf{G\_ideal\_3B} := $
+\begin{game}
+\item[] $(b, state) \leftarrow PRF\_A^{rb(\cdot)}$ 
+\item[] $ret \s hasDups(inputsOf(state))$ 
+\end{game}
+
+Now we bound the probability of the bad event happening.
+
+\begin{lem} $$\Pr[G\_ideal\_3B] \leq \f{n^2}{2^c}$$ \end{lem}
+\begin{proof} 
+By inlining $PRF\_A$, it becomes clear that the probability of $G\_ideal\_3B$ is the same as generating a list of $n$ uniformly-sampled bitvectors of length $c$ and returning whether there is a duplicate in that list. We can ignore the guess of the distinguisher $D$.
+
+To be more precise, $G\_ideal\_3B$ generates a list of $n-1$ such bitvectors (inputs) with a randomly-sampled seed $v$ at the beginning, which is the first input.\\
+
+$\textbf{G\_ideal\_4} := $
+\begin{game}
+\item[] $bits \leftarrow generate\_n\_bv\_of\_len\_c$
+\item[] $ret \s (hasDups(bits))$ 
+\end{game}
+
+\begin{lem}$\Pr[G\_ideal\_3] = \Pr[G\_ideal\_4]$.\end{lem}
+\begin{proof}Program equivalence and the irrelevance of the adversary.\end{proof}
+
+Thus, we need only upper-bound the probability that there is a duplicate in a list of $n$ uniformly-sampled bitvectors of length $c$. 
+
+\begin{lem}$$\Pr[G\_ideal\_4] \leq \f{n^2}{2^c}$$\end{lem}
+\begin{proof} There are $n \choose 2$ $= \f{n(n-1)}{2}$ pairs of bitvectors in the list, and the probability that there is a collision in a pair is $\f{1}{2^c}$. By the union bound, the probability that there is no collision is $\f{n(n-1)}{2} \cdot \f{1}{2^c} \leq \f{n^2}{2^c}.$ \end{proof}
+
+This completes our bound on the probability of the bad event.
+\end{proof}
+
+This completes our bound on the difference between $G\_intermediate$ and $G\_ideal$.
+\end{proof}
+
+This bound on the probability of the bad event yields our final result:
 
 \begin{thm}The distance between the two games is $$| \Pr[G\_real] - \Pr[G\_ideal]| \leq PRF\_Advantage + \f{n^2}{2^c}.$$ \end{thm}
 % TODO name theorems
 \begin{proof} By the triangle inequality, combined with theorems 3 and 4.\end{proof}
 
+Thus, $H$ is a secure PRG. Moreover, since we did our proof in the concrete security model, we have a better idea of how secure it is (modulo the black box of $PRF\_Advantage$).
+
 \subsection{Indistinguishability proof for multiple calls with state updating}
 
 Formal def of indist., adversaries, etc.
 
+GenUpdate code
+
+dealing with key/v updating 
+
 Games (in math, not code?)
+
+New oracles
 
 Hybrid argument
 
-Reductions/games (PRF, random function)
+My hybrids
 
-dealing with key/v updating 
+New reductions/games (PRF, random function)
 
 direction of proof we COULD have taken
 
@@ -1294,6 +1405,9 @@ Barker, Elaine, and John Kelsey. "NIST Special Publication 800-90A: Recommendati
 
 \bibitem{barthe2011}
 Barthe, Gilles, Benjamin Grégoire, Sylvain Heraud, and Santiago Zanella Béguelin. "Computer-aided security proofs for the working cryptographer." In \emph{Advances in Cryptology–CRYPTO} 2011, pp. 71-90. Springer Berlin Heidelberg, 2011.
+
+\bibitem{bellare2004}
+Bellare, Mihir, and Phillip Rogaway. "Code-Based Game-Playing Proofs and the Security of Triple Encryption." \emph{IACR Cryptology ePrint Archive} 2004 (2004): 331.
 
 \bibitem{beringer2015}
 Beringer, Lennart, Adam Petcher, Katherine Q. Ye, and Andrew W. Appel. "Verified correctness and security of OpenSSL HMAC." In \emph{24th USENIX Security Symposium (USENIX Security 15)}, pp. 207-221. 2015.
