@@ -469,6 +469,7 @@ To prove indistinguishability for HMAC-DRBG, we must extend the proof for $H$.
 
 HMAC-DRBG functions: Instantiate, Generate, Update, Reseed. State: (K, V, number of calls.) (This might go in the HMAC-DRBG section)
 
+% TODO here
 We model it as Instantiate, then Generate+Update as GenUpdate. (code for these)
 
 The user (adversary) can make a polynomial number of calls to GenUpdate, requesting a polynomial number of blocks 
@@ -483,17 +484,46 @@ Formal def of indistinguishability, adversaries, etc.
 
 Dealing with key/v updating 
 
-Real-world game
+% TODO: TeX all the games / functions / hybrids
+Real-world game \\
+
+% oh -- generic list?
+
+$\textbf{Instantiate} := $
+\begin{game}
+  \item[] $k \xleftarrow{R} \{0,1\}^m$
+  \item[] $v \xleftarrow{R} \{0,1\}^c$ \\
+\end{game}
+
+$\textbf{G\_real} := $
+\begin{game}
+\item[] $l \leftarrow D$ (the distinguisher outputs a list of TODO) 
+\item[] $(k,v) \leftarrow Instantiate$
+\item[] $bits \leftarrow GenUpdate(k,v,l)$
+\item[] $ret \s D(bits)$ \\
+\end{game}
+
+$\textbf{G\_ideal} := $
+\begin{game}
+\item[] $l \leftarrow D$ (the distinguisher outputs a list of TODO) 
+\item[] $bits \leftarrow GenRand(l)$
+\item[] $ret \s D(bits)$ \\
+\end{game}
 
 Ideal-world game
 
 Concrete bound
 
-New oracles
-
 Hybrid argument
 
 My hybrids (intermediate games)
+
+$Gi\_rf$
+$PRF\_A$
+
+New oracles:
+$Oi\_prg$
+$Oi\_oc$
 
 Sone words on dealing with the hybrids formally
 
