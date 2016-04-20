@@ -1,3 +1,16 @@
+
+Notes on setup:
+
+need to add the \synctex thing in beginning
+plus see elisp lines added
+
+AUCTeX: C-c C-a
+C-c C-v to view / go to point
+
+Skim- shift/cmd/click to open a NEW window ?? i guess it's too much to hope that it would take me to the point in the current window
+
+----
+
 4/12/16, 12:30 AM
 4/14/16, 2:30 AM...
 
