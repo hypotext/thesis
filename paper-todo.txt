@@ -1,15 +1,14 @@
 4/12/16, 12:30 AM
 4/14/16, 2:30 AM...
 
-- Explain PRF_Adv_eq_until_bad, oracleCompMap__oracle_eq_until_bad_dups
-  - and the corresponding lemmas PRF_A_randomFunc_eq_until_bad and fcf_oracle_eq_until_bad (Adam's work) <-- 1.5 pages
-  - the disheartening thing about this is that adam's proof could literally be done in a day, where is the thesis's worth of work???? 
+- Write HMAC-DRBG overview
+- ???
+  - Name lemmas to refer to them
 
-- Explain Gi_rb_normal <-- 0.5 pages
-  - Look at / count what other substantial lemmas I have, or if this is the last??
-  - hey! i have a proof idea for this now.
+- Put in edits
+  - Fix "equivalent" -> "identically distributed"
 
-- Fully write out informal proof as a crypto proof <-- 1 page ***
+- Fully write out informal proof as a crypto proof
   - Well, first write it out on paper...
   - Look at model papers
   - Indistinguishability AND backtracking resistance
