@@ -5,9 +5,6 @@
 - ???
   - Name lemmas to refer to them
 
-- Put in edits
-  - Fix "equivalent" -> "identically distributed"
-
 - Fully write out informal proof as a crypto proof
   - Well, first write it out on paper...
   - Look at model papers

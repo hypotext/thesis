@@ -180,6 +180,8 @@ HMAC-DRBG consists of four main functions, $Instantiate$, $Generate$, $Update$, 
 
 In this section we will write proofs as a conventional cryptographer would. We prove three things: indistinguishability for a simple PRG constructed from a PRF, indistinguishability for a real-world PRG constructed from a PRF, and backtracking resistance for the same PRG.
 
+For any game $G$ that returns a boolean, let $\Pr[G]$ denote the probability that $G$ returns true. 
+
 \subsection{Indistinguishability proof for one call}
 % TODO mention EasyCrypt tutorial -- it's on this level
 % hardness of PRF
@@ -335,7 +337,7 @@ And our two rewrites don't change the probability that the adversary returns $1$
 \begin{lem} $\Pr[G\_real] = \Pr[G\_real\_2].$ \end{lem}
 \begin{proof} By substitution and program equivalence. \end{proof}
 
-\begin{lem}\label{intermediate_2} $\Pr[G\_intermediate] = \Pr[G\_intermediate\_2].$ \end{lem}
+\begin{lem}\label{intermediate2} $\Pr[G\_intermediate] = \Pr[G\_intermediate\_2].$ \end{lem}
 \begin{proof} By substitution and program equivalence.  \end{proof}
 
 Thus, the theorem follows:
@@ -357,7 +359,7 @@ $$|\Pr[G^A = 1] - \Pr[H^A] = 1]| \leq Pr[H^A \s sets \s bad].$$ \end{lem}
 
 Intuitively, the "bad event" in both $G\_intermediate$ and $G\_ideal$ is that there are duplicates in the inputs to the random function used in the former game. If there are no duplicates, then the random function behaves exactly like uniformly sampling random bits. If there are duplicates, then the random function becomes deterministic and starts to cyclically repeat outputs. Thus, we manipulate both games to expose this bad event.
 
-Instead of using $G\_intermediate$, we modify $G\_intermediate\_2$, which we had proven equivalent to $G\_intermediate$ in Lemma \ref{intermediate_2}. We replace the random function oracle with a random function oracle $rf$ that keeps track of all (input, output) pairs, including duplicate inputs. \\
+Instead of using $G\_intermediate$, we modify $G\_intermediate\_2$, which we had proven equivalent (via program equivalence) to $G\_intermediate$ in Lemma \ref{intermediate2}. We replace the random function oracle with a random function oracle $rf$ that keeps track of all (input, output) pairs, including duplicate inputs. \\
 
 $\textbf{G\_intermediate\_3} := $
 \begin{game}
@@ -373,7 +375,7 @@ $\textbf{G\_intermediate\_4} := $
 \item[] $ret \s (b, hasDups(inputsOf(state))).$ \\
 \end{game}
 
-The three games are equivalent.
+In each of the three games, the probability that the adversary returns a guess of $true$ is the same.
 
 Since some games will now return 2-tuples of booleans instead of single booleans, for such games $G$, we define $\Pr_1[G]$ to be the probability that the first value of the tuple is true and $\Pr_2[G]$ analogously.
 
@@ -397,7 +399,7 @@ $\textbf{G\_ideal\_3} := $
 \item[] $ret \s (b, hasDups(inputsOf(state)))$ \\
 \end{game}
 
-These three games are equivalent.
+In each of the three games, the probability that the adversary returns a guess of $true$ is the same.
 
 \begin{lem}$$\Pr[G\_ideal] = \Pr[G\_ideal\_2] = \Pr_1[G\_ideal\_3].$$\end{lem}
 \begin{proof}By unfolding the definition of $PRF\_A$ and program equivalence. (In both $G\_ideal$ and $G\_ideal\_2$, we generate a list of pseudorandom bits by uniformly randomly sampling a bitvector $n$ times.) Also, adding state and duplicate tracking to the oracle does not change its outputs, and outputting whether the bad event happened does not change the adversary's guess. \end{proof}
