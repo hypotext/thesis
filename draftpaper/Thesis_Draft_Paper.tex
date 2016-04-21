@@ -83,6 +83,7 @@ breaklines=true
 \newcommand{\dr}{\{0,1\}^n \rightarrow \{0,1\}^n}
 \newcommand{\rar}{\rightarrow}
 \newcommand{\bt}{\{0,1\}}
+\newcommand{\samp}{\xleftarrow{R} \{0,1\}}
 
 \newtheorem{thm}{Theorem}
 \newtheorem{dfn}[thm]{Definition}
@@ -152,30 +153,43 @@ Our approach is unique because it provides an end-to-end and foundational verifi
 (TODO: fix these citations)
 
 \section{HMAC-DRBG overview}
+% **
+A pseudorandom number generator is used to stretch a small amount of randomness into a large amount of pseudo-randomness, often for use in cryptosystems. HMAC-DRBG, formalized in NIST SP 800-90A, is one such pseudorandom number generator. It generates output by iterating HMAC, a keyed-hash message authentication function widely believed to be difficult to invert [cite] and that proven to be a pseudo-random function (PRF) given that HMAC's internal hash function is a PRF. [mention key?]
 
-A pseudorandom number generator is used to stretch a small amount of randomness into a large amount of pseudo-randomness, often for use in cryptosystems. HMAC-DRBG, formalized in NIST SP 800-90A, is one such pseudorandom number generator. It generates output by iterating HMAC, a keyed-hash message authentication function widely believed to be difficult to invert [cite] and proven to be a pseudo-random function (PRF) given that HMACÕs internal hash function is a PRF. [mention key?]
-
-HMAC-DRBG possesses an internal state consisting of four elements:
-
-The working state, consisting of the secret key $K$ for HMAC, and an internal value $V$ which is updated with each block of output. The administrative information, consisting of the security strength of this instantiation, and a flag that indicates whether this instantiation requires prediction resistance.
-
-HMAC-DRBG consists of four main functions, $Instantiate$, $Generate$, $Update$, and $Reseed$, and another function we don't model called $getEntropy$. Refer to NIST 800-90A for the pseudocode. (TODO: summarize the functions in my thesis)
-
-%Instantiate:
-%\begin{lstlisting}
-%K <- É
-%V <- ...
-%\end{lstlisting}
-
-%Generate
+HMAC-DRBG possesses an internal state consisting of two pieces of administrative information and two pieces of secret information.
 
 
-%Update
+
+\begin{itemize}
+\item The secret key $K$ for HMAC.
+
+\item An internal value $V$ which is updated with each block of output. 
+
+\item The administrative information, consisting of the security strength of this instantiation
+\item a flag that indicates whether this instantiation requires prediction resistance.
+\end{itemize}
 
 
-%Reseed
+HMAC-DRBG consists of four main functions, $Instantiate$, $Generate$, $Update$, and $Reseed$, and another function we don't model called $getEntropy$. Refer to NIST 800-90A for the pseudocode. \\
 
-%Entropy
+$\textbf{Instantiate} := $
+\begin{game}
+\item[] $k \samp^m$
+\item[] $v \samp^n$ \\
+\end{game}
+
+$\textbf{Generate} := $
+\begin{game}
+\item[] $k \samp^m$
+\item[] $v \samp^n$ \\
+\end{game}
+
+Update
+
+
+Reseed
+
+Entropy
 
 \section{Proofs}
 
@@ -195,7 +209,6 @@ Construct a PRG $$H : (n : \mathbb{N}) \rightarrow (k : \{0,1\}^m) \rightarrow (
 
 It takes an input seed and applies the PRF to it, then uses the output as one block of pseudorandom bits and as the next input seed to the PRG. $n$ is the number of blocks desired, $k$ is the key for the PRF, and $c$ (the input/output size of the PRF) is the security parameter. \\
 
-% TODO fix formatting8
 $H(n, k, v) :=$
 \begin{game}
 \item[] if $n = 0$ then return $nil$ (the empty list)
@@ -216,7 +229,7 @@ $$| \Pr [ D (H (n, k, U_c) = 1] - \Pr [ D(U_{cn}) = 1] | \leq neg(c,n),$$
 
 where $U_c \xleftarrow{R} \{0,1\}^c$ ($U_c$ is sampled uniformly at random from $\{0,1\}^c$), $U_{cn} \xleftarrow{R} \{0,1\}^{cn}$, and $k \xleftarrow{R} \{0,1\}^m$ ($k$ is the key for the PRF).\end{dfn}
 
-$D$ is nonadaptive because it has to pick the number of blocks ahead of time. One can imagine a pathological PRG that chooses a random number of blocks after which to output its seed, and outputs that number of blocks as its first block (which is still random). An adaptive adversary could then distinguish with probability $\f{1}{2}$, whereas a non-adaptive adversary would have a negligible probability of doing so. % TODO footnote on difficulty?
+%$D$ is nonadaptive because it has to pick the number of blocks ahead of time. One can imagine a pathological PRG that chooses a random number of blocks after which to output its seed, and outputs that number of blocks as its first block (which is still random). An adaptive adversary could then distinguish with probability $\f{1}{2}$, whereas a non-adaptive adversary would have a negligible probability of doing so. % TODO footnote on difficulty?
 
 The probability that the distinguisher returns $1$ when given the PRG's output, $\Pr[D(H(n, k,  U_c) = 1]$, is the same as the probability that the result of this real-world game is $1$. \\
 
@@ -463,37 +476,56 @@ This bound on the probability of the bad event yields our final result:
 
 Thus, $H$ is a secure PRG. Moreover, since we did our proof in the concrete security model, we have a better idea of how secure it is (modulo the black box of $PRF\_Advantage$) than if we had proven its asymptotic security.
 
-\subsection{Indistinguishability proof for multiple calls with state updating}
+% TODO: remove this break (here for legibility)
+\break
 
+\subsection{Indistinguishability proof for multiple calls with state updating}
+% ^^
+\subsubsection{HMAC-DRBG}
+TODO
+
+\subsubsection{Setup}
 To prove indistinguishability for HMAC-DRBG, we must extend the proof for $H$.
 
-HMAC-DRBG functions: Instantiate, Generate, Update, Reseed. State: (K, V, number of calls.) (This might go in the HMAC-DRBG section)
+As summarized in section REFERENCE, the HMAC-DRBG functions are Instantiate, Generate, Update, Reseed. The state is a 3-tuple of (K, V, number of calls).
 
 % TODO here
 We model it as Instantiate, then Generate+Update as GenUpdate. (code for these)
 
 The user (adversary) can make a polynomial number of calls to GenUpdate, requesting a polynomial number of blocks 
 
-Relation to Adam's proof: we reduce it to his proof in the cases of
-\begin{itemize}
-\item identical until bad on the two oracle computations
-\item probability of the bad event
-\end{itemize}
-
-Formal def of indistinguishability, adversaries, etc.
-
-Dealing with key/v updating 
-
-% TODO: TeX all the games / functions / hybrids
-Real-world game \\
-
 % oh -- generic list?
 
 $\textbf{Instantiate} := $
 \begin{game}
-  \item[] $k \xleftarrow{R} \{0,1\}^m$
-  \item[] $v \xleftarrow{R} \{0,1\}^c$ \\
+  \item[] $k \samp^m$
+  \item[] $v \samp^c$ \\
 \end{game}
+
+Again we take $H$:
+
+$H(n, k, v) :=$
+\begin{game}
+\item[] if $n = 0$ then return $nil$ (the empty list)
+\item[] else return $f_k(v) || H(n-1, k, f_k(v)).$\\
+\end{game}
+
+For example, $H(0,k, v_0) = nil$, and $$H(3, k, v_0) = f_k(v_0) || f_k(f_k(v_0)) || f_k(f_k(f_k(v_0))).$$
+
+And construct a PRG for multiple calls as such:
+% !!
+
+We combined the $Generate$ and $Update$ functions into one program, since they're always called together.
+
+\begin{lstlisting}
+Definition GenUpdate_original (state : KV) (n : nat) :
+  Comp (list (Bvector eta) * KV) :=
+  [k, v] <-2 state;
+  [bits, v'] <-2 Gen_loop k v n;
+  k' <- f k (to_list v' ++ zeroes);
+  v'' <- f k' (to_list v');
+  ret (bits, (k', v'')).
+\end{lstlisting}
 
 $\textbf{G\_real} := $
 \begin{game}
@@ -510,7 +542,58 @@ $\textbf{G\_ideal} := $
 \item[] $ret \s D(bits)$ \\
 \end{game}
 
-Ideal-world game
+The adversary, an abstract probabilistic polynomial time algorithm. It takes a list of blocks and returns a guess.
+
+\begin{lstlisting}
+(* Non-adaptive adversary. *)
+Variable A : list (list (Bvector eta)) -> Comp bool.
+Hypothesis A_wf: forall ls, well_formed_comp (A ls).
+\end{lstlisting}
+
+\subsubsection{Extending prior work}
+
+We extend his work to deal with the following complications in the full HMAC-DRBG and model real-world usage.
+
+\begin{itemize}
+\item Additional functions: $Instantiate$, $Generate$, and $Update$.
+\item Multiple calls to $Generate$ and $Update$.
+\item We need to now consider whether the adversary is adaptive or non-adaptive.
+\item The $V$ is updated after each call.
+\item The $K$ is updated after each call, so the PRF is re-keyed.
+%\item Instantiate
+\end{itemize}
+
+\subsubsection{Proof}
+Dealing with key/v updating ?
+
+Updating the v immediately after re-keying the PRF, in the same oracle call, is hard to reason about. This is because at the beginning of each call, by the hybrid argument, we can assume that the \kv have been randomly sampled. Now we have to replace the key with a random key to reason about updating the v. The solution is simple: we move each v-update to the beginning of the next call and prove that the new sequence of programs is indistinguishable to the adversary. (TODO explain this with pictures)
+
+\begin{lstlisting}
+(* [GenUpdate_original, GenUpdate_original, ...] = [GenUpdate_noV, GenUpdate, Genupdate, ...] *)
+  (* use this for the first call *)
+Definition GenUpdate_noV (state : KV) (n : nat) :
+  Comp (list (Bvector eta) * KV) :=
+  [k, v] <-2 state;
+  [bits, v'] <-2 Gen_loop k v n;
+  k' <- f k (to_list v' ++ zeroes);
+  ret (bits, (k', v')).
+
+Definition GenUpdate (state : KV) (n : nat) :
+  Comp (list (Bvector eta) * KV) :=
+  [k, v] <-2 state;
+  v' <- f k (to_list v);
+  [bits, v''] <-2 Gen_loop k v' n;
+  k' <- f k (to_list v'' ++ zeroes);
+  ret (bits, (k', v'')).
+\end{lstlisting}
+
+Relation to Adam's proof: we reduce it to his proof in the cases of
+\begin{itemize}
+\item identical until bad on the two oracle computations
+\item probability of the bad event
+\end{itemize}
+
+% TODO: TeX all the games / functions / hybrids
 
 Concrete bound
 
@@ -520,6 +603,19 @@ My hybrids (intermediate games)
 
 $Gi\_rf$
 $PRF\_A$
+
+The PRF adversary. It uses the existing adversary so we can go from PRF to RF, which is much easier to reason about. (TODO: explained already below) Game $i$ here is more complicated because we can pass in any oracle to use on only the $i$th call, instead of the the hardcoding in game $i$ above. (TODO: talk about motivation for this)
+
+\begin{lstlisting}
+Definition PRF_Adversary (i : nat) : OracleComp Blist (Bvector eta) bool :=
+  bits <--$ oracleCompMap_outer _ _ (Oi_oc' i) maxCallsAndBlocks;
+  $ A bits.
+
+(* ith game: use RF oracle *)
+Definition Gi_rf (i : nat) : Comp bool :=
+  [b, _] <-$2 PRF_Adversary i _ _ (randomFunc ({0,1}^eta) eqdbl) nil;
+  ret b.
+\end{lstlisting}
 
 New oracles:
 $Oi\_prg$
@@ -602,19 +698,7 @@ Adam Petcher did some prior work on proving the security of the core loop seen a
 
 We reuse his proof techniques to replace the PRF with a random function, then the random function with random bits. The first is bounded by \li|PRF_Advantage|, the second by the collision bound. (TODO: elaborate on this)
 
-% @ don't need all these section headers
-\subsection{Extending prior work}
-
-We extend his work to deal with the following complications in the full HMAC-DRBG and model real-world usage.
-
-\begin{itemize}
-\item Additional functions: $Instantiate$, $Generate$, and $Update$.
-\item Multiple calls to $Generate$ and $Update$.
-\item We need to now consider whether the adversary is adaptive or non-adaptive.
-\item The $V$ is updated after each call.
-\item The $K$ is updated after each call, so the PRF is re-keyed.
-%\item Instantiate
-\end{itemize}
+TODO: move the explanation of identical until bad (in $oracleCompMap$) here
 
 \subsection{Proof of indistinguishability}
 

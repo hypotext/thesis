@@ -53,7 +53,8 @@
     "ov"
     "dr"
     "rar"
-    "bt")
+    "bt"
+    "samp")
    (LaTeX-add-labels
     "intermediate2")
    (LaTeX-add-bibitems
