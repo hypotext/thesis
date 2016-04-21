@@ -57,7 +57,8 @@
     "samp"
     "lar")
    (LaTeX-add-labels
-    "intermediate2")
+    "intermediate2"
+    "def:indist")
    (LaTeX-add-bibitems
     "affeldt2009"
     "appel2015"

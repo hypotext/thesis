@@ -67,7 +67,7 @@ breaklines=true
 %\newcommand{\ct}[1]{}
 \newcommand{\ct}[2]{\hspace{0in}#2}
 \newcommand{\li} {\lstinline}
-\newcommand{\kv} {$(K, V)$ }
+\newcommand{\kv} {$(k, v)$ }
 
 \newcommand{\f}{\frac}
 \newcommand{\cd}{\cdot}
@@ -194,7 +194,7 @@ $\textbf{Update}(data, k, v) := $
 \item[] $ret \s (k_2, v_2)$\\
 \end{game}
 
-$Instantiate$ initializes $(K,V)$ and $reseed\_counter$.  \\
+$Instantiate$ initializes $(k,v)$ and $reseed\_counter$.  \\
 
 $\textbf{Instantiate}(entropy, nonce) := $
 \begin{game}
@@ -276,7 +276,7 @@ For any game $G$ that returns a boolean, let $\Pr[G]$ denote the probability tha
 % TODO mention EasyCrypt tutorial -- it's on this level
 % hardness of PRF
 
-Adam Petcher proved the security of the core loop construction of \li|HMAC_DRBG|. We summarize his proofs here.
+Adam Petcher proved the security of the core loop construction in HMAC-DRBG's $Generate$ function. We summarize his proofs here.
 
 First, take any family of PRFs $$F_c = \{f_k : \{0,1\}^c \rightarrow \{0,1\}^c\}_{k \in \{0,1\}^c}.$$
 
@@ -290,7 +290,7 @@ $H(n, k, v) :=$
 \item[] else return $f_k(v) || H(n-1, k, f_k(v)).$\\
 \end{game}
 
-For example, $H(0,k, v_0) = nil$, and $$H(3, k, v_0) = f_k(v_0) || f_k(f_k(v_0)) || f_k(f_k(f_k(v_0))).$$
+For example, $H(0,k, v_0) = nil$, and $$H(3, k, v_0) = f_k(v_0) || f_k(f_k(v_0)) || f_k(f_k(f_k(v_0))).$$ (Note one difference between $H$ and the loop in $Generate$: $H$ prepends generated blocks, whereas $Generate$ appends generated blocks. We use the former construction because it is easier to reason about in Coq, but intuitively it is as secure as the latter.) % TODO do later
 
 The user (or adversary) can request any number of blocks $n$ polynomial in the security parameter $c$, and the length of the seed is $c$. Thus, the stretch of $H$ is $l(n, c) = cn$. When we use $H$, we pass in $k \xleftarrow{R} \bt^c$.
 
@@ -554,89 +554,87 @@ Thus, $H$ is a secure PRG. Moreover, since we did our proof in the concrete secu
 % TODO: remove this break (here for legibility)
 \break
 
-\subsection{Indistinguishability proof for multiple calls with state updating}
+\subsection{Indistinguishability proof for a simplified HMAC-DRBG}
 % ^^
-\subsubsection{HMAC-DRBG}
-TODO
+\subsubsection{Definitions}
+To prove indistinguishability for HMAC-DRBG, we must extend the proof for $H$ to apply for multiple calls of $H$, with $(k, v)$ being updated after each call.
 
-\subsubsection{Setup}
-To prove indistinguishability for HMAC-DRBG, we must extend the proof for $H$.
+As summarized in section REFERENCE, the HMAC-DRBG functions are $Instantiate$, $Generate$, $Update$, and $Reseed$. The state is $(k, v)$.
 
-As summarized in section REFERENCE, the HMAC-DRBG functions are Instantiate, Generate, Update, Reseed. The state is a 3-tuple of (K, V, number of calls).
-
-% TODO here
-We model it as Instantiate, then Generate+Update as GenUpdate. (code for these)
-
-The user (adversary) can make a polynomial number of calls to GenUpdate, requesting a polynomial number of blocks 
-
-% oh -- generic list?
+We make two main simplifications to HMAC-DRBG (in addition to the simplifications we made when first describing HMAC-DRBG). First, we do not model reseeding the PRG, because we are not proving that it possesses prediction resistance. Second, we do not model non-ideal randomness. As a corollary, we assume that $Instantiate$ initializes $k$ and $v$ with ideal randomness, which makes the proof much easier. Lastly, for convenience, we only output lists of pseudorandom bits whose lengths are multiples of the block size $c$. \\
 
 $\textbf{Instantiate} := $
 \begin{game}
-  \item[] $k \samp^m$
+  \item[] $k \samp^c$
   \item[] $v \samp^c$ \\
 \end{game}
 
-Again we take $H$:
+For the remaining two functions, $Generate$ and $Update$, we note that $Generate$ always calls $Update$ at the end. Thus, we inline $Update$ to produce one function called $GenUpdate\_original$. (It is labeled $original$ because we will be using a different version in our proof, which we cover in subsection REFERENCE.)\\
 
-$H(n, k, v) :=$
+$GenUpdate\_original(k, v, n) :=$
 \begin{game}
-\item[] if $n = 0$ then return $nil$ (the empty list)
-\item[] else return $f_k(v) || H(n-1, k, f_k(v)).$\\
+\item[] $(bits, v_1) \lar Gen\_loop(k, v, n)$
+\item[] $k_1 \lar f_k(v_1 || 00 \ldots 00)$
+\item[] $v_2 \lar f_{k_1}(v_1)$
+\item[] $ret \s (bits, k_1, v_2)$\\
 \end{game}
 
-For example, $H(0,k, v_0) = nil$, and $$H(3, k, v_0) = f_k(v_0) || f_k(f_k(v_0)) || f_k(f_k(f_k(v_0))).$$
+In $GenUpdate\_original$, $Gen\_loop$ behaves like $H$ (the core loop from $Generate$) but also separately returns the last block it generates. It does this because the last block becomes the new $v$ in the $(k,v)$ state.
 
-And construct a PRG for multiple calls as such:
-% !!
+$Gen\_loop(k, v, n) :=$
+\begin{game}
+\item[] if $n = 0$ then $ret \s (nil, v)$
+\item[] else
+  \begin{game}
+    \item[] $v_i \lar f_k(v)$
+    \item[] $(bits, v_{final}) \lar Gen\_loop(k, v_i, n-1)$
+    \item[] $ret \s (v_i || bits, v_{final})$\\
+  \end{game}
+\end{game}
 
-We combined the $Generate$ and $Update$ functions into one program, since they're always called together.
+Similarly to $H$, $Gen\_loop(k, v_0, 0) = (nil, v_0)$, and $$H(k, v_0, 3) = ((f_k(v_0) || f_k(f_k(v_0)) || f_k(f_k(f_k(v_0)))), f_k(f_k(f_k(v_0)))).$$
 
-\begin{lstlisting}
-Definition GenUpdate_original (state : KV) (n : nat) :
-  Comp (list (Bvector eta) * KV) :=
-  [k, v] <-2 state;
-  [bits, v'] <-2 Gen_loop k v n;
-  k' <- f k (to_list v' ++ zeroes);
-  v'' <- f k' (to_list v');
-  ret (bits, (k', v'')).
-\end{lstlisting}
+In our simplified model of HMAC-DRBG, which we will call HMAC-DRBG', a typical run would look like $Instantiate$ followed by some number of calls to $GenUpdate$, each call requesting an some number of pseudorandom blocks.
+
+This suggests the definition of security (indistinguishability) for HMAC-DRBG'. A non-uniform PPT adversary can make a number of calls to GenUpdate (polynomial in $c$), requesting a number of blocks (polynomial in $c$) each time. It receives the list of blocks, which are the bitvectors it requested. Then it must output a guess as to whether the bits are ideally random or pseudorandom.
+% TODO is this right? (polynom in $c$)
+
+We need to now consider whether the adversary is adaptive or non-adaptive. That is, should the adversary be allowed to make choices (e.g. numbers of blocks to query) based on previous results (e.g. pseudorandom bits returned so far)? This is a new concern. Previously, when proving the security of $H$, the adversary could only make one call to $H$. So it couldn't make any decision after picking $n$ (the number of blocks). 
+
+% TODO proof for adaptive adversary?
+Here, we choose to prove security against a non-adaptive adversary. Proving security against an adaptive adversary, and formalizing that proof, would be substantially harder. We discuss reasons for this decision in section REFERENCE.
+
+That said, here is the formal statement of what we want to prove.
+
+\begin{dfn}[Indistinguishability for HMAC-DRBG'] \label{def:indist}
+For all non-uniform, non-adaptive PPT distinguishers $D$, for all lists of natural numbers $l$ of length polynomial in $c$ (the list of numbers of blocks requested) that it outputs, let $n$ be the total number of blocks requested. ($n := \sum_i^{|l|} l_i$) 
+
+Then there exists a function negligible in $c$ and $l$ such that
+$$|\Pr[G\_real] - \Pr[G\_ideal]| \leq neg(c, n).$$
+
+The real-world game models the real-world usage we discussed earlier, again with a non-adaptive adversary.\\
 
 $\textbf{G\_real} := $
 \begin{game}
-\item[] $l \leftarrow D$ (the distinguisher outputs a list of TODO) 
+\item[] $l \leftarrow D$
 \item[] $(k,v) \leftarrow Instantiate$
 \item[] $bits \leftarrow GenUpdate(k,v,l)$
 \item[] $ret \s D(bits)$ \\
 \end{game}
 
+In the ideal-world game, $GenRand$ takes the list $l$ outputted by the adversary and generates $n$ blocks that is each sampled uniformly at random.\\
+
 $\textbf{G\_ideal} := $
 \begin{game}
-\item[] $l \leftarrow D$ (the distinguisher outputs a list of TODO) 
+\item[] $l \leftarrow D$ 
 \item[] $bits \leftarrow GenRand(l)$
 \item[] $ret \s D(bits)$ \\
 \end{game}
 
-The adversary, an abstract probabilistic polynomial time algorithm. It takes a list of blocks and returns a guess.
+\end{dfn}
 
-\begin{lstlisting}
-(* Non-adaptive adversary. *)
-Variable A : list (list (Bvector eta)) -> Comp bool.
-Hypothesis A_wf: forall ls, well_formed_comp (A ls).
-\end{lstlisting}
-
-\subsubsection{Extending prior work}
-
-We extend his work to deal with the following complications in the full HMAC-DRBG and model real-world usage.
-
-\begin{itemize}
-\item Additional functions: $Instantiate$, $Generate$, and $Update$.
-\item Multiple calls to $Generate$ and $Update$.
-\item We need to now consider whether the adversary is adaptive or non-adaptive.
-\item The $V$ is updated after each call.
-\item The $K$ is updated after each call, so the PRF is re-keyed.
-%\item Instantiate
-\end{itemize}
+% TODO remove
+\break
 
 \subsubsection{Proof}
 Dealing with key/v updating ?
@@ -1533,13 +1531,13 @@ Formally verifying HMAC-DRBG helped us notice several NIST design decisions that
 
 \section{Additional properties to prove about HMAC-DRBG}
 
-We plan to prove that HMAC-DRBG possesses backtracking resistance. That is, if it is compromised at time $T$, the adversary still cannot distinguish HMAC-DRBG previous output from ideal random strings. That is, if the adversary is given a $Compromise$ oracle that it can call after a certain number of calls to the $GenUpdate$ oracle to reveal the PRG's internal $(K,V)$, the adversary still cannot distinguish the previous output from ideal random strings. We plan to do this proof and reuse much of our existing work on indistinguishability. We're working on formalizing the definitions and working out some issues regarding v-updating and nonadaptive vs. adaptive adversaries.
+We plan to prove that HMAC-DRBG possesses backtracking resistance. That is, if it is compromised at time $T$, the adversary still cannot distinguish HMAC-DRBG previous output from ideal random strings. That is, if the adversary is given a $Compromise$ oracle that it can call after a certain number of calls to the $GenUpdate$ oracle to reveal the PRG's internal $(k,v)$, the adversary still cannot distinguish the previous output from ideal random strings. We plan to do this proof and reuse much of our existing work on indistinguishability. We're working on formalizing the definitions and working out some issues regarding v-updating and nonadaptive vs. adaptive adversaries.
 
 % how does this work?
 %@ the v-updating
 
 %@cite
-NIST also specifies that HMAC-DRBG possesses the complementary property of prediction resistance. That is, if it is compromised at time $T$, the adversary will find it difficult to distinguish HMAC-DRBG's future output from ideal random strings. Naively, if given $(K, V)$ at time $T$, the adversary should be able to compute all future DRBG output and thus distinguish. Thus, the $Reseed$ function is supposed to ensure prediction resistance by injecting fresh entropy into the DRBG that is unknown to the adversary. (It refreshes the $(K,V)$ by re-HMACing them with some entropy appended to the previous $(K,V)$)
+NIST also specifies that HMAC-DRBG possesses the complementary property of prediction resistance. That is, if it is compromised at time $T$, the adversary will find it difficult to distinguish HMAC-DRBG's future output from ideal random strings. Naively, if given $(k, v)$ at time $T$, the adversary should be able to compute all future DRBG output and thus distinguish. Thus, the $Reseed$ function is supposed to ensure prediction resistance by injecting fresh entropy into the DRBG that is unknown to the adversary. (It refreshes the $(k,v)$ by re-HMACing them with some entropy appended to the previous $(k,v)$)
 
 However, proving things about this is difficult. Dodis et al. (2013) proved that the Linux PRNG was insecure and did not possess prediction resistance. However, they had to do tricky reasoning about how much entropy was injected at once and where. They had to reason about, for example, the difference between injecting entropy as five bits per call over ten calls, versus fifty bits in one call, and relative difficulties for the adversary.
 
