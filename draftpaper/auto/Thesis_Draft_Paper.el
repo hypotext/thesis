@@ -54,7 +54,8 @@
     "dr"
     "rar"
     "bt"
-    "samp")
+    "samp"
+    "lar")
    (LaTeX-add-labels
     "intermediate2")
    (LaTeX-add-bibitems

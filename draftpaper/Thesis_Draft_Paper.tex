@@ -84,6 +84,7 @@ breaklines=true
 \newcommand{\rar}{\rightarrow}
 \newcommand{\bt}{\{0,1\}}
 \newcommand{\samp}{\xleftarrow{R} \{0,1\}}
+\newcommand{\lar}{\leftarrow}
 
 \newtheorem{thm}{Theorem}
 \newtheorem{dfn}[thm]{Definition}
@@ -169,41 +170,82 @@ The internal state consists of:
   \item A prediction resistance flag that indicates whether this instantiation requires prediction resistance. Prediction resistance is explained in the next section.
   \end{itemize}
 
-  \item The working state:
+  \item The working state, which we often refer to as $(k,v)$.
   \begin{itemize}
-  \item The secret key $K$ of length $c$ for the internal PRF, which is HMAC. It is updated at least once each time the PRG generates pseudorandom bits by calling the $Generate$ function.
-  \item An internal value $V$ of length $c$, which is updated each time the PRG generates another block of pseudorandom bits of length $c$.
+  \item The secret key $k$ of length $c$ for the internal PRF, which is HMAC. It is updated at least once each time the PRG generates pseudorandom bits by calling the $Generate$ function.
+  \item An internal value $v$ of length $c$, which is updated each time the PRG generates another block of pseudorandom bits of length $c$.
   \end{itemize}
 
 \end{itemize}
 
-HMAC-DRBG consists of four main functions, $Instantiate$, $Generate$, $Update$, and $Reseed$, and another function we don't model called $getEntropy$. Refer to NIST SP 800-90A for the pseudocode. 
+HMAC-DRBG consists of four functions, $Update$, $Instantiate$, $Reseed$, and $Generate$, and another function we don't model called $getEntropy$. For simplicity, we omit the $additional\_input$ and $personalization\_string$ parameters from $Instantiate$. Our proof of security does not include them. Refer to NIST SP 800-90A for the full pseudocode. 
 
-For simplicity, we omit the $provided\_data$ and $additional\_input$ parameters. Our proof of security does not include them.\\
+Let $f$ denote HMAC and $f_k$ denote HMAC partially applied with the key $k$. Let $||$ denote concatenation. Here we will not use mutable variables as NIST does, but write our code in a more functional style, which will make it more readable.\\
 
-$\textbf{Instantiate} := $
+$Update$ refreshes $(k, v)$, optionally using some $data$, which can be fresh entropy for prediction resistance.\\
+
+$\textbf{Update}(data, k, v) := $
 \begin{game}
-\item[] $k \samp^m$
-\item[] $v \samp^n$ \\
+\item[] $k_1 \lar f_k(v || 0x00 || data)$
+\item[] $v_1 \lar f_{k_1}(v)$
+\item[] if $(provided\_data = nil)$, $ret (k_1, v_1)$
+\item[] $k_2 \lar f_{k_1}(v_1 || 0x01 || data)$
+\item[] $v_2 \lar f_{k_2}(v_1)$
+\item[] $ret \s (k_2, v_2)$\\
 \end{game}
 
-$\textbf{Generate} := $
+$Instantiate$ initializes $(K,V)$ and $reseed\_counter$.  \\
+
+$\textbf{Instantiate}(entropy, nonce) := $
 \begin{game}
-\item[] $k \samp^m$
-\item[] $v \samp^n$ \\
+\item[] $seed \lar entropy || nonce$
+\item[] $k \lar 0x00 \ldots 00$
+\item[] $v \lar 0x01 \ldots 01$
+\item[] $(k_1, v_1) \lar Update(seed, k, v)$
+\item[] $reseed\_counter \lar 1$
+\item[] $ret \s (k_1, v_1, reseed\_counter)$\\
 \end{game}
 
-$\textbf{Update} := $
+$Reseed$ could be called for two reasons. First, $reseed\_counter$ could have exceeded $reseed\_interval$. This is rare, since $reseed\_interval$ is set to high values in practice; its maximum value is $2^{48}$, meaning it would naturally reseed once every couple of million years. (Indeed, in practice, one does not want a PRG to reseed often. This would give an attacker more opportunities to compromise the entropy source.) More commonly, $Reseed$ is called when a PRG's state could have be compromised, and requires fresh entropy to be mixed in.\\
+
+$\textbf{Reseed}(k, v, entropy) := $
 \begin{game}
-\item[] $k \samp^m$
-\item[] $v \samp^n$ \\
+\item[] $(k_1, v_1) \lar Update(seed, k, v)$
+\item[] $reseed\_counter \lar 1$
+\item[] $ret \s (k,v, reseed\_counter)$ \\
 \end{game}
 
-$\textbf{Reseed} := $
+$Generate$ generates $n$ blocks of pseudorandom bits.
+% $Gen\_loop$ is the internal bit-generating loop of $Generate$, rephrased in a functional and recursive manner from the original imperative $while$ loop. $c$ is the input/output size of $f_k$ (HMAC). \\
+
+% $\textbf{Gen\_loop(n, k, v)} :=$
+% \begin{game}
+% \item[] if $n = 0$ then return $nil$ (the empty list)
+% \item[] else return $f_k(v) || H(n-1, k, f_k(v)).$\\
+% \end{game}
+
+$\textbf{Generate(k, v, n)} := $
 \begin{game}
-\item[] $k \samp^m$
-\item[] $v \samp^n$ \\
+\item[] if $reseed\_counter > reseed\_interval$, 
+  \begin{game}
+  \item[] $ret$ ``reseed required''
+  \end{game}
+% \item[] $bits \lar Gen\_loop(\lceil \f{n}{c} \rceil, k,v)$
+\item[] $temp_0 \lar nil$
+\item[] $v_0 \lar v$
+\item[] while $len(temp_i) < n$
+  \begin{game}
+    \item[] $v_{i+1} \lar f_k(v_i)$
+    \item[] $temp_{i+1} \lar temp_i || v_{i+1}$
+  \end{game}
+\item[] (say the loop above ran $j$ times)
+\item[] $returned\_bits \lar$ leftmost $n$ of $temp_j$
+\item[] $(k_1, v_{j+1}) \lar Update(k, v_j)$
+\item[] $reseed\_counter_1 \lar reseed\_counter + 1$
+\item[] $ret \s (bits, k_1, v_{j+1}, reseed\_counter_1)$\\
 \end{game}
+
+From the user's point of view, only the $Instantiate$ and $Generate$ functions are visible. The state is, of course, hidden. Typical usage would be a call to $Instantiate$, followed by any number of calls to $Generate$ some number of pseudorandom bits. $Generate$ automatically calls $Update$ every time it is called, and $Generate$ may call $Reseed$.
 
 We discuss our proof of security for a simplified PRG, consisting of only one call to the internal loop in $Generate$, in section REFERENCE. We discuss our proof of security for a simplified version of HMAC-DRBG in section REFERENCE.
 
