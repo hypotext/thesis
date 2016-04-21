@@ -154,23 +154,32 @@ Our approach is unique because it provides an end-to-end and foundational verifi
 
 \section{HMAC-DRBG overview}
 % **
-A pseudorandom number generator is used to stretch a small amount of randomness into a large amount of pseudo-randomness, often for use in cryptosystems. HMAC-DRBG, formalized in NIST SP 800-90A, is one such pseudorandom number generator. It generates output by iterating HMAC, a keyed-hash message authentication function widely believed to be difficult to invert [cite] and that proven to be a pseudo-random function (PRF) given that HMAC's internal hash function is a PRF. [mention key?]
+A pseudorandom number generator is used to stretch a small amount of randomness into a large amount of pseudo-randomness, often for use in cryptosystems. HMAC-DRBG, formalized in NIST SP 800-90A, is one such pseudorandom number generator. It generates output by iterating HMAC, a keyed-hash message authentication function widely believed to be difficult to invert [cite] and that proven to be a pseudo-random function (PRF) given that HMAC's internal hash function is a PRF. % [mention key?]
 
-HMAC-DRBG possesses an internal state consisting of two pieces of administrative information and two pieces of secret information.
+The following section summarizes HMAC-DRBG's description in NIST SP 800-90A.
 
+HMAC-DRBG possesses an internal state consisting of two pieces of administrative information, which are constant across calls, and two pieces of secret information, which are updated across calls.
 
+The internal state consists of:
 
 \begin{itemize}
-\item The secret key $K$ for HMAC.
+\item Administrative information:
+  \begin{itemize}
+  \item The security strength of the PRG's instantiation. The $Instantiate$ function obtains the appropriate amount of entropy for that security strength.
+  \item A prediction resistance flag that indicates whether this instantiation requires prediction resistance. Prediction resistance is explained in the next section.
+  \end{itemize}
 
-\item An internal value $V$ which is updated with each block of output. 
+  \item The working state:
+  \begin{itemize}
+  \item The secret key $K$ of length $c$ for the internal PRF, which is HMAC. It is updated at least once each time the PRG generates pseudorandom bits by calling the $Generate$ function.
+  \item An internal value $V$ of length $c$, which is updated each time the PRG generates another block of pseudorandom bits of length $c$.
+  \end{itemize}
 
-\item The administrative information, consisting of the security strength of this instantiation
-\item a flag that indicates whether this instantiation requires prediction resistance.
 \end{itemize}
 
+HMAC-DRBG consists of four main functions, $Instantiate$, $Generate$, $Update$, and $Reseed$, and another function we don't model called $getEntropy$. Refer to NIST SP 800-90A for the pseudocode. 
 
-HMAC-DRBG consists of four main functions, $Instantiate$, $Generate$, $Update$, and $Reseed$, and another function we don't model called $getEntropy$. Refer to NIST 800-90A for the pseudocode. \\
+For simplicity, we omit the $provided\_data$ and $additional\_input$ parameters. Our proof of security does not include them.\\
 
 $\textbf{Instantiate} := $
 \begin{game}
@@ -184,12 +193,36 @@ $\textbf{Generate} := $
 \item[] $v \samp^n$ \\
 \end{game}
 
-Update
+$\textbf{Update} := $
+\begin{game}
+\item[] $k \samp^m$
+\item[] $v \samp^n$ \\
+\end{game}
 
+$\textbf{Reseed} := $
+\begin{game}
+\item[] $k \samp^m$
+\item[] $v \samp^n$ \\
+\end{game}
 
-Reseed
+We discuss our proof of security for a simplified PRG, consisting of only one call to the internal loop in $Generate$, in section REFERENCE. We discuss our proof of security for a simplified version of HMAC-DRBG in section REFERENCE.
 
-Entropy
+\subsection{Security properties}
+
+The most important property for a PRG is that its output is indistinguishable from ideal randomness. This definition will be formally stated in the proof in section REFERENCE.
+% If an attacker can predict, then it can...
+
+A good PRG ought to also possess \emph{backtracking resistance} and \emph{prediction resistance}.
+
+If a PRG is backtracking resistant, then if the working state of the PRG is compromised at some time, any of its (previously unseen) output from before that time remains indistinguishable from ideal randomness.
+
+This definition will be formally stated in the proof in section REFERENCE.
+
+Prediction resistance is the complementary property. If a PRG is prediction resistant, then if the working state of the PRG is compromised at some time, after a certain recovery or reseeding interval, it is again indistinguishable from ideal randomness for any time afterward.
+
+% cite entropy extractor stuff
+
+We do not prove that HMAC-DRBG is prediction resistant. This is because the definition is slippery, and because it is difficult to prove.
 
 \section{Proofs}
 
@@ -203,9 +236,9 @@ For any game $G$ that returns a boolean, let $\Pr[G]$ denote the probability tha
 
 Adam Petcher proved the security of the core loop construction of \li|HMAC_DRBG|. We summarize his proofs here.
 
-First, take any family of PRFs $$F_c = \{f_k : \{0,1\}^c \rightarrow \{0,1\}^c\}_{k \in \{0,1\}^m}.$$
+First, take any family of PRFs $$F_c = \{f_k : \{0,1\}^c \rightarrow \{0,1\}^c\}_{k \in \{0,1\}^c}.$$
 
-Construct a PRG $$H : (n : \mathbb{N}) \rightarrow (k : \{0,1\}^m) \rightarrow (v : \{0,1\}^c) \rightarrow (bits : \{0,1\}^{cn})$$
+Construct a PRG $$H : (n : \mathbb{N}) \rightarrow (k : \{0,1\}^c) \rightarrow (v : \{0,1\}^c) \rightarrow (bits : \{0,1\}^{cn})$$
 
 It takes an input seed and applies the PRF to it, then uses the output as one block of pseudorandom bits and as the next input seed to the PRG. $n$ is the number of blocks desired, $k$ is the key for the PRF, and $c$ (the input/output size of the PRF) is the security parameter. \\
 
@@ -217,7 +250,7 @@ $H(n, k, v) :=$
 
 For example, $H(0,k, v_0) = nil$, and $$H(3, k, v_0) = f_k(v_0) || f_k(f_k(v_0)) || f_k(f_k(f_k(v_0))).$$
 
-The user (or adversary) can request any number of blocks $n$ polynomial in the security parameter $c$, and the length of the seed is $c$. Thus, the stretch of $H$ is $l(n, c) = cn$. When we use $H$, we pass in $k \xleftarrow{R} \bt^m$.
+The user (or adversary) can request any number of blocks $n$ polynomial in the security parameter $c$, and the length of the seed is $c$. Thus, the stretch of $H$ is $l(n, c) = cn$. When we use $H$, we pass in $k \xleftarrow{R} \bt^c$.
 
 We want to prove that the bits generated by $H$ are pseudorandom. 
 
@@ -227,7 +260,7 @@ We want to prove that the bits generated by $H$ are pseudorandom.
 \begin{dfn}For all non-uniform, non-adaptive probabilistic polynomial time distinguishers $D$, number of blocks $n$ that is polynomial in $c$, there exists a negligible function such that
 $$| \Pr [ D (H (n, k, U_c) = 1] - \Pr [ D(U_{cn}) = 1] | \leq neg(c,n),$$
 
-where $U_c \xleftarrow{R} \{0,1\}^c$ ($U_c$ is sampled uniformly at random from $\{0,1\}^c$), $U_{cn} \xleftarrow{R} \{0,1\}^{cn}$, and $k \xleftarrow{R} \{0,1\}^m$ ($k$ is the key for the PRF).\end{dfn}
+where $U_c \xleftarrow{R} \{0,1\}^c$ ($U_c$ is sampled uniformly at random from $\{0,1\}^c$), $U_{cn} \xleftarrow{R} \{0,1\}^{cn}$, and $k \xleftarrow{R} \{0,1\}^c$ ($k$ is the key for the PRF).\end{dfn}
 
 %$D$ is nonadaptive because it has to pick the number of blocks ahead of time. One can imagine a pathological PRG that chooses a random number of blocks after which to output its seed, and outputs that number of blocks as its first block (which is still random). An adaptive adversary could then distinguish with probability $\f{1}{2}$, whereas a non-adaptive adversary would have a negligible probability of doing so. % TODO footnote on difficulty?
 
@@ -236,7 +269,7 @@ The probability that the distinguisher returns $1$ when given the PRG's output, 
 $\textbf{G\_real} := $
 \begin{game}
 \item[] $n \leftarrow D$ (the distinguisher picks a number of blocks)
-\item[] $k \xleftarrow{R} \{0,1\}^m$
+\item[] $k \xleftarrow{R} \{0,1\}^c$
 \item[] $v \xleftarrow{R} \{0,1\}^c$
 \item[] $bits \leftarrow H(n,k,v)$
 \item[] $ret \s D(bits)$ \\
@@ -297,7 +330,7 @@ where the games are as follows:\\
 
 $\textbf{G\_Adv\_PRF} := $
 \begin{game}
-\item[] $k \xleftarrow{R} \bt^m$
+\item[] $k \xleftarrow{R} \bt^c$
 \item[] $b \leftarrow D_p^{f_k(\cdot)}$ 
 \item[] $ret \s b$ \\
 \end{game}
@@ -314,7 +347,7 @@ Then we rewrite our existing games to fit the form of some adversary being given
 
 $\textbf{G\_real\_2} := $
 \begin{game}
-\item[] $k \xleftarrow{R} \bt^m$
+\item[] $k \xleftarrow{R} \bt^c$
 \item[] $b \leftarrow PRF\_A^{f_k(\cdot)}$ 
 \item[] $ret \s b$ \\
 \end{game}
