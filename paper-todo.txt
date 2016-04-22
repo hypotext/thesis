@@ -54,6 +54,7 @@ TODO: I don't even understand PRHL... ask Lennart to explain the rules to me?
 Later:
 
 ** - Incorporate Andrew's edits
+- Sneaky vegans
 - Write conclusion
 - Explain PRHL and comp_spec
 - Explain HMAC_DRBG

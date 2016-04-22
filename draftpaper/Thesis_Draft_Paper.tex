@@ -87,9 +87,12 @@ breaklines=true
 \newcommand{\lar}{\leftarrow}
 
 \newtheorem{thm}{Theorem}
+% different level
 \newtheorem{dfn}[thm]{Definition}
 \newtheorem{cor}[thm]{Corollary}
+% subnumbering
 \newtheorem{lem}{Lemma}[thm]
+\newtheorem{ex}{Example}[thm]
 
 \begin{document}
 
@@ -592,7 +595,12 @@ $Gen\_loop(k, v, n) :=$
   \end{game}
 \end{game}
 
-Similarly to $H$, $Gen\_loop(k, v_0, 0) = (nil, v_0)$, and $$H(k, v_0, 3) = ((f_k(v_0) || f_k(f_k(v_0)) || f_k(f_k(f_k(v_0)))), f_k(f_k(f_k(v_0)))).$$
+Similarly to $H$:\\
+\begin{game}
+  \item[] $Gen\_loop(k, v_0, 0) = (nil, v_0)$
+  \item[] $Gen\_loop(k, v_0, 1) = (f_k(v_0), f_k(v_0))$
+  \item[] $Gen\_loop(k, v_0, 2) = (f_k(v_0) || f_k(f_k(v_0)), f_k(f_k((v_0))))$\\
+\end{game}
 
 In our simplified model of HMAC-DRBG, which we will call HMAC-DRBG', a typical run would look like $Instantiate$ followed by some number of calls to $GenUpdate$, each call requesting an some number of pseudorandom blocks.
 
@@ -634,43 +642,84 @@ $\textbf{G\_ideal} := $
 \end{dfn}
 
 % TODO remove
+% sometimes latexmk complains about this
 \break
 
-\subsubsection{Proof}
-Dealing with key/v updating ?
+\subsubsection{Proof outline}
 
-Updating the v immediately after re-keying the PRF, in the same oracle call, is hard to reason about. This is because at the beginning of each call, by the hybrid argument, we can assume that the \kv have been randomly sampled. Now we have to replace the key with a random key to reason about updating the v. The solution is simple: we move each v-update to the beginning of the next call and prove that the new sequence of programs is indistinguishable to the adversary. (TODO explain this with pictures)
+Again, we must extend the proof for the security of $H$ to the security of multiple calls of $H$ with $(k,v)$ being updated after each call. This problem often arises when proving the security of PRGs, and it is solved by using a powerful technique called the \emph{hybrid argument}. We will briefly summarize the use of the hybrid argument in the setting of concrete security.
 
-\begin{lstlisting}
-(* [GenUpdate_original, GenUpdate_original, ...] = [GenUpdate_noV, GenUpdate, Genupdate, ...] *)
-  (* use this for the first call *)
-Definition GenUpdate_noV (state : KV) (n : nat) :
-  Comp (list (Bvector eta) * KV) :=
-  [k, v] <-2 state;
-  [bits, v'] <-2 Gen_loop k v n;
-  k' <- f k (to_list v' ++ zeroes);
-  ret (bits, (k', v')).
+% TODO mathcal. also this could be summarized better in the context of reductions...
+We want to bound the probability that some distribution $D_1$ can be distinguished from another distribution $D_2$. Thus, we define $t$ intermediate, or hybrid, distributions $H_i$, with $H_0 := D_1$ and $H_t := D_2$. ($t$ must be polynomial in the security parameter.) 
 
-Definition GenUpdate (state : KV) (n : nat) :
-  Comp (list (Bvector eta) * KV) :=
-  [k, v] <-2 state;
-  v' <- f k (to_list v);
-  [bits, v''] <-2 Gen_loop k v' n;
-  k' <- f k (to_list v'' ++ zeroes);
-  ret (bits, (k', v'')).
-\end{lstlisting}
+% actually TODO cite wikipedia
+Define the probability of $A$ distinguishing between two distributions $D_i, D_j$ to be 
+$$Adv_{D_i, D_j}(A) := | \Pr_{x \xleftarrow{R} D_i} [A(x) = 1] - \Pr_{x \xleftarrow{R} D_j} [A(x) = 1] |.$$
 
-Relation to Adam's proof: we reduce it to his proof in the cases of
-\begin{itemize}
-\item identical until bad on the two oracle computations
-\item probability of the bad event
-\end{itemize}
+Then by the triangle inequality, the probability that a non-uniform PPT adversary $A$ can distinguish $D_1$ and $D_2$ is bounded by the sum of the probabilities of distinguishing between adjacent hybrids.
+$$Adv_{D_1, D_2}(A) \leq \sum_{0}^{t-1} Adv_{H_i, H_{i+1}}(A)$$
 
-% TODO: TeX all the games / functions / hybrids
+% In our case, we simplify the proof by making an assumption that implies that the probabilities of distinguishing between adjacent hybrids are all the same:
+% \begin{gather*}
+% \forall i, j \in [0, t-1],\\ Adv_{H_i, H_{i+1}}(A) = Adv_{H_j, H_{j+1}}(A). 
+% \end{gather*}
+% Namely, we make the simplifying assumption that all elements are the same in the list $l$ of blocks requested by the adversary. The element in question could be anything; in our proof, we set it to the maximum number of blocks requestable.\footnote{This is not a realistic assumption in practice. Also, one can contrive a PRG that is insecure for certain hardcoded block request numbers. We plan to extend our pseudorandomness proof to arbitrary lists of block numbers chosen by the adversary. 
 
-Concrete bound
+% Proof sketch: Let $l_i$ be the number of blocks requested by the adversary on the $i$th call to $GenUpdate$. Then $$Adv_{H_i, H_{i+1}}(A) \leq PRF\_Advantage + Pr\_collisions(l_i)$$ where $Pr\_collisions(n) = \f{(n+1)^2}{2^c}.$ This is negligible for bounded $n$ and sufficiently large $c$.}
 
-Hybrid argument
+% Using this assumption, 
+% \begin{gather*}
+% \forall i \in [0, t-1],\\ Adv_{D_1, D_2}(A) \leq t \cdot Adv_{H_i, H_{i+1}}(A),
+% \end{gather*}
+
+% so we need only bound $Adv_{H_i, H_{i+1}}(A)$.
+
+The above discussion pertained to the general hybrid argument. Now we specialize it to our proof. 
+
+Let $n$ be the number of calls the adversary makes to $GenUpdate$ (so $n := len(l)$) and $l_i$ be the number of blocks of pseudorandom output that the adversary requests on that call ($l_i$ is the $i$th element of the list). Calls are numbered from $1$ to $n$. 
+
+We take the first hybrid $H_0$ to be the distribution of the bits generated by using the PRG normally; that is, using the PRF to generate pseudorandom bits. Subsequently, we define one new hybrid for each call to the PRG, so $t = n + 1$. $H_1$ replaces the PRF used in the first call with ideal randomness, and $H_i$ replaces the PRFs used in calls $1$ through $i$ (inclusive) with ideal randomness. The last hybrid, $H_n$ replaces all PRFs with ideal randomness. 
+
+Thus, $\Pr[G\_real]$ equals $\Pr_{x \xleftarrow{R} H_0} [A(x) = 1]$.
+
+Similarly, $\Pr[G\_ideal]$ equals $\Pr_{x \xleftarrow{R} H_n} [A(x) = 1]$.
+
+Thus, the endpoint hybrids correspond correctly to the quantity defined in \ref{def:indist}:
+$$|Pr[G\_real] - \Pr[G\_ideal]| = Adv_{H_0, H_n}(A).$$
+
+\begin{ex}
+Let's define a notation for the $i$th hybrid and write out all the hybrids for some $i$. Take $i = 3$ (so the adversary makes $3$ calls to $GenUpdate$ with some number of blocks requested). Then there are four hybrids.
+
+In $H_1$, the first call to $GenUpdate$ generates bits in $Gen\_loop$ uniformly sampling from $\{0,1\}^c$ instead of calling $f_k$. Subsequent calls use the normal $Gen\_loop$ construction, which calls $f_k$. Hence we denote $H_1$ as \\ \li|RB PRF PRF|.
+
+$$\begin{tabular}{ l || r |  r | r}
+  call & 1 & 2 & 3\\
+\hline 
+  $H_0$ & PRF & PRF & PRF\\
+  $H_1$ & RB & PRF & PRF\\
+  $H_2$ & RB & RB & PRF\\
+  $H_3$ & RB & RB & RB\\
+\end{tabular}$$
+
+Note that there is state being kept between calls and updated in calls. $(k,v)$ is instantiated, then passed into call 1 of $GenUpdate$, updated there and passed into call 2 of $GenUpdate$, and so on for the rest of the calls.
+
+Intuitively, we replace PRFs with RBs from left to right. The order matters. In $H_0$, $(k,v)$ are passed in from $Instantiate$, which uniformly randomly samples them. In $H_i$, $(k,v)$ are passed in to the call $i+1$ (the first call with the PRF) from call $i$ (the last call using RB), which uniformly randomly samples $k$ and $v$ when they are updated. That makes it easier to reason about subsequent PRF-using calls, which we will have to do later.
+% TODO how does it make reasoning easy
+% TODO subtlety: v-updating moved means v is now URD because it's the first input of a "fresh" PRF
+% TODO but we didn't have to deal with this?
+\end{ex}
+
+Again, we are seeking to bound
+$$Adv_{D_1, D_2}(A) \leq \sum_{0}^{t-1} Adv_{H_i, H_{i+1}}(A).$$
+
+Now we bound the quantity in the summation. Intuitively, we have just reduced it to our earlier proof about the security of $H$, and the bound is the same.
+
+\begin{thm}[Distance between adjacent hybrids.] \label{thm:adjacent_hybrids}
+Let $l_i$ be the number of blocks that the adversary requests on the $i$th call. Then for all $i \in [0,n-1]$,
+\begin{gather*}
+Adv_{H_i, H_{i+1}}(A) \leq PRF\_Advantage + \f{(l_i+1)^2}{2^c}.
+\end{gather*} \end{thm}
+\begin{proof} 
 
 My hybrids (intermediate games)
 
@@ -694,10 +743,60 @@ New oracles:
 $Oi\_prg$
 $Oi\_oc$
 
+Reusing Adam's work. Relation to Adam's proof: we reduce it to his proof in the cases of
+\begin{itemize}
+\item identical until bad on the two oracle computations
+\item probability of the bad event
+\end{itemize}
+
+\subsubsection{Updating the v}
+
+Updating the v immediately after re-keying the PRF, in the same oracle call, is hard to reason about. This is because at the beginning of each call, by the hybrid argument, we can assume that the $(k,v)$ have been randomly sampled. Now we have to replace the key with a random key to reason about updating the v. The solution is simple: we move each v-update to the beginning of the next call and prove that the new sequence of programs is indistinguishable to the adversary. 
+
+This version of $GenUpdate\_original$ omits the last line, which updates $v$. \\
+
+$GenUpdate\_noV(k, v, n) :=$
+\begin{game}
+\item[] $(bits, v_1) \lar Gen\_loop(k, v, n)$
+\item[] $k_1 \lar f_k(v_1 || 00 \ldots 00)$
+\item[] $ret \s (bits, k_1, v_1)$\\
+\end{game}
+
+This version of $GenUpdate\_original$ starts by updating $v$ and does not update $v$ again. \\
+
+$GenUpdate(k, v, n) :=$
+\begin{game}
+\item[] $v_1 \lar f_k(v)$
+\item[] $(bits, v_2) \lar Gen\_loop(k, v_1, n)$
+\item[] $k_1 \lar f_k(v_2 || 00 \ldots 00)$
+\item[] $ret \s (bits, k_1, v_2)$\\
+\end{game}
+
+We prove that the pseudorandom output produced by this sequence of calls $$[GenUpdate\_original, GenUpdate\_original, \ldots]$$ is identically distributed to the pseudorandom output produced by this new sequence of calls $$[GenUpdate\_noV, GenUpdate, GenUpdate, \ldots].$$ 
+
+\subsubsection{End}
+
+This completes our bound on the distance between adjacent hybrids.
+
+\end{proof}
+
+\begin{thm}[Distance between first and last hybrid.] \label{thm:hybrids}
+\begin{gather*}
+Adv_{D_1, D_2}(A) \leq t \cdot PRF\_Advantage + \sum_{0}^{t-1} \f{(l_i+1)^2}{2^c} \\ 
+\leq t \cdot (PRF\_Advantage + \f{(maxBlocks + 1)^2}{2^c}).
+\end{gather*}
+\end{thm}
+\begin{proof}
+The first inequality follows by the triangle inequality combined with Theorem \ref{thm:adjacent_hybrids}. 
+
+The second inequality follows by the fact that the PRG imposes an upper limit on the number of blocks that may be requested per call. This is $2^{19}$ bits for HMAC-DRBG, according to NIST SP 800-90A (39).
+
+This is a negligible quantity for sufficiently large $c$. Usually $c$ is 256, since HMAC's internal hash function is typically SHA-256.
+\end{proof}
+
+\subsubsection{Other}
+
 Sone words on dealing with the hybrids formally
-
-New reductions/games (PRF, random function)
-
 Direction of proof we COULD have taken
 
 \subsection{Proof of backtracking resistance}
