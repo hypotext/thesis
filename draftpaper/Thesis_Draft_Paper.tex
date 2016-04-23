@@ -582,7 +582,7 @@ $GenUpdate\_original(k, v, n) :=$
 \item[] $ret \s (bits, k_1, v_2)$\\
 \end{game}
 
-In $GenUpdate\_original$, $Gen\_loop$ behaves like $H$ (the core loop from $Generate$) but also separately returns the last block it generates. It does this because the last block becomes the new $v$ in the $(k,v)$ state.
+In $GenUpdate\_original$, $Gen\_loop$ behaves like $H$ (the core loop from $Generate$) but also separately returns the last block it generates. It does this because the last block becomes the new $v$ in the $(k,v)$ state.\\ 
 
 $Gen\_loop(k, v, n) :=$
 \begin{game}
@@ -622,6 +622,8 @@ $$|\Pr[G\_real] - \Pr[G\_ideal]| \leq neg(c, n).$$
 
 The real-world game models the real-world usage we discussed earlier, again with a non-adaptive adversary.\\
 
+TODO: $compMap$ here and in the game below \\
+
 $\textbf{G\_real} := $
 \begin{game}
 \item[] $l \leftarrow D$
@@ -631,6 +633,8 @@ $\textbf{G\_real} := $
 \end{game}
 
 In the ideal-world game, $GenRand$ takes the list $l$ outputted by the adversary and generates $n$ blocks that is each sampled uniformly at random.\\
+
+TODO: $compMap$ here and in the game below \\
 
 $\textbf{G\_ideal} := $
 \begin{game}
@@ -643,7 +647,7 @@ $\textbf{G\_ideal} := $
 
 % TODO remove
 % sometimes latexmk complains about this
-\break
+% \break
 
 \subsubsection{Proof outline}
 
@@ -684,13 +688,13 @@ Thus, $\Pr[G\_real]$ equals $\Pr_{x \xleftarrow{R} H_0} [A(x) = 1]$.
 
 Similarly, $\Pr[G\_ideal]$ equals $\Pr_{x \xleftarrow{R} H_n} [A(x) = 1]$.
 
-Thus, the endpoint hybrids correspond correctly to the quantity defined in \ref{def:indist}:
+Thus, the endpoint hybrids correspond correctly to the quantity defined in Theorem \ref{def:indist}:
 $$|Pr[G\_real] - \Pr[G\_ideal]| = Adv_{H_0, H_n}(A).$$
 
-\begin{ex}
+\begin{ex} \label{ex:hybrid_notation}
 Let's define a notation for the $i$th hybrid and write out all the hybrids for some $i$. Take $i = 3$ (so the adversary makes $3$ calls to $GenUpdate$ with some number of blocks requested). Then there are four hybrids.
 
-In $H_1$, the first call to $GenUpdate$ generates bits in $Gen\_loop$ uniformly sampling from $\{0,1\}^c$ instead of calling $f_k$. Subsequent calls use the normal $Gen\_loop$ construction, which calls $f_k$. Hence we denote $H_1$ as \\ \li|RB PRF PRF|.
+In $H_1$, the first call to $GenUpdate$ generates bits in $Gen\_loop$ by uniformly sampling from $\{0,1\}^c$ instead of calling $f_k$. Denote this as RB (ideally random bits). Subsequent calls use the normal $Gen\_loop$ construction, which calls $f_k$. Hence we denote $H_1$ as \\ \li|RB PRF PRF|.
 
 $$\begin{tabular}{ l || r |  r | r}
   call & 1 & 2 & 3\\
@@ -701,54 +705,59 @@ $$\begin{tabular}{ l || r |  r | r}
   $H_3$ & RB & RB & RB\\
 \end{tabular}$$
 
-Note that there is state being kept between calls and updated in calls. $(k,v)$ is instantiated, then passed into call 1 of $GenUpdate$, updated there and passed into call 2 of $GenUpdate$, and so on for the rest of the calls.
+The notation hides the fact that state being kept between calls and updated in calls. $(k,v)$ is instantiated, then passed into call 1 of $GenUpdate$, updated there and passed into call 2 of $GenUpdate$, and so on for the rest of the calls.
 
-Intuitively, we replace PRFs with RBs from left to right. The order matters. In $H_0$, $(k,v)$ are passed in from $Instantiate$, which uniformly randomly samples them. In $H_i$, $(k,v)$ are passed in to the call $i+1$ (the first call with the PRF) from call $i$ (the last call using RB), which uniformly randomly samples $k$ and $v$ when they are updated. That makes it easier to reason about subsequent PRF-using calls, which we will have to do later.
+Intuitively, we replace PRFs with RBs from left to right. The order matters. In $H_0$, $(k,v)$ are passed in from $Instantiate$, which uniformly randomly samples them. In $H_i$, $(k,v)$ are passed in to the call $i+1$ (the first call using the PRF) from call $i$ (the last call using RB), which uniformly randomly samples $k$ and $v$ when they are updated. That makes it easier to reason about subsequent PRF-using calls, which we will have to do later.
 % TODO how does it make reasoning easy
 % TODO subtlety: v-updating moved means v is now URD because it's the first input of a "fresh" PRF
 % TODO but we didn't have to deal with this?
 \end{ex}
 
-Again, we are seeking to bound
+Again, we are trying to bound
 $$Adv_{D_1, D_2}(A) \leq \sum_{0}^{t-1} Adv_{H_i, H_{i+1}}(A).$$
 
-Now we bound the quantity in the summation. Intuitively, we have just reduced it to our earlier proof about the security of $H$, and the bound is the same.
+Now we bound the quantity being summed, which is the distance between adjacent hybrids. Intuitively, we have just reduced it to our earlier proof about the security of $H$, and the bound is the same.
 
 \begin{thm}[Distance between adjacent hybrids.] \label{thm:adjacent_hybrids}
 Let $l_i$ be the number of blocks that the adversary requests on the $i$th call. Then for all $i \in [0,n-1]$,
 \begin{gather*}
-Adv_{H_i, H_{i+1}}(A) \leq PRF\_Advantage + \f{(l_i+1)^2}{2^c}.
+Adv_{H_i, H_{i+1}}(A) \leq PRF\_Advantage\_Max + \f{(l_i+1)^2}{2^c}.
 \end{gather*} \end{thm}
 \begin{proof} 
 
-My hybrids (intermediate games)
+In place of the PRF, $H_i$ uses ideal randomness for calls $\leq i$. So its output is ideally random for calls $\leq i$.
 
-$Gi\_rf$
-$PRF\_A$
+In place of the PRF, $H_{i+1}$ uses ideal randomness for calls $\leq i + 1$. So its output is ideally random for calls $\leq i+1$.
 
-The PRF adversary. It uses the existing adversary so we can go from PRF to RF, which is much easier to reason about. (TODO: explained already below) Game $i$ here is more complicated because we can pass in any oracle to use on only the $i$th call, instead of the the hardcoding in game $i$ above. (TODO: talk about motivation for this)
+We introduce an intermediate hybrid $H_i'$ between them. For calls $\leq i$, just like $H_i$, $H_i'$ uses ideal randomness in place of the PRF. On call $i$, $H_i$ uses a random function in place of the PRF. For calls $> i$, $H_i$ uses the PRF normally.
 
-\begin{lstlisting}
-Definition PRF_Adversary (i : nat) : OracleComp Blist (Bvector eta) bool :=
-  bits <--$ oracleCompMap_outer _ _ (Oi_oc' i) maxCallsAndBlocks;
-  $ A bits.
+% TODO: difference between hybrids and games?
+Phrase each in terms of games
 
-(* ith game: use RF oracle *)
-Definition Gi_rf (i : nat) : Comp bool :=
-  [b, _] <-$2 PRF_Adversary i _ _ (randomFunc ({0,1}^eta) eqdbl) nil;
-  ret b.
-\end{lstlisting}
+Actually, the $G\_real$ and $G\_ideal$ above are wrong...
 
-New oracles:
-$Oi\_prg$
-$Oi\_oc$
+We introduce an intermediate game $Gi\_rf$ between the two corresponding games TODO.
 
-Reusing Adam's work. Relation to Adam's proof: we reduce it to his proof in the cases of
-\begin{itemize}
-\item identical until bad on the two oracle computations
-\item probability of the bad event
-\end{itemize}
+As before, we bound the distance between via the triangle inequality. This is very similar to our proof in Theorem REFERENCE. Reduces to Adam's because of the hybrid ordering (reduces to $Instantiate$)
 
+Intuition: 
+
+\begin{ex} \label{ex:hybrid_intermediate} Continuing our hybrid example from earlier (Example \ref{ex:hybrid_notation}),  
+\end{ex}
+
+\begin{lem}$$Adv_{H_i, H_i'}(A) \leq PRF\_Advantage \s i.$$ \end{lem}
+\begin{proof} 
+Phrase in terms of $PRF\_Advantage$ and $PRF\_A$. Similar to Lemma REFERENCE, but does not reduce to it.
+
+TODO: there are multiple PRF adversaries, so we need an upper bound 
+
+TODO: we move the $v$ because we re-key the PRF, so it'd hard to phrase it in terms of $PRF\_A i$? It would be really messy (and maybe impossible). $PRF\_A i$ is given $f_k$ oracle or RF oracle. The oracle query has to happen across two adjacent $GenUpdate$ calls ($v\_update$ from previous call if it exists, then in current call the $Gen\_loop$ and PRF re-keying). Write out the iterations sideways
+
+TODO: was there a second reason for this?
+
+TODO: same PRF in $Gen\_loop$
+
+% subsubsections are confusing. rephrase this as lemma TODO
 \subsubsection{Updating the v}
 
 Updating the v immediately after re-keying the PRF, in the same oracle call, is hard to reason about. This is because at the beginning of each call, by the hybrid argument, we can assume that the $(k,v)$ have been randomly sampled. Now we have to replace the key with a random key to reason about updating the v. The solution is simple: we move each v-update to the beginning of the next call and prove that the new sequence of programs is indistinguishable to the adversary. 
@@ -772,9 +781,55 @@ $GenUpdate(k, v, n) :=$
 \item[] $ret \s (bits, k_1, v_2)$\\
 \end{game}
 
-We prove that the pseudorandom output produced by this sequence of calls $$[GenUpdate\_original, GenUpdate\_original, \ldots]$$ is identically distributed to the pseudorandom output produced by this new sequence of calls $$[GenUpdate\_noV, GenUpdate, GenUpdate, \ldots].$$ 
+We prove that the pseudorandom output produced by this sequence of calls $$[GenUpdate\_original, GenUpdate\_original, \ldots]$$ is identically distributed to the pseudorandom output produced by this new sequence of calls $$[GenUpdate\_noV, GenUpdate, GenUpdate, \ldots].$$ (Note that the intermediate $(k,v)$ state between the PRG calls is \emph{not} the same, but the two outputs are still identically distributed.) The proof is omitted because it is a proof of program equivalence, but it is present in the Coq develpment. 
 
-\subsubsection{End}
+TODO: Preserves $v$ being URD
+
+TODO: use the new $oracleCompMap$ afterward
+
+This completes our proof of $PRF\_Advantage\_Max$.
+\end{proof}
+
+\begin{lem}$$Adv_{H_i', H_{i+1}'}(A) \leq \f{(l_i + 1)^2}{2^c}.$$ \end{lem}
+\begin{proof} 
+% TODO check that this bound is right
+Reduces to Lemma REFERENCE. Again, because of the hybrid ordering (reduces to $Instantiate$)
+
+Reuse identical until bad proof. 
+
+Reuse collision probability proof.
+\end{proof}
+
+\subsubsection{Formalization}
+
+These are more code-related. Should I talk about them later?
+
+Formalization reminded me of one subtlety: there are multiple PRF adversaries and that we need to take 
+
+Formalization helped me check the indices, 
+
+Some things I got wrong: $v_2$ vs $v_1$ in $GenUpdate$; relating which hybrids and intermediate hybrids
+
+In more detail:
+
+The PRF adversary. It uses the existing adversary so we can go from PRF to RF, which is much easier to reason about. (TODO: explained already below) Game $i$ here is more complicated because we can pass in any oracle to use on only the $i$th call, instead of the the hardcoding in game $i$ above. (TODO: talk about motivation for this)
+
+Is there some way to pseudocode $oracleCompMap\_outer$?
+
+\begin{lstlisting}
+Definition PRF_Adversary (i : nat) : OracleComp Blist (Bvector eta) bool :=
+  bits <--$ oracleCompMap_outer _ _ (Oi_oc' i) maxCallsAndBlocks;
+  $ A bits.
+
+(* ith game: use RF oracle *)
+Definition Gi_rf (i : nat) : Comp bool :=
+  [b, _] <-$2 PRF_Adversary i _ _ (randomFunc ({0,1}^eta) eqdbl) nil;
+  ret b.
+\end{lstlisting}
+
+New oracles:
+$Oi\_prg$
+$Oi\_oc$
 
 This completes our bound on the distance between adjacent hybrids.
 
@@ -782,8 +837,8 @@ This completes our bound on the distance between adjacent hybrids.
 
 \begin{thm}[Distance between first and last hybrid.] \label{thm:hybrids}
 \begin{gather*}
-Adv_{D_1, D_2}(A) \leq t \cdot PRF\_Advantage + \sum_{0}^{t-1} \f{(l_i+1)^2}{2^c} \\ 
-\leq t \cdot (PRF\_Advantage + \f{(maxBlocks + 1)^2}{2^c}).
+Adv_{D_1, D_2}(A) \leq t \cdot PRF\_Advantage\_Max + \sum_{0}^{t-1} \f{(l_i+1)^2}{2^c} \\ 
+\leq t \cdot (PRF\_Advantage\_Max + \f{(maxBlocks + 1)^2}{2^c}).
 \end{gather*}
 \end{thm}
 \begin{proof}
@@ -794,10 +849,13 @@ The second inequality follows by the fact that the PRG imposes an upper limit on
 This is a negligible quantity for sufficiently large $c$. Usually $c$ is 256, since HMAC's internal hash function is typically SHA-256.
 \end{proof}
 
-\subsubsection{Other}
+\subsubsection{Comments on proof technique}
 
-Sone words on dealing with the hybrids formally
-Direction of proof we COULD have taken
+TODO: Some words on dealing with the hybrids formally
+
+Direction of proof we could have taken
+
+No v-updating (see Matt's email on Dec 22)
 
 \subsection{Proof of backtracking resistance}
 
@@ -1656,7 +1714,7 @@ To add: VST overview. Hoare logic overview. Summary of Naphat's proof. A diagram
 We must prove lemmas about at least the following differences between the specifications.
 
 \begin{enumerate}
-\item Naphat's code has essentially the same core loop ($Gen_loop$) and $Generate$ and $Update$ code. However, it's surrounded by many layers of error checking code, e.g. for \li|prediction_resistance_request|. We need to prove equivalence modulo error checking.
+\item Naphat's code has essentially the same core loop ($Gen\_loop$) and $Generate$ and $Update$ code. However, it's surrounded by many layers of error checking code, e.g. for \li|prediction_resistance_request|. We need to prove equivalence modulo error checking.
 \item Naphat's code also models failures in the type for the entropy stream. It is an infinite stream of either bit or failure. Also, it is not necessarily ideal randomness. We need to relate FCF's sampling uniformly at random to this more realistic entropy model. Adam Petcher's thesis provides some theorems about the operational semantics of FCF that can help us with this.
 \end{enumerate}
 

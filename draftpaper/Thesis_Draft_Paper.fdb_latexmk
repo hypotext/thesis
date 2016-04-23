@@ -1,9 +1,9 @@
 # Fdb version 3
-["bibtex Thesis_Draft_Paper"] 1461330686 "Thesis_Draft_Paper.aux" "Thesis_Draft_Paper.bbl" "Thesis_Draft_Paper" 1461330689
+["bibtex Thesis_Draft_Paper"] 1461406335 "Thesis_Draft_Paper.aux" "Thesis_Draft_Paper.bbl" "Thesis_Draft_Paper" 1461406337
   "/usr/local/texlive/2012/texmf-dist/bibtex/bst/natbib/plainnat.bst" 1233624470 26816 ffe5423d2019860bad9f54bc402fac15 ""
-  "Thesis_Draft_Paper.aux" 1461330688 5360 6520c1460f038b023d0cdfa8bb567167 ""
+  "Thesis_Draft_Paper.aux" 1461406336 5520 047f97da5be9c5ca05b2ee863feaadb0 ""
   "Thesis_Draft_Paper.bcf" 0 -1 0 ""
-  "Thesis_Draft_PaperNotes.bib" 1461330687 0 d41d8cd98f00b204e9800998ecf8427e ""
+  "Thesis_Draft_PaperNotes.bib" 1461406336 0 d41d8cd98f00b204e9800998ecf8427e ""
   (generated)
   "Thesis_Draft_Paper.bbl"
   "Thesis_Draft_Paper.blg"
@@ -105,7 +105,7 @@
   "Thesis_Draft_Paper.log"
   "Thesis_Draft_Paper.aux"
   "Thesis_Draft_Paper.dvi"
-["pdflatex"] 1461330686 "Thesis_Draft_Paper.tex" "Thesis_Draft_Paper.pdf" "Thesis_Draft_Paper" 1461330689
+["pdflatex"] 1461406335 "Thesis_Draft_Paper.tex" "Thesis_Draft_Paper.pdf" "Thesis_Draft_Paper" 1461406337
   "/usr/local/texlive/2012/texmf-dist/fonts/map/fontname/texfonts.map" 1272929888 3287 e6b82fe08f5336d4d5ebc73fb1152e87 ""
   "/usr/local/texlive/2012/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1246382020 1004 54797486969f23fa377b128694d548df ""
   "/usr/local/texlive/2012/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex9.tfm" 1246382020 996 a18840b13b499c08ac2de96a99eda4bc ""
@@ -155,6 +155,7 @@
   "/usr/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmssi10.pfb" 1248133631 25150 e0d09798d232ab9d00c5c0a8df6cc22d ""
   "/usr/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmssi8.pfb" 1248133631 25168 33771b85f45c82138dd7745db7092d1c ""
   "/usr/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb" 1248133631 32569 5e5ddc8df908dea60932f3c484a54c0d ""
+  "/usr/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pfb" 1248133631 32915 7bf7720c61a5b3a7ff25b0964421c9b6 ""
   "/usr/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb" 1248133631 32716 08e384dc442464e7285e891af9f45947 ""
   "/usr/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb" 1248133631 37944 359e864bd06cde3b1cf57bb20757fb06 ""
   "/usr/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmti9.pfb" 1248133631 36310 f5ddc6715cc60deb16d9db5ded6a9391 ""
@@ -221,10 +222,10 @@
   "/usr/local/texlive/2012/texmf-var/web2c/pdftex/pdflatex.fmt" 1341108725 3691572 80746d7cec090b0770bc87079bef471d ""
   "/usr/local/texlive/2012/texmf.cnf" 1341108668 572 7ea7194897937febeb63145e1c3a1f03 ""
   "/usr/local/texlive/2012/texmf/web2c/texmf.cnf" 1336865692 31299 729e216d9b945005c0d4b079c0500bc9 ""
-  "Thesis_Draft_Paper.aux" 1461330688 5360 6520c1460f038b023d0cdfa8bb567167 ""
-  "Thesis_Draft_Paper.bbl" 1461330686 275 de5ffaf5b665b622658d80bed97ba2a5 "bibtex Thesis_Draft_Paper"
-  "Thesis_Draft_Paper.out" 1461330688 2678 dfa0ede42ed13b2999de2c6e273fa412 ""
-  "Thesis_Draft_Paper.tex" 1461330684 96649 de3c185c1329d8a8c0224f4393b6b1ea ""
+  "Thesis_Draft_Paper.aux" 1461406336 5520 047f97da5be9c5ca05b2ee863feaadb0 ""
+  "Thesis_Draft_Paper.bbl" 1461406335 275 de5ffaf5b665b622658d80bed97ba2a5 "bibtex Thesis_Draft_Paper"
+  "Thesis_Draft_Paper.out" 1461406336 2710 10fc9ad3cc45370284fff2229cce74f4 ""
+  "Thesis_Draft_Paper.tex" 1461406333 99685 41d8ad0868e435fa424e7a429c42ae67 ""
   (generated)
   "Thesis_Draft_PaperNotes.bib"
   "Thesis_Draft_Paper.out"

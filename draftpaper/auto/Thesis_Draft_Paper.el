@@ -59,7 +59,9 @@
    (LaTeX-add-labels
     "intermediate2"
     "def:indist"
+    "ex:hybrid_notation"
     "thm:adjacent_hybrids"
+    "ex:hybrid_intermediate"
     "thm:hybrids")
    (LaTeX-add-bibitems
     "affeldt2009"
