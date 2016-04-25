@@ -51,13 +51,35 @@ TODO: I don't even understand PRHL... ask Lennart to explain the rules to me?
 
 ------
 
+4/25/16
+
+- Write section on bounding adjacent hybrids
+- Write section on _
+
+- Fix formal proof outline
+  - move hasDups to Adam's section
+  - explain complicated oracleCompMap stuff
+- Lemma diagram
+- Fix abstract
+- Fix introduction
+
+- Add brief summary of FCF: PRHL and comp_spec
+- Flesh out explanation of collisions lemmas
+
+-----
+
 Later:
 
+- Change distinguishers D to adversaries A
+- Fix references
+- Table of acknowledgments
+- Move to new template
+- Fix citations
+- Move acknowledgments to beginning
 ** - Incorporate Andrew's edits
 - Sneaky vegans
 - Write conclusion
 - Explain PRHL and comp_spec
-- Explain HMAC_DRBG
 - Explain FCF
 - Comment on what was hybrid-specific work (i.e. hard induction) -- note it in the diagram
 - Write a worked example of a Coq proof
