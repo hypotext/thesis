@@ -748,9 +748,11 @@ $\textbf{G\_hybrid\_useO(o, i)} := $
 \item[] $ret \s A(bits)$ \\
 \end{game}
 
-$oracle\_i\_useO$ ($^*Oi\_oc'$) replaces the oracle used in call $i+1$ with the provided oracle, and behaves like $oracle\_i$ otherwise (replaces the PRF with ideal randomness for calls $\leq i$, and uses the PRF normally for calls $> i+1$). 
+$oracle\_i\_useO$ ($^*Oi\_oc'$) replaces the oracle used in call $i+1$ with the provided oracle, and behaves like $oracle\_i$ otherwise (replaces the PRF with ideal randomness for calls $\leq i$, and uses the PRF normally for calls $> i+1$). To do this replacement, we replace $GenUpdate$ in $oracle\_i\_useO$ with $GenUpdate\_oc$, which uses the provided oracle in place of the PRF.
 
 Now we provide a random function as the oracle for $G\_hybrid\_useO$. So the bits $G\_hybrid\_useO(randomFunc, i)$ generates are sampled from $H_i'$. This serves as our intermediate game between $G\_hybrid(i)$ and $G\_hybrid(i+1)$. We will nickname it $G\_hybrid\_rf(i)$.
+
+To get all the games in a uniform format, we will take $G\_hybrid'(i) := (G\_hybrid\_useO(f\_oracle, i))$ and $G\_hybrid'(i+1) := (G\_hybrid\_useO(rb\_oracle, i))$. $f\_oracle$ is the PRF oracle and $rb\_oracle$ is an oracle that uniformly samples random blocks on each query. Both store their input/output state. These two rewrites can be proven equal, and we will use the game and its oracle-rewritten form interchangeable. (The proof is omitted for brevity.)
 
 As in Section REFERENCE, we bound the distance between $G\_hybrid(i)$ and $G\_hybrid(i+1)$ via the triangle inequality. The proof is also very similar to our proof in Theorem REFERENCE. 
 %Reduces to Adam's because of the hybrid ordering (reduces to $Instantiate$)
@@ -811,7 +813,6 @@ $$\begin{tabular}{ l || r |  r | r}
 
 Now we tackle each part of the bound separately in Lemma \ref{lem:hybrid_triangle} separately. 
 
-% >>
 \begin{lem}
 \begin{gather*}
 |\Pr[G\_hybrid(i)] - \Pr[G\_hybrid\_rf(i)] | \leq PRF\_Advantage\_i \s i \\
@@ -819,25 +820,24 @@ Now we tackle each part of the bound separately in Lemma \ref{lem:hybrid_triangl
 \end{gather*} 
 \end{lem}
 \begin{proof} 
-This proof is not as easy as the proof-by-definition in Lemma REFERENCE. There are two added complexities. Because the $(k,v)$ is updated at an inconvenient place, in order to rewrite the two games above in the form of a $PRF\_Adversary$, we must move one of the lines of code. Additionally, there is one $PRF\_Adversary$ for each $i$, so there are multiple $PRF\_Advantages$.
+This proof is not as easy as the proof-by-definition in Lemma REFERENCE. There are two added complexities. Because the $(k,v)$ is updated at an inconvenient place, in order to rewrite the two games above in the form of a $PRF\_Adversary$, we must move one of the lines of update code. Additionally, there is one $PRF\_Adversary$ for each $i$, so there are multiple $PRF\_Advantages$.
 
-First, we reproduce the code of $G\_hybrid(i)$ and $GenUpdate\_oc$:
+Here we work with $G\_hybrid'(i)$ instead of $G\_hybrid(i)$ because it's in the same form as $G\_hybrid\_rf$. 
 
-$\textbf{G\_hybrid(i)} := $
+First, we deal with the $(k,v)$-updating. We reproduce the code of $GenUpdate\_original$ here. \\
+% which is the version of $GenUpdate$ in $oracle\_i\_useO$ that uses the provided oracle $o$ in place of the PRF.
+ 
+$GenUpdate\_original((k,v), n) :=$
 \begin{game}
-\item[] $l \leftarrow A$
-\item[] $(k,v) \leftarrow Instantiate$
-\item[] $bits \lar oracleMap(oracle\_i(i),(0, (k, v)),l)$
-\item[] $ret \s A(bits)$ \\
+\item[] $(bits, v_1) \lar Gen\_loop((k,v), n)$
+\item[] $k_1 \lar f_k(v_1 || 00 \ldots 00)$
+\item[] $v_2 \lar f_{k_1}(v_1)$
+\item[] $ret \s (bits, (k_1, v_2))$\\
 \end{game}
 
-We move the $v$ because we re-key the PRF, so it'd hard to phrase it in terms of $PRF\_A i$? It would be really messy (and maybe impossible). $PRF\_A i$ is given $f_k$ oracle or RF oracle. The oracle query has to happen across two adjacent $GenUpdate$ calls ($v\_update$ from previous call if it exists, then in current call the $Gen\_loop$ and PRF re-keying). Write out the iterations sideways.
-% TODO: was there a second reason for this?
-% TODO: same PRF in $Gen\_loop$
+Note that the PRF is re-keyed on the second line. Then, on the next line, the function queries the \emph{new} PRF. Therefore, if we were to replace $f_k$ with a PRF oracle, it would have to span the last line of $GenUpdate\_original$ and the first two lines of the next $GenUpdate\_original$ call, but not include the second call's $v$-update. This would be messy and difficult to reason about. It is cleaner to move each $v$-update to the beginning of the next call of $GenUpdate\_original$, then prove that the outputs are still identically distributed. We accomplish this by splitting $GenUpdate\_original$ into two versions.
 
-Updating the v immediately after re-keying the PRF, in the same oracle call, is hard to reason about. This is because at the beginning of each call, by the hybrid argument, we can assume that the $(k,v)$ have been randomly sampled. Now we have to replace the key with a random key to reason about updating the v. The solution is simple: we move each v-update to the beginning of the next call and prove that the new sequence of programs is indistinguishable to the adversary. 
-
-This version of $GenUpdate\_original$ omits the last line, which updates $v$. \\
+The first version, $GenUpdate\_noV$, omits the last line, which updates $v$. \\
 
 $GenUpdate\_noV((k,v), n) :=$
 \begin{game}
@@ -846,7 +846,7 @@ $GenUpdate\_noV((k,v), n) :=$
 \item[] $ret \s (bits, (k_1, v_1))$\\
 \end{game}
 
-This version of $GenUpdate\_original$ starts by updating $v$ and does not update $v$ again. \\
+The second version, $GenUpdate$ starts by updating $v$ and does not update $v$ again. \\
 
 $GenUpdate((k,v), n) :=$
 \begin{game}
@@ -856,9 +856,10 @@ $GenUpdate((k,v), n) :=$
 \item[] $ret \s (bits, (k_1, v_2))$\\
 \end{game}
 
-We prove that the pseudorandom output produced by this sequence of calls $$[GenUpdate\_original, GenUpdate\_original, \ldots]$$ is identically distributed to the pseudorandom output produced by this new sequence of calls $$[GenUpdate\_noV, GenUpdate, GenUpdate, \ldots].$$ (Note that the intermediate $(k,v)$ state between the PRG calls is \emph{not} the same, but the two outputs are still identically distributed.) The proof is omitted because it is a proof of program equivalence, but it is present in the Coq develpment. 
+We prove that the pseudorandom output produced by this sequence of calls $$[GenUpdate\_original, GenUpdate\_original, \ldots]$$ is identically distributed to the pseudorandom output produced by this new sequence of calls $$[GenUpdate\_noV, GenUpdate, GenUpdate, \ldots].$$ (Note that the intermediate $(k,v)$ state between the PRG calls is \emph{not} the same, but the two outputs are still identically distributed.) The proof is omitted because it is a proof of program equivalence, but it is present in the Coq development as $GenUpdate\_v\_output\_probability$. 
 
-TODO: Preserves $v$ being URD \\
+We rewrite $G\_real$ to replace $GenUpdate\_original$ with the two new versions.\\
+% TODO: Preserves $v$ being URD \\
 
 $\textbf{G\_real\_noV} := $
 \begin{game}
@@ -875,23 +876,118 @@ $\textbf{G\_real\_noV} := $
 \begin{lem} $\Pr[G\_real] = \Pr[G\_real\_noV].$ \end{lem}
 \begin{proof} By program equivalence on the outputs. \end{proof}
 
-Now we rewrite $G\_hybrid(i)$ and $G\_hybrid\_rf(i)$ in terms of $PRF\_Advantage$ and $PRF\_A$. 
+Pretend that this is what $G\_real$ has been all along, and that all subsequent rewrites of $G\_real$ have followed this structure. (We can simply add this as a game in the beginning. The $v$-updating is mentioned here, and not in the beginning of the proof, because it is better motivated in context.) 
 
-Similar to Lemma REFERENCE, but does not reduce to it.
+Now, as we originally desired, we can write each $GenUpdate$ (and $GenUpdate\_noV$) to query a provided oracle instead of the PRF. \\
 
-There are multiple PRF adversaries, so we take the final bound to be the greatest of the $PRF\_Advantage$s.
+$GenUpdate\_oc(o, (k,v), n) :=$
+\begin{game}
+\item[] $v_1 \lar o.query(v)$
+\item[] $(bits, v_2) \lar Gen\_loop\_oc(o, k, v_1, n)$
+\item[] $k_1 \lar o.query(v_2 || 00 \ldots 00)$
+\item[] $ret \s (bits, (k_1, v_2))$\\
+\end{game}
 
-This completes our proof of $PRF\_Advantage\_Max$.
+Note that after the PRF is re-keyed, we do \emph{not} further query it in this call of $GenUpdate$. This is much neater than before.
+
+Finally, we can rewrite $G\_hybrid'(i)$ and $G\_hybrid\_rf(i)$ in terms of $PRF\_Adversary$. \\
+
+% k gets overwritten (there are 2)
+% TODO comment on what A can see / need for PRF-A not to see k and v?
+% actually was there any reason for this? i should just revert it to oracleCompMap... TODO
+$\textbf{PRF\_Adversary(o, i)} := $
+\begin{game}
+\item[] $l \leftarrow A$
+\item[] $(k,v) \leftarrow Instantiate$
+\item[] $bits \lar oracleMap(oracle\_i\_useO(o, i),(0, (k, v)),l)$
+\item[] $ret \s A(bits)$ \\
+\end{game}
+
+$\textbf{G\_hybrid\_oc'(i)} := $
+\begin{game}
+\item[] $k \samp^n$
+\item[] $(b, $ \li|_|$) \lar PRF\_Adversary (f\_oracle(k), i)$
+\item[] $ ret(b)$ \\
+\end{game}
+
+$\textbf{G\_hybrid\_rf\_oc(i)} := $
+\begin{game}
+\item[] $(bits, $ \li|_|$) \lar PRF\_Adversary (randomFunc\_oracle, i)$
+\item[] $ret(b)$ \\
+\end{game}
+
+\begin{lem} for all $i$,
+\begin{gather*} 
+| \Pr[G\_hybrid\_oc'(i) ] - \Pr[G\_hybrid\_rf\_oc(i)] | \\
+\leq PRF\_Advantage(i).
+\end{gather*}
+\end{lem}
+\begin{proof}
+More precisely, $PRF\_Advantage$ is parametrized by the $PRF\_Adversary$ passed in, which is parametrized by the hybrid index $i$. The bits generated differ depending on $i$.
+
+This is similar to Lemma REFERENCE, but does not reduce to it.
 \end{proof}
 
+As is evident from the lemma above, there are multiple PRF adversaries, one for each $i$. So, we take the final bound to be the greatest of the $PRF\_Advantage$s: 
+$$PRF\_Advantage\_max := \max_i PRF\_Advantage(i).$$
+
+This completes our proof bounding the distance between hybrid $i$ and the intermediate hybrid for $i$.
+\end{proof}
+
+% >>
 \begin{lem}$$|\Pr[G\_hybrid\_rf(i)] - \Pr[G\_hybrid\_(i+1)] | \leq \f{(l_i + 1)^2}{2^c}.$$ \end{lem}
 \begin{proof} 
 % TODO check that this bound is right
-Reduces to Lemma REFERENCE. Again, because of the hybrid ordering (reduces to $Instantiate$)
+%Reduces to Lemma REFERENCE. Again, because of the hybrid ordering (reduces to $Instantiate$)
+
+We pick a bad event, show that the two games are identical until bad, and bound the probability of the bad event of the bad event happening.
+
+The bad event is much the same as before, in Lemma REFERENCE. Intuitively, we need to ``zoom in'' on the inputs and outputs to the oracles in only the $i+1$th call of each game.
+
+\begin{dfn}The \textbf{bad event} is that there are duplicates in the inputs to the oracle used on the $i+1$th call.\end{dfn} 
+
+Expose the bad event in both games.
+
+State the theorem in terms of first and second.
+
+\begin{lem}The two games (name them TODO) are identical until bad. \end{lem}
+\begin{proof} 
+We prove the two assumptions.
+
+  \begin{enumerate}
+  \item
+  \item 
+  \end{enumerate}
 
 Reuse identical until bad proof. 
+\end{proof}
 
-Reuse collision probability proof.
+\begin{lem}The probability of the bad event is $\f{(l_i+1)^2}{2^c}$. (TODO: probability of that game returning true) \end{lem}
+\begin{proof} 
+Use oracle eq until bad? 
+
+Then reuse collision probability proof. 
+\end{proof}
+
+This completes bound on the distance between hybrid $i+1$ and the intermediate hybrid for $i$.
+\end{proof}
+
+This completes our bound on the distance between adjacent hybrids $H_i$ and $H_{i+1}$.
+
+\end{proof}
+
+\begin{thm}[Distance between first and last hybrid.] \label{thm:hybrids}
+\begin{gather*}
+Adv_{D_1, D_2}(A) \leq t \cdot PRF\_Advantage\_Max + \sum_{0}^{t-1} \f{(l_i+1)^2}{2^c} \\ 
+\leq t \cdot (PRF\_Advantage\_Max + \f{(maxBlocks + 1)^2}{2^c}).
+\end{gather*}
+\end{thm}
+\begin{proof}
+The first inequality follows by the triangle inequality combined with Theorem \ref{thm:adjacent_hybrids}. 
+
+The second inequality follows by the fact that the PRG imposes an upper limit on the number of blocks that may be requested per call. This is $2^{19}$ bits for HMAC-DRBG, according to NIST SP 800-90A (39).
+
+This is a negligible quantity for sufficiently large $c$. Usually $c$ is 256, since HMAC's internal hash function is typically SHA-256.
 \end{proof}
 
 \subsubsection{Formalization}
@@ -924,24 +1020,6 @@ Definition Gi_rf (i : nat) : Comp bool :=
 New oracles:
 $Oi\_prg$
 $Oi\_oc$
-
-This completes our bound on the distance between adjacent hybrids.
-
-\end{proof}
-
-\begin{thm}[Distance between first and last hybrid.] \label{thm:hybrids}
-\begin{gather*}
-Adv_{D_1, D_2}(A) \leq t \cdot PRF\_Advantage\_Max + \sum_{0}^{t-1} \f{(l_i+1)^2}{2^c} \\ 
-\leq t \cdot (PRF\_Advantage\_Max + \f{(maxBlocks + 1)^2}{2^c}).
-\end{gather*}
-\end{thm}
-\begin{proof}
-The first inequality follows by the triangle inequality combined with Theorem \ref{thm:adjacent_hybrids}. 
-
-The second inequality follows by the fact that the PRG imposes an upper limit on the number of blocks that may be requested per call. This is $2^{19}$ bits for HMAC-DRBG, according to NIST SP 800-90A (39).
-
-This is a negligible quantity for sufficiently large $c$. Usually $c$ is 256, since HMAC's internal hash function is typically SHA-256.
-\end{proof}
 
 \subsubsection{Comments on proof technique}
 
