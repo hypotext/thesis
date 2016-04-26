@@ -63,7 +63,8 @@
     "thm:adjacent_hybrids"
     "lem:hybrid_triangle"
     "ex:hybrid_intermediate"
-    "thm:hybrids")
+    "thm:hybrids"
+    "fig:project_diagram")
    (LaTeX-add-bibitems
     "affeldt2009"
     "appel2015"

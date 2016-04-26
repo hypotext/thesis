@@ -43,7 +43,7 @@ breaklines=true
 \usepackage{amssymb}
 \usepackage{amsmath}
 \usepackage{amsthm}
-\usepackage{graphicx}
+% \usepackage{graphicx}
 \usepackage{dcolumn}
 \usepackage{hyperref}
 \usepackage{enumitem}
@@ -97,6 +97,7 @@ breaklines=true
 
 \begin{document}
 
+
 \title{Formal verification of the HMAC-DRBG pseudorandom number generator}
 \author{Katherine Ye, advised by Andrew W. Appel}
 \affiliation{Princeton University}
@@ -105,10 +106,16 @@ breaklines=true
 
 % TODO revise to remove unfinished work
 \begin{abstract}
-We have proved, with machine-checked proofs, that the pseudorandom output produced by HMAC-DRBG is indistinguishable from random by a computationally bounded adversary. We proved this about a high-level specification of HMAC-DRBG written in the probabilistic language provided by the Foundational Cryptography Framework (FCF), which is embedded in the Coq proof assistant. We also plan to prove that HMAC-DRBG is backtracking-resistant and prediction-resistant. After these proofs are done, we will prove equivalence between our high-level specification of HMAC-DRBG and a different specification used to prove its functional correctness of the mBED TLS C implementation of HMAC-DRBG. This will allow our proofs of cryptographic security properties to transfer to the C implementation of HMAC-DRBG.
+  We have proved, with machine-checked proofs, that the output produced by HMAC-DRBG is indistinguishable from random by a computationally bounded adversary. We proved this about a high-level specification of a simplified version of HMAC-DRBG written in the probabilistic language provided by the Foundational Cryptography Framework (FCF), which is embedded in the Coq proof assistant. We have also proven on paper that HMAC-DRBG is backtracking-resistant. Our work comprises the first formal verification of a real-world PRG.
+  Our functional specification can be linked to a proof of functional correctness of mbedTLS's C implementation of HMAC-DRBG. This will allow our proofs of cryptographic security properties to transfer to this implementation.
 \end{abstract}
 
 \maketitle
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\tableofcontents
+\newpage
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -134,17 +141,17 @@ We present the first machine-checked proof of a crucial cryptographic security p
 %@ cite and add names
 There exist only two prior proofs of security of HMAC-DRBG. The first, by Campagna (2006), is not peer-reviewed. The second, by Hirose (2008), was peer-reviewed, but its proof is lengthy and involved. Neither paper's proofs has been machine-checked or linked to an implementation of HMAC-DRBG.
 
-After this, we plan to prove additional cryptographic properties of HMAC-DRBG, including backtracking resistance. No paper proofs exist for any of these additional properties. 
+We have also proven on paper that HMAC-DRBG is backtracking-resistant. No paper proofs exist for this. We plan to modify our computer-checked indistinguishability proof to hold for this property.
 
-Additionally, we plan to connect our proof of security with an existing proof of correctness to create an end-to-end machine-checked proof chain of functional correctness and security of HMAC-DRBG, which has never been done before.
+Additionally, we plan to connect our proof of security with an existing proof of correctness to create an end-to-end machine-checked proof chain of functional correctness and security of HMAC-DRBG, which is entirely novel work.
 
-TODO: include precise theorem statement
+%TODO: include precise theorem statement
 
 \section{Problem background and related work}
 
 Andrew Appel's group has done the most significant related work in the area. Appel (2015) presents a Òfull formal machine-checked verification of a C program: the OpenSSL implementation of SHA-256.Ó Beringer et al. (2015) build on this work to do the same for HMAC, adding a proof of security that relies on the security of SHA. We plan to use the same approach for CTR-DRBG and HMAC-DRBG.
 
-In addition, there exist paper proofs of the security of CTR-DRBG and HMAC-DRBG (Campagna (2006), Hirose (2008)), though the former hasn't appeared in a peer-reviewed venue and the latter is very complicated.
+In addition, there exist paper proofs of the security of CTR-DRBG and HMAC-DRBG (Campagna (2006), Hirose (2008)), though (as mentioned earlier) the former hasn't appeared in a peer-reviewed venue and the latter is very complicated.
 
 In the area of checking game-based proofs of cryptographic security within a proof assistant, there are two main tools: EasyCrypt and its cousin CertiCrypt (neither of which is foundational) (Barthe (2011)), and the Foundational Cryptography Framework (Petcher (2015)).
 
@@ -558,7 +565,7 @@ This bound on the probability of the bad event yields our final result:
 Thus, $H$ is a secure PRG. Moreover, since we did our proof in the concrete security model, we have a better idea of how secure it is (modulo the black box of $PRF\_Advantage$) than if we had proven its asymptotic security.
 
 % TODO: remove this break (here for legibility)
-\break
+% \break
 
 \subsection{Indistinguishability proof for a simplified HMAC-DRBG}
 % ^^
@@ -1120,9 +1127,18 @@ No v-updating (see Matt's email on Dec 22)
 
 \subsection{Proof of backtracking resistance}
 
+We plan to prove that HMAC-DRBG possesses backtracking resistance. That is, if it is compromised at time $T$, the adversary still cannot distinguish HMAC-DRBG previous output from ideal random strings. That is, if the adversary is given a $Compromise$ oracle that it can call after a certain number of calls to the $GenUpdate$ oracle to reveal the PRG's internal $(k,v)$, the adversary still cannot distinguish the previous output from ideal random strings. We plan to do this proof and reuse much of our existing work on indistinguishability. We're working on formalizing the definitions and working out some issues regarding v-updating and nonadaptive vs. adaptive adversaries.
+
 Formal def of backtracking resistance and adversary
 
-Reductions/games re-using the previous one
+Reductions/games re-using the previous one, adding one additional game.
+
+\subsection{On proving prediction resistance}
+
+%@cite
+NIST also specifies that HMAC-DRBG possesses the complementary property of prediction resistance. That is, if it is compromised at time $T$, the adversary will find it difficult to distinguish HMAC-DRBG's future output from ideal random strings. Naively, if given $(k, v)$ at time $T$, the adversary should be able to compute all future DRBG output and thus distinguish. Thus, the $Reseed$ function is supposed to ensure prediction resistance by injecting fresh entropy into the DRBG that is unknown to the adversary. (It refreshes the $(k,v)$ by re-HMACing them with some entropy appended to the previous $(k,v)$)
+
+However, proving things about this is difficult. Dodis et al. (2013) proved that the Linux PRNG was insecure and did not possess prediction resistance. However, they had to do tricky reasoning about how much entropy was injected at once and where. They had to reason about, for example, the difference between injecting entropy as five bits per call over ten calls, versus fifty bits in one call, and relative difficulties for the adversary. 
 
 \section{Foundational Cryptography Framework summary}
 
@@ -1144,8 +1160,7 @@ TODO: cover the following topics:
 
 \subsection{Starting HMAC-DRBG definitions}
 
-% TODO: I copy and pasted some of this into the paper proof section
-The core inner loop of HMAC-DRBG that generates pseudorandom blocks. (TODO: compare and contrast each definition with the corresponding NIST pseudocode)
+The core inner loop of HMAC-DRBG that generates pseudorandom blocks. 
 
 \begin{lstlisting}
 (* save the last v and output it as part of the state *)
@@ -1214,13 +1229,11 @@ TODO: discuss pseudorandom functions, random functions, uniformly sampling rando
 
 TODO: Indistinguishability definition
 
-\subsection{Hybrid argument}
-
-\subsection{Main games}
+\subsubsection{Main games}
 
 TODO: talk about what a game is
 
-Updating the v immediately after re-keying the PRF, in the same oracle call, is hard to reason about. This is because at the beginning of each call, by the hybrid argument, we can assume that the \kv have been randomly sampled. Now we have to replace the key with a random key to reason about updating the v. The solution is simple: we move each v-update to the beginning of the next call and prove that the new sequence of programs is indistinguishable to the adversary. (TODO explain this with pictures)
+Updating the v immediately after re-keying the PRF, in the same oracle call, is hard to reason about. This is because at the beginning of each call, by the hybrid argument, we can assume that the $(k,v)$ have been randomly sampled. Now we have to replace the key with a random key to reason about updating the v. The solution is simple: we move each v-update to the beginning of the next call and prove that the new sequence of programs is indistinguishable to the adversary. (TODO explain this with pictures)
 
 \begin{lstlisting}
 (* [GenUpdate_original, GenUpdate_original, ...] = [GenUpdate_noV, GenUpdate, Genupdate, ...] *)
@@ -1936,6 +1949,20 @@ We abstracted or ignored a few parts of HMAC-DRBG.
 % \item Why is formalizing our proof so much work? (Number of hours and lines of code?)
 % \end{itemize}
 
+\subsection{Comments on the Coq development}
+
+There are 17 main lemmas and many small ones. Not all are proven, but I've proved the four most difficult ones and am confident about the rest, which are mostly game equivalence proofs. There are 22 admitted lemmas (including medium-sized lemmas but not the smallest ones.
+
+The development spans 2000 lines of code. Adam's proof for the core loop spans less than 1000 lines.
+
+Besides proving the admitted lemmas, here's what's left to do in the near future:
+
+\begin{itemize}
+\item Adapt the indistinguishability proof to a nonadaptive adversary that picks any list of $blocksPerCall$ and $numCalls$ beforehand, not the hardcoded $maxBlocksPerCall$ and $maxCalls$. The paper proof here already holds for the more general adversary.
+\item Reuse the indistinguishability proofs to show backtracking resistance.
+\item The spec equivalence proof. (Discussed in the following section.)
+\end{itemize}
+
 \subsection{Comments on HMAC-DRBG's design}
 
 Formally verifying HMAC-DRBG helped us notice several NIST design decisions that made our job either harder or easier.
@@ -1946,30 +1973,26 @@ Formally verifying HMAC-DRBG helped us notice several NIST design decisions that
 \item In $Update$, NIST does (++ [v]) instead of (v ::). The former is intuitive on paper; the latter is much easier to reason about by induction in Coq.
 \end{itemize}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\section{Additional properties to prove about HMAC-DRBG}
-
-We plan to prove that HMAC-DRBG possesses backtracking resistance. That is, if it is compromised at time $T$, the adversary still cannot distinguish HMAC-DRBG previous output from ideal random strings. That is, if the adversary is given a $Compromise$ oracle that it can call after a certain number of calls to the $GenUpdate$ oracle to reveal the PRG's internal $(k,v)$, the adversary still cannot distinguish the previous output from ideal random strings. We plan to do this proof and reuse much of our existing work on indistinguishability. We're working on formalizing the definitions and working out some issues regarding v-updating and nonadaptive vs. adaptive adversaries.
-
-% how does this work?
-%@ the v-updating
-
-%@cite
-NIST also specifies that HMAC-DRBG possesses the complementary property of prediction resistance. That is, if it is compromised at time $T$, the adversary will find it difficult to distinguish HMAC-DRBG's future output from ideal random strings. Naively, if given $(k, v)$ at time $T$, the adversary should be able to compute all future DRBG output and thus distinguish. Thus, the $Reseed$ function is supposed to ensure prediction resistance by injecting fresh entropy into the DRBG that is unknown to the adversary. (It refreshes the $(k,v)$ by re-HMACing them with some entropy appended to the previous $(k,v)$)
-
-However, proving things about this is difficult. Dodis et al. (2013) proved that the Linux PRNG was insecure and did not possess prediction resistance. However, they had to do tricky reasoning about how much entropy was injected at once and where. They had to reason about, for example, the difference between injecting entropy as five bits per call over ten calls, versus fifty bits in one call, and relative difficulties for the adversary.
-
-%@cite
-
 \section{Linking our crypto spec with the functional spec}
 
-Naphat Sanguansin '16 proved functional correctness of the mbed TLS implementation of HMAC-DRBG using a different functional specification, also written in Gallina. To create a truly end-to-end proof of correctness, we must prove that our cryptographic specification of HMAC-DRBG is the same as his specification. 
+Naphat Sanguansin '16 proved functional correctness of the mbed TLS implementation of HMAC-DRBG using a different functional specification, also written in Gallina. To create a truly end-to-end proof of correctness, we must prove that our cryptographic specification of HMAC-DRBG is the same as his specification. This is the labeled arrow in Figure \ref{fig:project_diagram}.
+
+\begin{figure}
+  \includegraphics[width=\linewidth]{images/project_diagram.png}
+  \caption{A fully verified HMAC-DRBG.}
+  \label{fig:project_diagram}
+\end{figure}
 
 \subsection{Proving functional correctness of HMAC-DRBG}
 
-To add: VST overview. Hoare logic overview. Summary of Naphat's proof. A diagram of the whole project, similar to the HMAC diagram. My prior work for HMAC.
-%@
+To add: 
+\begin{itemize}
+\item VST overview. 
+\item Hoare logic overview. 
+\item Summary of Naphat's proof. 
+\item A diagram of the whole project, similar to the HMAC diagram. 
+\item My prior work for HMAC.
+\end{itemize}
 
 \subsection{Bridging the gaps between the specifications}
 
@@ -1979,16 +2002,6 @@ We must prove lemmas about at least the following differences between the specif
 \item Naphat's code has essentially the same core loop ($Gen\_loop$) and $Generate$ and $Update$ code. However, it's surrounded by many layers of error checking code, e.g. for \li|prediction_resistance_request|. We need to prove equivalence modulo error checking.
 \item Naphat's code also models failures in the type for the entropy stream. It is an infinite stream of either bit or failure. Also, it is not necessarily ideal randomness. We need to relate FCF's sampling uniformly at random to this more realistic entropy model. Adam Petcher's thesis provides some theorems about the operational semantics of FCF that can help us with this.
 \end{enumerate}
-
-\section{Plan for the summer}
-
-There are 21 admitted lemmas left to prove that I'm confident about.
-
-Matt and I have started working on the backtracking resistance proof. It relies heavily on reusing our work on the indistinguishability proof, modulo adaptiveness of adversary. So, we will concurrently work on writing an informal proof of that and formalizing the specifications and definitions in FCF. 
-
-Also, we need to figure out how to adapt the indistinguishability proof to a nonadaptive adversary that picks any list of $blocksPerCall$ and $numCalls$ beforehand, not the hardcoded $maxBlocksPerCall$ and $maxCalls$.
-
-I also need to do the spec equivalence proof.
 
 \section{Future work}
 
@@ -2010,10 +2023,9 @@ We have contributed knowledge about the challenges of formally verifying PRGs, a
 
 We plan to link this security proof to a functional correctness proof. Thus, mbedTLS's implementation of HMAC-DRBG will be fully certified.
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{acknowledgments}
+\section{Acknowledgments}
 
 I'd like to thank the following people for their help.
 
@@ -2033,9 +2045,7 @@ Thanks to everyone in 2D for general encouragement, cooking great food that sust
 
 Thanks to Jean Juang, Frederic Koehler, and Xiaoyan Han for being great friends and thesis buddies, and Carolyn Chen and Pallavi Koppol for being great friends during the grad school application process.
 
-Thanks to the Recurse Center for being a community of excellent people who are happy to listen to me ramble about research.
-
-\end{acknowledgments}
+Thanks to the Recurse Center for being a community of excellent people who are happy to listen to me ramble about research. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -2090,7 +2100,7 @@ Sanguansin, Naphat. "Verification of a Deterministic Random Bits Generator." Ind
 
 \section{Definitions and proofs}
 
-Will add worked examples of Coq proofs using FCF tactics.
+Will add worked examples of Coq proofs using FCF tactics. 
 
  \end{document}
 

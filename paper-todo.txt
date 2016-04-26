@@ -53,27 +53,32 @@ TODO: I don't even understand PRHL... ask Lennart to explain the rules to me?
 
 4/25/16
 
-- Write section on bounding adjacent hybrids
+- Project diagram
+- Write changelog
+  - Wrote HMAC-DRBG overview
+  - Wrote and edited core loop proof
+  - Wrote our proof (without BR)
+  - Wrote oracleCompMap stuff and hasDups explanation
 
-- Fix formal proof outline
+- Read and fix formal proof outline
   - move hasDups to Adam's section
-  - explain complicated oracleCompMap stuff
+- Add brief summary of FCF: PRHL and comp_spec
+- Proof of backtracking resistance
+- Lemma diagram
+
+- Flesh out explanation of collisions lemmas
 - Fix abstract
 - Fix introduction
-
-- Lemma diagram
-- Add brief summary of FCF: PRHL and comp_spec
-- Flesh out explanation of collisions lemmas
-- Proof of backtracking resistance
+- Add evaluation questions
 
 -----
 
 Later:
 
+- List of figures and list of tables
 - Change distinguishers D to adversaries A
 - Fix references
 - Table of acknowledgments
-- Move to new template
 - Fix citations
 - Move acknowledgments to beginning
 ** - Incorporate Andrew's edits
