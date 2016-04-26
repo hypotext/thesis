@@ -1,9 +1,9 @@
 # Fdb version 3
-["bibtex Thesis_Draft_Paper"] 1461587063 "Thesis_Draft_Paper.aux" "Thesis_Draft_Paper.bbl" "Thesis_Draft_Paper" 1461587105
+["bibtex Thesis_Draft_Paper"] 1461628591 "Thesis_Draft_Paper.aux" "Thesis_Draft_Paper.bbl" "Thesis_Draft_Paper" 1461628822
   "/usr/local/texlive/2012/texmf-dist/bibtex/bst/natbib/plainnat.bst" 1233624470 26816 ffe5423d2019860bad9f54bc402fac15 ""
-  "Thesis_Draft_Paper.aux" 1461587105 5364 bebde060408a29fae14779accb501341 ""
+  "Thesis_Draft_Paper.aux" 1461628822 5364 4b4c28e7d881bb4fd639e7061cffdb85 ""
   "Thesis_Draft_Paper.bcf" 0 -1 0 ""
-  "Thesis_Draft_PaperNotes.bib" 1461587104 0 d41d8cd98f00b204e9800998ecf8427e ""
+  "Thesis_Draft_PaperNotes.bib" 1461628821 0 d41d8cd98f00b204e9800998ecf8427e ""
   (generated)
   "Thesis_Draft_Paper.bbl"
   "Thesis_Draft_Paper.blg"
@@ -105,7 +105,7 @@
   "Thesis_Draft_Paper.log"
   "Thesis_Draft_Paper.aux"
   "Thesis_Draft_Paper.dvi"
-["pdflatex"] 1461587104 "Thesis_Draft_Paper.tex" "Thesis_Draft_Paper.pdf" "Thesis_Draft_Paper" 1461587105
+["pdflatex"] 1461628821 "Thesis_Draft_Paper.tex" "Thesis_Draft_Paper.pdf" "Thesis_Draft_Paper" 1461628822
   "/usr/local/texlive/2012/texmf-dist/fonts/map/fontname/texfonts.map" 1272929888 3287 e6b82fe08f5336d4d5ebc73fb1152e87 ""
   "/usr/local/texlive/2012/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1246382020 1004 54797486969f23fa377b128694d548df ""
   "/usr/local/texlive/2012/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex8.tfm" 1246382020 988 bdf658c3bfc2d96d3c8b02cfc1c94c20 ""
@@ -226,10 +226,10 @@
   "/usr/local/texlive/2012/texmf-var/web2c/pdftex/pdflatex.fmt" 1341108725 3691572 80746d7cec090b0770bc87079bef471d ""
   "/usr/local/texlive/2012/texmf.cnf" 1341108668 572 7ea7194897937febeb63145e1c3a1f03 ""
   "/usr/local/texlive/2012/texmf/web2c/texmf.cnf" 1336865692 31299 729e216d9b945005c0d4b079c0500bc9 ""
-  "Thesis_Draft_Paper.aux" 1461587105 5364 bebde060408a29fae14779accb501341 ""
-  "Thesis_Draft_Paper.bbl" 1461587063 275 de5ffaf5b665b622658d80bed97ba2a5 "bibtex Thesis_Draft_Paper"
-  "Thesis_Draft_Paper.out" 1461587105 2555 c8a62972e917f189beff3712d9ffc7ee ""
-  "Thesis_Draft_Paper.tex" 1461587103 109860 e5d72d86b213a01dd8cb004c647a9317 ""
+  "Thesis_Draft_Paper.aux" 1461628822 5364 4b4c28e7d881bb4fd639e7061cffdb85 ""
+  "Thesis_Draft_Paper.bbl" 1461628591 275 de5ffaf5b665b622658d80bed97ba2a5 "bibtex Thesis_Draft_Paper"
+  "Thesis_Draft_Paper.out" 1461628822 2555 c8a62972e917f189beff3712d9ffc7ee ""
+  "Thesis_Draft_Paper.tex" 1461628820 116033 cd4238e18b1231788fd4fc1629026c09 ""
   (generated)
   "Thesis_Draft_PaperNotes.bib"
   "Thesis_Draft_Paper.out"

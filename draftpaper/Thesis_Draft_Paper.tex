@@ -934,42 +934,129 @@ $$PRF\_Advantage\_max := \max_i PRF\_Advantage(i).$$
 This completes our proof bounding the distance between hybrid $i$ and the intermediate hybrid for $i$.
 \end{proof}
 
-% >>
-\begin{lem}$$|\Pr[G\_hybrid\_rf(i)] - \Pr[G\_hybrid\_(i+1)] | \leq \f{(l_i + 1)^2}{2^c}.$$ \end{lem}
+Now we bound the distance between the intermediate hybrid and the next real hybrid.
+
+\begin{lem} for all $i$,
+$$|\Pr[G\_hybrid\_rf(i)] - \Pr[G\_hybrid(i+1)] | \leq \f{(l_i + 1)^2}{2^c}.$$ \end{lem}
 \begin{proof} 
 % TODO check that this bound is right
 %Reduces to Lemma REFERENCE. Again, because of the hybrid ordering (reduces to $Instantiate$)
 
-We pick a bad event, show that the two games are identical until bad, and bound the probability of the bad event of the bad event happening.
+We define the bad event, show that the two games are identical until bad, and bound the probability of the bad event happening.
 
-The bad event is much the same as before, in Lemma REFERENCE. Intuitively, we need to ``zoom in'' on the inputs and outputs to the oracles in only the $i+1$th call of each game.
+\begin{dfn}The \textbf{bad event} is that there are duplicates in the inputs to the oracle used on the $i+1$th call. 
+Intuitively, we need to ``zoom in'' on the inputs and outputs to the oracles in only the $i+1$th call of each game. Then, the bad event becomes the same as the bad event discussed in Theorem REFERENCE, in the proof about the simpler PRG.
+\end{dfn} 
 
-\begin{dfn}The \textbf{bad event} is that there are duplicates in the inputs to the oracle used on the $i+1$th call.\end{dfn} 
+Theorem REFERENCE gives a detailed overview of why the bad event is bad, the fundamental lemma of game-playing, the definition of ``identical until bad'', the technique of exposing the bad event, and the $\Pr_1$ and $\Pr_2$ notation. This section will omit that discussion.
 
-Expose the bad event in both games.
+As before, we expose the bad event in both games by returning both the generated bits and a boolean indicating whether the bad event occurred in the oracle's state.
 
-State the theorem in terms of first and second.
+First, we expose the bad event in $G\_hybrid(i+1)$, rewritten to use an oracle that returns ideal randomness when queried and keeps track of all input-output pairs. The second return value of $PRF\_Adversary$ is the oracle's state. (Implicit program equivalence: $G\_hybrid(i+1)$ is the same as replacing the oracle on the $i+1$th call with random bits.) \\
 
-\begin{lem}The two games (name them TODO) are identical until bad. \end{lem}
+$\textbf{G\_hybrid\_rb\_oc\_2(i)} := $
+\begin{game}
+\item[] $(bits, state) \lar PRF\_Adversary (rb\_oracle, i)$
+\item[] $ret(b, hasDups(inputsOf(state))$ \\
+\end{game}
+
+Similarly, we expose the bad event in $G\_hybrid\_rf$, rewritten to use a random function oracle that keeps track of duplicate inputs. (Again, on the $i+1$th call, it uses this RF oracle.)\\
+
+$\textbf{G\_hybrid\_rf\_oc\_2(i)} := $
+\begin{game}
+\item[] $(bits, state) \lar PRF\_Adversary (randomFunc\_withDups, i)$
+\item[] $ret(b, hasDups(inputsOf(state))$ 
+\end{game} 
+
+\begin{lem} for all $i$,
+$G\_hybrid\_rf\_oc\_2(i)$ and \\
+  $G\_hybrid\_rb\_oc\_2(i)$ are identical until bad. \end{lem}
 \begin{proof} 
-We prove the two assumptions.
+They satisfy the two requirements. The reasoning is the same as in Theorem REFERENCE, because we only have to reason about the one call between the computations that uses the two different oracles. The only difference between here and Theorem REFERENCE is that the oracle is queried either one or two additional times when we update $k$ and $v$ at the end of $GenUpdate$.
 
   \begin{enumerate}
-  \item
-  \item 
+  \item If the bad event does not happen, their output distributions are identical. If there are no duplicates in the inputs to the oracle ($rb\_oracle$ or $randomFunc_withDups$), they behave the same.
+  \item The probability of the bad event happening is the same in both. Again, this is obvious.
   \end{enumerate}
 
-Reuse identical until bad proof. 
+Incidentally, this lemma is very obvious on paper, but took a lot of effort to formalize. We had to do a tricky induction over the list of blocks $l$ that the adversary requested. See the discussion of $oracleCompMap\_\_oracle\_eq\_until\_bad\_dups$ in Section REFERENCE.
 \end{proof}
 
-\begin{lem}The probability of the bad event is $\f{(l_i+1)^2}{2^c}$. (TODO: probability of that game returning true) \end{lem}
+Then we may bound the distance between the two games by the probability of the bad event happening.
+
+\begin{lem} for all $i$,
+\begin{gather*}
+|\Pr_1[G\_hybrid\_rf\_oc\_2(i)] - \Pr_1[G\_hybrid\_rb\_oc\_2(i)] |
+\\ \leq \Pr_2[G\_hybrid\_rb\_oc\_2(i)].
+\end{gather*}
+\end{lem}
+\begin{proof}
+Because we just proved that the two games are identical until bad, we apply the fundamental lemma, which yields this result. 
+\end{proof}
+
+% >>
+Now we need only reason about the bad event in the second game, which replaces the PRF with ideal randomness in the $i+1$th oracle call. We rewrite the game into several simpler forms and prove that each preserves the probability of the bad event happening, then reduce it to the bound proven earlier in Lemma REFERENCE.
+
+Intuitively, we only care about the computation that queries the oracle, which is one iteration of $GenUpdate\_oc$. We can discard the other calls to $GenUpdate\_oc$. By the ordering of the hybrid argument, we know that the state coming into this call is ideally random. (This was an important reason we picked this hybrid ordering.) 
+
+Thus, we inline $GenUpdate$ and replace $Gen\_loop$ with $genRandForEach$ (since we replaced the PRF with ideal randomness). \\
+
+$\textbf{G\_hybrid\_rb\_oc\_bad\_1(i)} := $
+\begin{game}
+\item[] $l \lar A$
+\item[] $firstInput\_v \samp^n$ 
+  \begin{game}
+    \item[] (because the $v$ coming in is ideally random)
+  \end{game}
+\item[] $outputsAsInputs \lar tail(genRandForEach(l))$
+  \begin{game}
+    \item[] (the $v$ is the first input; we throw away one element, which is an output)
+  \end{game}
+\item[] $v_2 \samp^n$
+\item[] $keyInput \lar v_2 || 0 \ldots 0$
+  \begin{game}
+    \item[] (updating the key)
+  \end{game}
+\item[] $ret(hasDups([keyInput, firstInput\_v] || outputsAsInputs)$ \\
+\end{game}
+
+By NIST's design, the PRF is re-keyed as such:
+$$k_1 \lar f_k(v || 0 \ldots 0)$$
+
+$(v||0 \ldots 0)$ can never be a duplicate input for that particular PRF, because the PRF was always queried previously with inputs of length $c$, and this input is longer. (Our guess is that NIST made this design decision so that for that PRF, the new key would always be ideally random.) Therefore, we can remove the key input from our list of possible duplicate inputs. 
+
+We are left with essentially the same situation as in Lemma REFERENCE. The total number of inputs is the sum of the total number of blocks requested (minus 1 because the last one is an output; plus 1 for the initial $v$), plus one more input because $GenUpdate$ made one more query to the oracle to update $v$ at the end. (The $v$-updating is not present in $GenUpdate\_noV$, but the bound still holds.)\\
+
+$\textbf{G\_hybrid\_rb\_oc\_bad\_2(i)} := $
+\begin{game}
+\item[] $l \lar A$
+\item[] $inputs \lar generate\_bitvectors(1 + sum(l))$
+\item[] $ret(hasDups(inputs))$ \\
+\end{game}
+
+Each rewrite preserves the probability of the bad event happening.
+
+\begin{lem} for all $i$,
+  \begin{gather*}
+    \Pr_2[G\_hybrid\_rb\_oc\_2(i)] = \Pr[G\_hybrid\_rb\_oc\_bad\_1(i)]\\
+    = \Pr[G\_hybrid\_rb\_oc\_bad\_2(i)]
+  \end{gather*}
+\end{lem}
+\begin{proof}
+This is one lemma which is intuitively obvious, but subtle. It's easy to inline $GenUpdate$ wrong by hand, mistake an output for an input, or make an off-by-one error. (The last error doesn't matter much in the final bound, but it's still good to be accurate.) 
+
+Here is where formal verification shines. In the explanation above, we combined 5-6 possible intermediate games into 2 games for brevity; in Coq, we can write out each one and prove each adjacent pair equivalent. These proofs can be found in the Coq development under the theorem $Gi\_rb\_bad\_collisions$.
+\end{proof}
+
+Finally, we bound the probability of the bad event happening.
+
+\begin{lem} for all $i$,
+$$\Pr[G\_hybrid\_rb\_oc\_bad\_2(i)] \leq \f{(l_i+1)^2}{2^c}$$ \end{lem}
 \begin{proof} 
-Use oracle eq until bad? 
-
-Then reuse collision probability proof. 
+The game is in almost exactly the same form as $G\_ideal\_4$, so we reuse the collision probability bound with $n := 1 + sum(l)$.
 \end{proof}
 
-This completes bound on the distance between hybrid $i+1$ and the intermediate hybrid for $i$.
+This completes our bound on the distance between hybrid $i+1$ and the intermediate hybrid for $i$.
 \end{proof}
 
 This completes our bound on the distance between adjacent hybrids $H_i$ and $H_{i+1}$.
@@ -988,6 +1075,8 @@ The first inequality follows by the triangle inequality combined with Theorem \r
 The second inequality follows by the fact that the PRG imposes an upper limit on the number of blocks that may be requested per call. This is $2^{19}$ bits for HMAC-DRBG, according to NIST SP 800-90A (39).
 
 This is a negligible quantity for sufficiently large $c$. Usually $c$ is 256, since HMAC's internal hash function is typically SHA-256.
+
+This completes our bound on the total probability of distinguishing between the real-world and ideal-world games.
 \end{proof}
 
 \subsubsection{Formalization}
@@ -1934,17 +2023,13 @@ Matt Green came up with the proof of security for the simplified HMAC-DRBG, aske
 
 Andrew Appel provided lots of help with Coq proofs and suggestions for the future proof of equivalence. I'm glad he had the confidence that I would be able to do and verify crypto math (though it's not done yet!). Andrew has been a very active, supportive, and patient advisor during my JP, the grad school application process, and this thesis.
 
-I also want to thank Matt and Andrew for suggesting a thesis topic that was both cool and well-motivated.
-
-Lennart Beringer came to all of my thesis meetings and helped debug my proofs on the weekend.
-
-Everyone above provided valuable feedback on drafts of this thesis.
+Lennart Beringer came to all of my thesis meetings and went above and beyond by helping me debug my proofs on Sundays.
 
 Naphat Sanguansin did the work that would allow my proofs to actually hold on an implementation of HMAC-DRBG.
 
-% Naphat Sanguansin 
+I want to thank Matt and Andrew again for suggesting a thesis topic that was cool and well-motivated, as well as providing detailed feedback on drafts of this thesis.
 
-Thanks to everyone in 2D for general encouragement, cooking great food that sustained me at late hours, and for dealing with me camping out in the dining room (hi, Jaehwan).
+Thanks to everyone in 2D for general encouragement, cooking great food that sustained me at late hours, and camping out with me in the dining room (hi, Jaehwan).
 
 Thanks to Jean Juang, Frederic Koehler, and Xiaoyan Han for being great friends and thesis buddies, and Carolyn Chen and Pallavi Koppol for being great friends during the grad school application process.
 
