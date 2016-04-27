@@ -53,23 +53,44 @@ TODO: I don't even understand PRHL... ask Lennart to explain the rules to me?
 
 4/25/16
 
-- Project diagram
-- Write changelog
-  - Wrote HMAC-DRBG overview
-  - Wrote and edited core loop proof
-  - Wrote our proof (without BR)
-  - Wrote oracleCompMap stuff and hasDups explanation
-
-- Read and fix formal proof outline
-  - move hasDups to Adam's section
-- Add brief summary of FCF: PRHL and comp_spec
-- Proof of backtracking resistance
-- Lemma diagram
+- Write up backtracking resistance proof
+- Write section on FCF 
+- Write section on proving spec equivalence
 
 - Flesh out explanation of collisions lemmas
 - Fix abstract
 - Fix introduction
+- Add appendix
 - Add evaluation questions
+
+-----
+
+Andrew's edits
+
+- Move to new format
+  - Merge formal section and Coq section (2-column)
+  - Rename Coq code
+- Read Hirose's paper and compare
+- Read Affeldt's paper and compare
+- Summarize more of Barthe's stuff
+- New proof for real Instantiate
+- Move noV presentation
+- Estimate actual failure probability (Adam/Matt: PRF_Advantage)
+- Diagram of proof structure (could be ToC)
+  - Asterisk the unfinished ones
+
+- Cite entropy extractor paper and summarize
+- Cite Naphat
+- Fix "appending"
+- Pr_1
+- PRNG -> PRG, DRBG
+- Math font -> serif
+- Listings font -> sans serif
+- PRF_A -> A_{PRF}
+- G_real -> G_{mathit{real}} and also for ideal
+- Fix hyphens
+- Fix architecture diagram
+- Other misc
 
 -----
 
