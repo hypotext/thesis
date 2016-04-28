@@ -64,17 +64,22 @@
     "lem:hybrid_triangle"
     "ex:hybrid_intermediate"
     "thm:hybrids"
+    "thm:br"
     "fig:project_diagram")
    (LaTeX-add-bibitems
     "affeldt2009"
     "appel2015"
+    "barak2005"
     "barker2012"
     "barthe2011"
+    "barthe2014"
     "bellare2004"
     "beringer2015"
     "campagna2006"
     "dodis2013"
     "dorre2015"
+    "fouque2008"
+    "goldreich2005"
     "hirose2008"
     "petcher2015"
     "sanguansin2016")

@@ -1,67 +1,44 @@
+4/27/16
 
-Notes on setup:
+HAVE A DRAFT FOR ANDREW BY FRIDAY, 8 AM.!!!!
+Goal for Wednesday->Thursday (3:30 am):
+- Write BR (30)
+- Write FCF (30)
+- Write spec equivalence (30)
+- Read Hirose and compare (15)
+- Read Affeldt and compare (15)
+- Read Barthe and compare (15)
+- Estimate failure probability (15)
+---> 2.5 hrs
+--> finish by 3:30!!!
 
-need to add the \synctex thing in beginning
-plus see elisp lines added
+Goal for Thursday->Friday (8 am): 
+- Move to new format 
+  - Rewrite in 2-column
+  - Coq correctness edits, possible renaming
+  - Move NoV presentation
+- Edit list of lemmas
+- Proof structure
 
-AUCTeX: C-c C-a
-C-c C-v to view / go to point
+Friday (midnight):
+- Typesetting (Andrew's edits), ToC
+  - Typesetting (line breaks; code; real-world/ideal-world)
+- BibTeX
+- Edit intro/conclusion/prior work
+- Lemma diagram
+- Appendix
+- Acknowledgments, thesis phrase
+- Print and edit
 
-Skim- shift/cmd/click to open a NEW window ?? i guess it's too much to hope that it would take me to the point in the current window
+Ask Matt:
+- Comments on my proof (new + BR)
+- Comparison to Hirose
 
-----
+---
 
-4/12/16, 12:30 AM
-4/14/16, 2:30 AM...
-
-- Write HMAC-DRBG overview
-- ???
-  - Name lemmas to refer to them
-
-- Fully write out informal proof as a crypto proof
-  - Well, first write it out on paper...
-  - Look at model papers
-  - Indistinguishability AND backtracking resistance
-
-(  - But I already wrote a bunch of stuff??
-  - The code level of detail is too great
-  - I guess I want to start at code level for the definitions for both, but then do a crypto-paper-style proof outline for the former, and a detailed Coq exposition for the latter -- and I'm not even done... 
-  - I'd just feel weird copying-and-pasting half a page of code
-  - I mean do I really have to close-read and explain the Coq??)
-
-TODO: I don't even understand PRHL... ask Lennart to explain the rules to me?
-
--------
-
-- Write out the collisions intermediate games <-- 0.5 pages
-  - Explain Adam's proof (did I already do that?)
- 
-- Diagram of lemma structure <-- 0.5 pages
-
-==== 4 pages (which is probably fine for this Friday)
-
-- Add sections on "not being able to prove this helped me find these errors in my code" and "formal methods made us think about these theorems"
-
-- Replace dupsInIthInputCalls.* everywhere by hasDups, and explain it
-  - also rf_withDups (e.g. Gi_rb_rf_no_bad_same)
-
-- Read the HMAC paper
-
-- PROPERLY NAME AND REFER TO MY LEMMAS
-
-------
-
-4/25/16
-
-- Write up backtracking resistance proof
+- Write up backtracking resistance proof (games and idea)
 - Write section on FCF 
-- Write section on proving spec equivalence
-
-- Flesh out explanation of collisions lemmas
-- Fix abstract
-- Fix introduction
-- Add appendix
-- Add evaluation questions
+- Quickly write section on proving spec equivalence
 
 -----
 
@@ -72,17 +49,31 @@ Andrew's edits
   - Rename Coq code
 - Read Hirose's paper and compare
 - Read Affeldt's paper and compare
-- Summarize more of Barthe's stuff
-- New proof for real Instantiate
-- Move noV presentation
-- Estimate actual failure probability (Adam/Matt: PRF_Advantage)
 - Diagram of proof structure (could be ToC)
   - Asterisk the unfinished ones
+- Estimate actual failure probability (Adam/Matt: PRF_Advantage)
+- Summarize more of Barthe's stuff
+- Move noV presentation
+- Move to BibTeX and make a final pass through citations
+- New proof for real Instantiate
+- Fix all labels and references
 
-- Cite entropy extractor paper and summarize
-- Cite Naphat
+--
+
+- Fix abstract
+- Fix introduction
+- Fix conclusion
+- Add appendix (of the code so far? but it's messy. maybe just link to the repo)
+
+- Replace dupsInIthInputCalls.* everywhere by hasDups, and explain it
+  - also rf_withDups (e.g. Gi_rb_rf_no_bad_same)
 - Fix "appending"
-- Pr_1
+- Flesh out explanation of collisions lemmas (didn't I already do this? integrate)
+- Add sections on "not being able to prove this helped me find these errors in my code" and "formal methods made us think about these theorems"
+- Cite entropy extractor paper and summarize
+
+- Cite Naphat
+- Fix Pr_1 notation
 - PRNG -> PRG, DRBG
 - Math font -> serif
 - Listings font -> sans serif
@@ -90,29 +81,13 @@ Andrew's edits
 - G_real -> G_{mathit{real}} and also for ideal
 - Fix hyphens
 - Fix architecture diagram
-- Other misc
-
------
-
-Later:
+- Change distinguishers D to adversaries A
+- Other misc (look through the marked-up paper)
+- Add evaluation questions
+- Move acknowledgments to beginning
+- Talk about the DRBG complexities we glossed over
 
 - List of figures and list of tables
-- Change distinguishers D to adversaries A
-- Fix references
-- Table of acknowledgments
-- Fix citations
-- Move acknowledgments to beginning
-** - Incorporate Andrew's edits
-- Sneaky vegans
-- Write conclusion
-- Explain PRHL and comp_spec
-- Explain FCF
-- Comment on what was hybrid-specific work (i.e. hard induction) -- note it in the diagram
-- Write a worked example of a Coq proof
-- Talk about the DRBG complexities we glossed over
-- Lemma "table of contents" (quick summary)?
-
-- ACTUALLY FINISH PROOFS AND CLEAN UP CODE
 - Go through meeting notes to see what I missed
 - Read EasyCrypt https://www.easycrypt.info/downloads/tutorial/tutorial-prg.pdf
 - Cite Bellare/Rogaway for game playing
@@ -122,7 +97,6 @@ Later:
 
 Presentation:
 
-- Look at Mario's paper
 - MODEL PAPER: the HMAC paper honestly
 - Look at EasyCrypt paper and how people handle games
 - Look at the Oakland papers he sent me
@@ -133,12 +107,10 @@ Presentation:
 
 Bucket list:
 
+- ACTUALLY FINISH PROOFS AND CLEAN UP CODE
 - We can't verify these systems because they're broken
   - Breaking ElGamal
   - Or some PRG we come up with
 - Tailor background to the conference
-- Appendix with code
-- Move to a real TODO system
-- Move to BibTeX
 - Read Naphat's paper
 - Get it printed and bound

@@ -98,7 +98,8 @@ breaklines=true
 \begin{document}
 
 
-\title{Formal verification of the HMAC-DRBG pseudorandom number generator}
+\title{The Notorious PRG:\\
+Formal verification of the HMAC-DRBG pseudorandom number generator}
 \author{Katherine Ye, advised by Andrew W. Appel}
 \affiliation{Princeton University}
 \author{and Matthew Green}
@@ -127,7 +128,7 @@ The attack has indeed happened in practice (through due to a programming error a
 
 Despite the importance of PRNGs, surprisingly little work exists on proving them secure, either by proving on paper that certain widely used PRNGs are secure, or by verifying with computer-checked proofs that implementations of these PRNGs satisfy their specifications.
 
-%Our project aims to do both. We aim prove correctness and security of an OpenSSL implementations of  HMAC-DRBG. We will do this by proving that the implementation satisfies a functional specification (a high-level implementation in code) of the random number generator, which we trust satisfies its paper specification. Then we will prove that the functional specification guarantees the expected cryptographic properties, most notably that a computationally bounded attacker cannot distinguish generated bits from random bits. These properties will ÒflowÓ from the functional spec down to the compiled code via a verified compiler, CompCert. The entire verification will be machine-checked by Coq, a trusted proof assistant.
+%Our project aims to do both. We aim prove correctness and security of an OpenSSL implementations of  HMAC-DRBG. We will do this by proving that the implementation satisfies a functional specification (a high-level implementation in code) of the random number generator, which we trust satisfies its paper specification. Then we will prove that the functional specification guarantees the expected cryptographic properties, most notably that a computationally bounded attacker cannot distinguish generated bits from random bits. These properties will ï¾’flowï¾“ from the functional spec down to the compiled code via a verified compiler, CompCert. The entire verification will be machine-checked by Coq, a trusted proof assistant.
 
 %This thesis attacks the cryptographic aspect of the problem. We hope to prove that PRNGs called CTR-DRBG and HMAC-DBG generate bits that are indistinguishable from random, that the PRGs are backtracking-resistant, that they eventually recover from compromises of internal state, and other important properties. We will write functional specifications of these PRGs in the environment of the Coq proof assistant, then prove that they possess the desired properties by using the Foundational Cryptography Framework in Coq.
 
@@ -149,7 +150,7 @@ Additionally, we plan to connect our proof of security with an existing proof of
 
 \section{Problem background and related work}
 
-Andrew Appel's group has done the most significant related work in the area. Appel (2015) presents a Òfull formal machine-checked verification of a C program: the OpenSSL implementation of SHA-256.Ó Beringer et al. (2015) build on this work to do the same for HMAC, adding a proof of security that relies on the security of SHA. We plan to use the same approach for CTR-DRBG and HMAC-DRBG.
+Andrew Appel's group has done the most significant related work in the area. Appel (2015) presents a ï¾’full formal machine-checked verification of a C program: the OpenSSL implementation of SHA-256.ï¾“ Beringer et al. (2015) build on this work to do the same for HMAC, adding a proof of security that relies on the security of SHA. We plan to use the same approach for CTR-DRBG and HMAC-DRBG.
 
 In addition, there exist paper proofs of the security of CTR-DRBG and HMAC-DRBG (Campagna (2006), Hirose (2008)), though (as mentioned earlier) the former hasn't appeared in a peer-reviewed venue and the latter is very complicated.
 
@@ -158,7 +159,7 @@ In the area of checking game-based proofs of cryptographic security within a pro
 % TODO fix quotes
 In the general area of formalizing PRNGs, several crypto papers analyze the security of PRNGs and propose new security properties. Dodis et al. (2013) propose the ``robustness'' property and show that the built-in Linux PRNG, /dev/random, is not robust.
 
-There's not much prior work on formal verification of PRNGs in our style. Dorre and Klebanov (2015)  focus on verifying that a PRNG uses all its entropy. They perform this logic-based information flow verification using the KeY system for Java, which uses symbolic execution. This only defends against one particular attack (that of Òsquandering entropyÓ) and does not guarantee functional correctness or other security properties we may care about, such as indistinguishability from randomness and backtracking resistance.
+There's not much prior work on formal verification of PRNGs in our style. Dorre and Klebanov (2015)  focus on verifying that a PRNG uses all its entropy. They perform this logic-based information flow verification using the KeY system for Java, which uses symbolic execution. This only defends against one particular attack (that of ï¾’squandering entropyï¾“) and does not guarantee functional correctness or other security properties we may care about, such as indistinguishability from randomness and backtracking resistance.
 
 Affeldt (2009) do include game-playing proofs of provable security in Coq. However, they focus on doing so directly on an assembly implementation of a PRNG, not on a high-level functional specification. They also verified their own assembly implementation, not a widely used existing one. One advantage of this approach is that it avoids mismatches between the functional specification of the C code and the functional specification used for cryptographic proofs.
 
@@ -365,9 +366,9 @@ $\textbf{G\_intermediate} := $
 
 Then we calculate the overall bound using this intermediate game. We first bound the difference between the real and the intermediate game, then between the intermediate and the ideal game.
 
-\begin{thm} \begin{gather*}| \Pr[G\_real] - \Pr[G\_ideal]| = \\
+\begin{thm} \begin{gather*}| \Pr[G\_real] - \Pr[G\_ideal]| \leq \\
 |\Pr[G\_real] - \Pr[G\_intermediate]| \\
--  |\Pr[G\_intermediate] - \Pr[G\_ideal]|. \end{gather*} \end{thm}
++  |\Pr[G\_intermediate] - \Pr[G\_ideal]|. \end{gather*} \end{thm}
 \begin{proof} By the triangle inequality. \end{proof}
 
 \begin{thm} \begin{gather*}|\Pr[G\_real] - \Pr[G\_intermediate]| \leq PRF\_Advantage.\end{gather*} \end{thm}
@@ -452,7 +453,8 @@ Next, we bound the difference between the intermediate and the ideal-world game.
 
 We use Bellare's \emph{fundamental lemma of game-playing} to bound the distance between these two games.
 
-If two games are \emph{identical until bad}, they are "syntactically identical except for statements that follow the setting of a flag bad to true" (Bellare (2004)). 
+If two games are \emph{identical until bad}, they are "syntactically identical except for statements that follow the setting of a flag bad to true" (Bellare (2004)).
+%\cite{bellare2004}
 
 \begin{lem}(Fundamental lemma of game-playing) Let G and H be identical-until-bad games and
 let A be an adversary. Then 
@@ -1117,21 +1119,137 @@ New oracles:
 $Oi\_prg$
 $Oi\_oc$
 
-\subsubsection{Comments on proof technique}
-
-TODO: Some words on dealing with the hybrids formally
-
-Direction of proof we could have taken
-
-No v-updating (see Matt's email on Dec 22)
+%\subsubsection{Comments on proof technique}
+% compare to campagna/hirose?
 
 \subsection{Proof of backtracking resistance}
 
-We plan to prove that HMAC-DRBG possesses backtracking resistance. That is, if it is compromised at time $T$, the adversary still cannot distinguish HMAC-DRBG previous output from ideal random strings. That is, if the adversary is given a $Compromise$ oracle that it can call after a certain number of calls to the $GenUpdate$ oracle to reveal the PRG's internal $(k,v)$, the adversary still cannot distinguish the previous output from ideal random strings. We plan to do this proof and reuse much of our existing work on indistinguishability. We're working on formalizing the definitions and working out some issues regarding v-updating and nonadaptive vs. adaptive adversaries.
+It is not enough for a real-world DRBG to possess pseudorandomness. As a motivating example, say Alice and Bob want to communicate secretly. Perhaps they are sneaky vegans who want to trade insider information about the future stock prices of Earth Balance Inc. Thus, they use a simple hybrid cryptosystem to communicate, consisting of some public-key encryption scheme $P$ and some symmetric-key encryption scheme $S$. (Such schemes are used in practice; one example is OpenPGP. They are used because the symmetric-key scheme is typically faster than the public-key scheme.)
 
-Formal def of backtracking resistance and adversary
+On Bob's end, he obtains Alice's public key through some trusted authority, generates a fresh symmetric key, encrypts the message using the symmetric key, encrypts the symmetric key using the public key, and sends both encryptions to Alice.
 
-Reductions/games re-using the previous one, adding one additional game.
+On Alice's end, she receives both encryptions. She first decrypts the second encryption with her private key to obtain the symmetric key, then uses the symmetric key to decrypt the message. At that point, Alice and Bob communicate only within the scheme $S$. After a certain number of messages, for good hygiene, one generates a new symmetric key, encrypts that using the old symmetric key, and sends it over. From then on they use the new symmetric key to communicate.
+
+Symmetric keys are essentially generated by a DRBG, with possibly some deterministic function applied to the pseudorandomness afterward. Say the DRBG only possesses the property of pseudorandomness. The DRBG's output here must be kept secret, but if only the output becomes public, then the adversary only knows the symmetric key for time $T$. However, if the DRBG is fully compromised at time $T$ (meaning that an adversary receives its key and seed at that time), the adversary can also apply the DRBG's $Generate$ function to generate the symmetric keys to encrypt and decrypt messages sent \emph{after} time $T$. And the adversary may be able to run the DRBG ``backward'' to generate the symmetric keys used to encrypt and decrypt messages sent \emph{before} time $T$.
+
+We give a formal definition of an adversary not being able to run a PRG ``backward''.
+
+\begin{dfn} \textbf{Backtracking resistance.} Informally, if a PRG is compromised at time $T$, the adversary still cannot distinguish its previous output from ideal random strings. 
+
+Specializing to HMAC-DRBG: any non-uniform non-adaptive PPT adversary $A$ is given a $Compromise$ oracle that it can call after a certain number of calls to the $GenUpdate$ oracle to reveal the PRG's internal $(k,v)$. Even given this additional state, the adversary has a negligible probability of distinguishing the previous output from ideal randomness. This definition is based on the definition given by Barak (2005).
+
+Here is the real-world game. Since $A_{BR}$ (the backtracking resistance adversary) is non-adaptive, there is no separate $Compromise$ oracle; the length of the list implicitly indicates the number of calls after which $A$ wishes to see the internal state $(k,v)$ of the PRG. Then it is given the generated pseudorandom bits and the final $(k,v)$ state.\\
+
+$\textbf{G\_real\_BR} := $
+\begin{game}
+\item[] $l \leftarrow A$
+\item[] $(k,v) \leftarrow Instantiate$
+\item[] $(bits, (k_f, v_f)) \lar$
+  \begin{game}
+    \item[] $oracleMap(GenUpdate\_original,(k, v),l)$
+  \end{game}
+\item[] $ret \s A_{BR}(bits, (k_f, v_f))$ \\
+\end{game}
+
+In the ideal-world game, $A_{BR}$ is given a string of ideal randomness of the same length, as well as $(k,v)$ that are ideally random.\\
+
+$\textbf{G\_ideal\_BR} := $
+\begin{game}
+\item[] $l \leftarrow A$ 
+\item[] $(k,v) \leftarrow Instantiate$
+\item[] $bits \leftarrow genRandForEach(l)$
+\item[] $ret \s A_{BR}(bits, (k,v))$ \\
+\end{game}
+
+The PRG modeled on HMAC-DRBG is backtracking-resistant if for all non-uniform non-adaptive PPT $A_{BR}$ that asks for a polynomial number of blocks over a polynomial number of $GenUpdate$ calls, $A_{BR}$ has a negligible chance of distinguishing between the worlds.
+
+\begin{gather*}
+|\Pr[G\_real\_BR] - \Pr[G\_ideal\_BR]| \leq neg(n, l).
+\end{gather*}
+\end{dfn}
+
+By this definition of backtracking resistance, the real-world and ideal-world games are very similar to the respective games in the definition of pseudorandomness, discussed in section REFERENCE. The only difference is that in the real-world game, the new adversary is given the final state, and in the ideal-world game, the new adversary is given an ideally random state. Thus, intuitively, the proof of backtracking resistance can reuse many of the steps and reductions we used to prove pseudorandomness.
+
+% $\textbf{G\_real} := $
+% \begin{game}
+% \item[] $l \leftarrow A$
+% \item[] $(k,v) \leftarrow Instantiate$
+% \item[] $bits \lar oracleMap(GenUpdate\_original,(k, v),l)$
+% \item[] $ret \s A(bits)$ \\
+% \end{game}
+
+% $\textbf{G\_ideal} := $
+% \begin{game}
+% \item[] $l \leftarrow A$ 
+% \item[] $bits \leftarrow genRandForEach(l)$
+% \item[] $ret \s A(bits)$ \\
+% \end{game}
+
+\begin{thm}\label{thm:br} HMAC-DRBG is backtracking resistant. 
+% TODO fix this bound
+  \begin{gather*}
+|\Pr[G\_real\_BR] - \Pr[G\_ideal\_BR]| \\
+\leq t \cdot PRF\_Advantage\_Max + \sum_{0}^{t-1} \f{(l_i+1)^2}{2^c} \\ 
+\leq t \cdot (PRF\_Advantage\_Max + \f{(maxBlocks + 1)^2}{2^c}).
+\end{gather*}
+
+\end{thm}
+\begin{proof} This is a proof sketch, not the full proof.
+
+Note that in every proof we reuse from the pseudorandomness proof, we have to check that the result holds for an adversary that also receives the state. We run into such a problem in the first step.
+
+We reuse Lemma REFERENCE to move each $v$-update in $GenUpdate$ to the beginning of the next call. Because this is a program equivalence proof, the result holds as-is on the output. However, the \emph{state} at the end of a $GenUpdate\_noV$ call is not the same as it would be at the end of a $GenUpdate$ call. 
+
+This breaks backtracking resistance. Referring to $GenUpdate\_original$ (in Section REFERENCE), the adversary would receive $v_1$, not $v_2$. But if $A_{BR}$ knows that the last block of the PRG's output is $v_1$. So if $A_{BR}$ is in the real-world game, it can simply check if this is true. This happening has a negligible probability of happening in the ideal-world game, since the $v$ that $A_{BR}$ receives is ideally random. To fix this, we simply update $v_1$ before giving the state to $A_{BR}$ \footnote{One could change the ideal-world definition to give $A_{BR}$ the last block of the ideally random output as $v$, but that would weaken the definition. Anyway, we still need to fix the $v$-updating in order to rewrite the game in terms of the PRF adversary, as discussed in Section REFERENCE.}
+
+Here is the new game with $v$-updating.\\
+
+$\textbf{G\_real\_BR\_noV} := $
+\begin{game}
+\item[] $l \leftarrow A$
+\item[] $(k,v) \leftarrow Instantiate$
+\item[] $(head\_bits, state') \lar$
+  \begin{game}
+    \item[]  $GenUpdate\_noV((k, v), (head \s l))$
+  \end{game}
+\item[] $(tail\_bits, (k_f, v_1)) \lar$
+  \begin{game}
+    \item[] $oracleMap(GenUpdate,state',(tail l))$
+  \end{game}
+\item[] $v_f \lar f_k(v_1)$
+\item[] $ret \s A_{BR}(head\_bits :: tail\_bits, (k_f, v_f))$ \\
+\end{game}
+
+Afterward, we take the same strategy. We define the same hybrids: $H_i$ replaces the PRF on calls $\leq i$ with ideal randomness, and using the PRF normally afterward. Then we use the triangle inequality so that we only need bound the distance between adjacent hybrids $H_i$ and $H_{i+1}$.
+
+The first step in the bound between adjacent hybrids is the same as in the pseudorandomness proof. We use the same intermediate hybrid $H_i'$: we rewrite $G\_real\_BR\_noV$ in the form of a game $G\_real\_BR\_noV\_RF(i)$ that passes a random function oracle to some PRF adversary, which uses ideal randomness in place of the PRF on calls $\leq i$, the provided oracle on call $i+1$, and the PRF afterward. We rewrite the beginning hybrid $H_i$ in the same form, just passing the PRF adversary the PRF as an oracle instead.
+
+The distance between $H_i$ and $H_i'$ is $PRF\_Advantage\_Max$ by definition and by taking the maximum $PRF\_Advantage$ over all hybrids (discussed in Section REFERENCE). In this step, we don't need to reason about the $A_{BR}$ being given the state; no matter what happens, the bound is $PRF\_Advantage\_Max$ by definition.
+
+The second step in the bound between adjacent hybrids is to rewrite the ideal-world game in the form of a game that instead passes the PRF adversary the oracle $rb\_oracle$ for all calls. (This oracle uniformly samples random bits and records the input-output pairs.) Then, we reason that this new game, $G\_real\_BR\_noV\_RB$, is related to the intermediate game because they are identical until bad. This is true. To see this, we consider the distribution of the output $(bits, (k_f, v_f))$ instead of just $bits$ as before.
+
+\begin{enumerate}
+\item The bad event (duplicates in the inputs to the provided oracle) has the same chance of happening in both games. This is true. Outputting the end state does not affect whether the bad event happens.
+\item If the bad event does not happpen, the output distributions are identical between the games. We already proved this for $bits$. For $(k_f, v_f)$, the key is always ideally random because its input is length-extended. $v_f$ is ideally random because it is the first query of a freshly re-keyed PRF. This is true across both games.
+\end{enumerate}
+
+At this point, we have essentially replaced the first hybrid with the last hybrid, adding on the collision bounds along the way. The last hybrid here is a slightly different game from the ideal-world game, whereas in the pseudorandomness proof the last hybrid was the same as the ideal-world game by program equivalence. The last hybrid here still possesses the last $v$-update after the $GenUpdate\_noV$ calls.\\
+
+$\textbf{G\_last\_hybrid\_BR} := $
+\begin{game}
+\item[] $l \leftarrow A$ 
+\item[] $bits \leftarrow genRandForEach(l)$
+\item[] $k_f \samp^n$
+\item[] $lastV \lar lastBlockOf(bits)$
+\item[] $v_f \lar randomFunc\_withDups(lastV)$
+\item[] $ret \s A_{BR}(bits, (k_f,v_f))$ \\
+\end{game}
+
+Clearly, since $v_f$ is the first query to a random function, it is ideally random. Thus $(bits, (k_f, v_f))$ has the same distribution here as in the ideal-world game, so the distribution of $A_{BR}$'s guess is the same.
+
+The bound on the probability that $A_{BR}$ breaks backtracking resistance is the same as the bound on the probability that $A$ can break pseudorandomness. This is not immediately obvious!
+
+\end{proof}
 
 \subsection{On proving prediction resistance}
 
@@ -1139,6 +1257,10 @@ Reductions/games re-using the previous one, adding one additional game.
 NIST also specifies that HMAC-DRBG possesses the complementary property of prediction resistance. That is, if it is compromised at time $T$, the adversary will find it difficult to distinguish HMAC-DRBG's future output from ideal random strings. Naively, if given $(k, v)$ at time $T$, the adversary should be able to compute all future DRBG output and thus distinguish. Thus, the $Reseed$ function is supposed to ensure prediction resistance by injecting fresh entropy into the DRBG that is unknown to the adversary. (It refreshes the $(k,v)$ by re-HMACing them with some entropy appended to the previous $(k,v)$)
 
 However, proving things about this is difficult. Dodis et al. (2013) proved that the Linux PRNG was insecure and did not possess prediction resistance. However, they had to do tricky reasoning about how much entropy was injected at once and where. They had to reason about, for example, the difference between injecting entropy as five bits per call over ten calls, versus fifty bits in one call, and relative difficulties for the adversary. 
+
+\subsection{On adaptivity of the adversary}
+
+How would I prove this on paper?
 
 \section{Foundational Cryptography Framework summary}
 
@@ -2041,11 +2163,14 @@ Naphat Sanguansin did the work that would allow my proofs to actually hold on an
 
 I want to thank Matt and Andrew again for suggesting a thesis topic that was cool and well-motivated, as well as providing detailed feedback on drafts of this thesis.
 
-Thanks to everyone in 2D for general encouragement, cooking great food that sustained me at late hours, and camping out with me in the dining room (hi, Jaehwan).
+Thanks to everyone in 2D for general encouragement, cooking great food that sustained me at late hours, sending me thesis jams (thanks, Angela), and camping out with me in the dining room (hi, Jaehwan).
 
 Thanks to Jean Juang, Frederic Koehler, and Xiaoyan Han for being great friends and thesis buddies, and Carolyn Chen and Pallavi Koppol for being great friends during the grad school application process.
 
 Thanks to the Recurse Center for being a community of excellent people who are happy to listen to me ramble about research. 
+
+% Signing out,\\
+% \indent \it{Notorious P.R.G.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -2055,26 +2180,29 @@ Thanks to the Recurse Center for being a community of excellent people who are h
 
 \begin{thebibliography}{99}
 
-%\bibitem{byrd2009}
-%Byrd, William E. \emph{Relational programming in minikanren: Techniques, applications, and implementations.} Diss. faculty of the University Graduate School in partial fulfillment of the requirements for the degree Doctor of Philosophy in the Department of Computer Science, Indiana University, 2009.
-
 \bibitem{affeldt2009}
 Affeldt, Reynald, David Nowak, and Kiyoshi Yamada. "Certifying assembly with formal cryptographic proofs: the case of BBS." \emph{Electronic Communications of the EASST} 23 (2009).
 
 \bibitem{appel2015}
 Appel, Andrew W. "Verification of a cryptographic primitive: SHA-256." \emph{ACM Transactions on Programming Languages and Systems (TOPLAS)} 37, no. 2 (2015): 7.
 
+\bibitem{barak2005}
+Barak, Boaz, and Shai Halevi. ``A model and architecture for pseudo-random generation with applications to/dev/random.'' \emph{Proceedings of the 12th ACM conference on Computer and communications security.} ACM, 2005. 
+
 \bibitem{barker2012}
 Barker, Elaine, and John Kelsey. "NIST Special Publication 800-90A: Recommendation for random number generation using deterministic random bit generators." (2012).
 
 \bibitem{barthe2011}
-Barthe, Gilles, Benjamin GrŽgoire, Sylvain Heraud, and Santiago Zanella BŽguelin. "Computer-aided security proofs for the working cryptographer." In \emph{Advances in CryptologyÐCRYPTO} 2011, pp. 71-90. Springer Berlin Heidelberg, 2011.
+Barthe, Gilles, Benjamin Gr{\'e}goire, Sylvain Heraud, and Santiago Zanella-B{\'e}guelin. "Computer-aided security proofs for the working cryptographer." In \emph{Advances in Cryptology---CRYPTO} 2011, pp. 71-90. Springer Berlin Heidelberg, 2011.
+
+\bibitem{barthe2014}
+Barthe, Gilles, et al. ``Easycrypt: A tutorial.'' \emph{Foundations of Security Analysis and Design VII.} Springer International Publishing, 2014. 146-166.
 
 \bibitem{bellare2004}
 Bellare, Mihir, and Phillip Rogaway. "Code-Based Game-Playing Proofs and the Security of Triple Encryption." \emph{IACR Cryptology ePrint Archive} 2004 (2004): 331.
 
 \bibitem{beringer2015}
-Beringer, Lennart, Adam Petcher, Katherine Q. Ye, and Andrew W. Appel. "Verified correctness and security of OpenSSL HMAC." In \emph{24th USENIX Security Symposium (USENIX Security 15)}, pp. 207-221. 2015.
+Beringer, Lennart, Adam Petcher, Katherine Q. Ye, and Andrew W. Appel. "Verified correctness and security of OpenSSL HMAC." In \emph{24th USENIX Security Symposium (USENIX Security '15)}, pp. 207-221. 2015.
 
 \bibitem{campagna2006}
 Campagna, Matthew J. "Security Bounds for the NIST Codebook-based Deterministic Random Bit Generator." \emph{IACR Cryptology ePrint Archive 2006} (2006): 379.
@@ -2083,13 +2211,19 @@ Campagna, Matthew J. "Security Bounds for the NIST Codebook-based Deterministic 
 Dodis, Yevgeniy, David Pointcheval, Sylvain Ruhault, Damien Vergniaud, and Daniel Wichs. "Security analysis of pseudorandom number generators with input:/dev/random is not robust." In \emph{Proceedings of the 2013 ACM SIGSAC conference on Computer and Communications Security}, pp. 647-658. ACM, 2013.
 
 \bibitem{dorre2015}
-Dšrre, Felix, and Vladimir Klebanov. "Pseudo-random Number Generator Verification: A Case Study." \emph{Proceedings, Verified Software: Theories, Tools, and Experiments (VSTTE)} (2015).
+D{\"o}rre, Felix, and Vladimir Klebanov. "Pseudo-random Number Generator Verification: A Case Study." \emph{Proceedings, Verified Software: Theories, Tools, and Experiments (VSTTE)} (2015).
+
+\bibitem{fouque2008}
+Fouque, Pierre-Alain, David Pointcheval, and SÃ©bastien Zimmer. ``HMAC is a randomness extractor and applications to TLS.'' \emph{Proceedings of the 2008 ACM symposium on Information, computer and communications security.} ACM, 2008.
+
+\bibitem{goldreich2005}
+Goldreich, Oded. \emph{Foundations of cryptography: a primer}. Vol. 1. Now Publishers Inc, 2005.
 
 \bibitem{hirose2008}
 Hirose, Shoichi. "Security analysis of DRBG using HMAC in NIST SP 800-90." In \emph{Information Security Applications}, pp. 278-291. Springer Berlin Heidelberg, 2008.
 
 \bibitem{petcher2015}
-Petcher, Adam, and Greg Morrisett. "The foundational cryptography framework." \emph{In Principles of Security and Trust}, pp. 53-72. Springer Berlin Heidelberg, 2015.
+Petcher, Adam, and Greg Morrisett. "The foundational cryptography framework." In \emph{Principles of Security and Trust}, pp. 53-72. Springer Berlin Heidelberg, 2015.
 
 \bibitem{sanguansin2016}
 Sanguansin, Naphat. "Verification of a Deterministic Random Bits Generator." Independent work paper, Princeton University. 2016.
