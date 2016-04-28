@@ -2,10 +2,8 @@
 
 HAVE A DRAFT FOR ANDREW BY FRIDAY, 8 AM.!!!!
 Goal for Wednesday->Thursday (3:30 am):
-- Write BR (30)
 - Write FCF (30)
 - Write spec equivalence (30)
-- Read Hirose and compare (15)
 - Read Affeldt and compare (15)
 - Read Barthe and compare (15)
 - Estimate failure probability (15)
@@ -30,10 +28,6 @@ Friday (midnight):
 - Acknowledgments, thesis phrase
 - Print and edit
 
-Ask Matt:
-- Comments on my proof (new + BR)
-- Comparison to Hirose
-
 ---
 
 - Write up backtracking resistance proof (games and idea)
@@ -47,7 +41,6 @@ Andrew's edits
 - Move to new format
   - Merge formal section and Coq section (2-column)
   - Rename Coq code
-- Read Hirose's paper and compare
 - Read Affeldt's paper and compare
 - Diagram of proof structure (could be ToC)
   - Asterisk the unfinished ones

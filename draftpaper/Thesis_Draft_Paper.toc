@@ -15,8 +15,8 @@
 \contentsline {subsubsection}{\numberline {3}Formalization}{13}{section*.13}
 \contentsline {subsection}{\numberline {C}Proof of backtracking resistance}{13}{section*.14}
 \contentsline {subsection}{\numberline {D}On proving prediction resistance}{15}{section*.15}
-\contentsline {subsection}{\numberline {E}On adaptivity of the adversary}{15}{section*.16}
-\contentsline {section}{\numberline {V}Foundational Cryptography Framework summary}{15}{section*.17}
+\contentsline {subsection}{\numberline {E}On adaptivity of the adversary}{16}{section*.16}
+\contentsline {section}{\numberline {V}Foundational Cryptography Framework summary}{16}{section*.17}
 \contentsline {section}{\numberline {VI}Formal proof outline}{16}{section*.18}
 \contentsline {subsection}{\numberline {A}Starting HMAC-DRBG definitions}{16}{section*.19}
 \contentsline {subsection}{\numberline {B}Prior work on abstract PRF-DRBG}{16}{section*.20}
