@@ -291,7 +291,7 @@ For any game $G$ that returns a boolean, let $\Pr[G]$ denote the probability tha
 % TODO mention EasyCrypt tutorial -- it's on this level
 % hardness of PRF
 
-Adam Petcher proved the security of the core loop construction in HMAC-DRBG's $Generate$ function. We summarize his proofs here.
+Petcher proved the security of the core loop construction in HMAC-DRBG's $Generate$ function. We summarize his proofs here.
 
 First, take any family of PRFs $$F_c = \{f_k : \{0,1\}^c \rightarrow \{0,1\}^c\}_{k \in \{0,1\}^c}.$$
 
@@ -1396,7 +1396,7 @@ Definition GenUpdate_original (state : KV) (n : nat) :
 % @ where should this go?
 \subsection{Prior work on abstract PRF-DRBG}
 
-Adam Petcher did some prior work on proving the security of the core loop seen above, run once. His definition is similar to ours, but more abstract. Here $f$ is any $PRF$.
+Petcher did some prior work on proving the security of the core loop seen above, run once. His definition is similar to ours, but more abstract. Here $f$ is any $PRF$.
 
 \begin{lstlisting}
   Fixpoint PRF_DRBG_f (v : D)(n : nat)(k : Key) :=
@@ -1629,7 +1629,7 @@ This is the important part of the proof. We prove that the difference between ea
 Gi_Gi_plus_1_bound := PRF_Advantage_i + Pr_collisions.
 \end{lstlisting}
 
-Adam's existing lemma handles the rest of the work, yielding the result that the difference between the first and the last hybrid is at most this bound times the number of hybrids.
+Petcher's existing lemma handles the rest of the work, yielding the result that the difference between the first and the last hybrid is at most this bound times the number of hybrids.
 
 \end{enumerate} 
 
@@ -2159,7 +2159,7 @@ We abstracted or ignored a few parts of HMAC-DRBG.
 
 There are 17 main lemmas and many small ones. Not all are proven, but I've proved the four most difficult ones and am confident about the rest, which are mostly game equivalence proofs. There are 22 admitted lemmas (including medium-sized lemmas but not the smallest ones.
 
-The development spans 2000 lines of code. Adam's proof for the core loop spans less than 1000 lines.
+The development spans 2000 lines of code. Petcher's proof for the core loop spans less than 1000 lines.
 
 Besides proving the admitted lemmas, here's what's left to do in the near future:
 
@@ -2323,15 +2323,25 @@ Ye, Katherine. ``Formally proving equivalence between abstract and concrete spec
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  \appendix
 
-\section{Definitions and proofs}
+\section{Code}
 
-My repository.
+The HMAC-DRBG pseudorandomness proof may be found in this file. (The backtracking proof will be added in that repository in a month or two.) \\
 
-FCF repository.
+\li|https://github.com/hypotext/fcf/blob/master/src/examples/HMAC_DRBG_nonadaptive.v| \\
 
-HMAC repository.
+The HMAC-DRBG functional correctness proof may be found in this repository. \\
 
-Will add worked examples of Coq proofs using FCF tactics. 
+\li|https://bitbucket.org/naphatkrit/rng| \\
+
+The Foundational Cryptography Framework may be found in this repository. 
+
+\li|https://github.com/adampetcher/fcf| \\
+
+The full verification of HMAC may be found in this repository, subdirectories $sha$, $fcf$, and $hmacfcf$. \\
+
+\li|https://github.com/PrincetonUniversity/VST/|
+
+% Will add worked examples of Coq proofs using FCF tactics. 
 
  \end{document}
 
