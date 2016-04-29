@@ -1,63 +1,37 @@
 4/27/16
 
 HAVE A DRAFT FOR ANDREW BY FRIDAY, 8 AM.!!!!
-Goal for Thursday->Friday (11:45-2 am):
-1:03->2:21->2:51
---> 2 hrs
 
-Goal for Thursday->Friday (3 am-7 am): 
-- Move to new format 
-  - Rewrite in 2-column
-  - Coq correctness edits, possible renaming
+Goal for Friday (done by midnight, needs to be turn-in-able):
 
-  - Write section on formal verification
-  - Estimate failure probability (15)
-  - Move NoV presentation
-  --> 2 hrs
-- Edit list of lemmas
-- Proof structure
-  --> 2 hrs
-==== 6 hrs
-so, finish by 8 am
+- Interstitial paragraph on my approach to summarizing formal stuff
+- Rewrite in 2-column <-- Just for the stuff I have already (PRF_DRBG ideal/real world def / adversary / 2 games, same for the other one)
 
-Friday (midnight):
+- Lemma outline with short summary in body of paper
+  - Tree diagram
+- Edit lemmas for correctness
+- Move lemmas to appendix
+
+- Write section on stuff verification helped me catch
+- Write section on specifically annoying reasoning, pointing to list of lemmas
+
+Goal for Saturday: -- should be able to turn it in by 8pm/10pm!!
+
+- Estimate failure probability (15)
+- Move NoV presentation
 - Typesetting (Andrew's edits), ToC
-  - Typesetting (line breaks; code; real-world/ideal-world)
-- BibTeX
+- Typesetting (line breaks; code; real-world/ideal-world)
+- Move to BibTex? At least fix references (intro)
 - Edit intro/conclusion/prior work
-- Lemma diagram
-- Appendix
-- Acknowledgments
 - Go through and remove inline/commented TODOs, weird symbols in source
 - Print and edit
 
----
-
-- Write section on FCF 
-- Quickly write section on proving spec equivalence
-
------
-
-Andrew's edits
-
-- Move to new format
-  - Merge formal section and Coq section (2-column)
-  - Rename Coq code
-- Diagram of proof structure (could be ToC)
-  - Asterisk the unfinished ones
-- Estimate actual failure probability (Adam/Matt: PRF_Advantage)
-- Summarize more of Barthe's stuff
-- Move noV presentation
-- Move to BibTeX and make a final pass through citations
-- New proof for real Instantiate
-- Fix all labels and references
-
 --
 
+- Label tables (list of tables)
 - Fix abstract
 - Fix introduction
 - Fix conclusion
-- Add appendix (of the code so far? but it's messy. maybe just link to the repo)
 
 - Replace dupsInIthInputCalls.* everywhere by hasDups, and explain it
   - also rf_withDups (e.g. Gi_rb_rf_no_bad_same)
@@ -67,7 +41,6 @@ Andrew's edits
 - Cite entropy extractor paper and summarize
 
 - Cite Naphat
-- Adam -> Petcher
 - Indistinguishability -> pseudorandomness
 - Fix Pr_1 notation
 - PRNG -> PRG, DRBG
@@ -80,10 +53,8 @@ Andrew's edits
 - Change distinguishers D to adversaries A
 - Other misc (look through the marked-up paper)
 - Add evaluation questions
-- Move acknowledgments to beginning
 - Talk about the DRBG complexities we glossed over
 
-- List of figures and list of tables
 - Go through meeting notes to see what I missed
 - Read EasyCrypt https://www.easycrypt.info/downloads/tutorial/tutorial-prg.pdf
 - Cite Bellare/Rogaway for game playing
@@ -110,3 +81,19 @@ Bucket list:
 - Tailor background to the conference
 - Read Naphat's paper
 - Get it printed and bound
+
+---
+
+Andrew's edits
+
+- Move to new format
+  - Merge formal section and Coq section (2-column)
+  - Rename Coq code
+- Diagram of proof structure (could be ToC)
+  - Asterisk the unfinished ones
+- Estimate actual failure probability (Adam/Matt: PRF_Advantage)
+- Summarize more of Barthe's stuff
+- Move noV presentation
+- Move to BibTeX and make a final pass through citations
+- New proof for real Instantiate
+- Fix all labels and references

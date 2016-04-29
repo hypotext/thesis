@@ -75,19 +75,15 @@
   \vspace{.6in}
   \extravspace{.6in}
   \begin{center}
-    A Dissertation \\
-    Presented to the Faculty \\
-    of Princeton University \\
-    in Candidacy for the Degree \\
-    of Doctor of Philosophy
+    A Thesis \\
+    Presented for the Degree \\
+    of Bachelor of Arts
   \end{center}
   \vspace{.3in}
   \extravspace{.3in}
   \begin{center}
-    Recommended for Acceptance \\
-    by the \@deptpref \\
-    \@dept \\
-    Adviser: \@adviser
+    Department of \@dept \\
+    Advisors: \@adviser
   \end{center}
   \vspace{.3in}
   \extravspace{.3in}

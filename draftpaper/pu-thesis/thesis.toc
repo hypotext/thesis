@@ -1,34 +1,34 @@
 \select@language {english}
 \contentsline {section}{Abstract}{iii}{Doc-Start}
 \contentsline {section}{Acknowledgements}{iv}{section*.1}
-\contentsline {section}{List of Tables}{vii}{section*.4}
-\contentsline {section}{List of Figures}{viii}{section*.6}
+\contentsline {section}{List of Tables}{viii}{section*.4}
+\contentsline {section}{List of Figures}{ix}{section*.6}
 \contentsline {chapter}{\numberline {1}Introduction}{1}{chapter.1}
-\contentsline {section}{\numberline {1.1}Related work}{3}{section.1.1}
-\contentsline {section}{\numberline {1.2}HMAC-DRBG overview}{4}{section.1.2}
-\contentsline {subsection}{\numberline {1.2.1}Security properties}{8}{subsection.1.2.1}
-\contentsline {section}{\numberline {1.3}Proofs}{8}{section.1.3}
-\contentsline {subsection}{\numberline {1.3.1}Indistinguishability proof for one call}{9}{subsection.1.3.1}
-\contentsline {subsection}{\numberline {1.3.2}Indistinguishability proof for a simplified HMAC-DRBG}{20}{subsection.1.3.2}
-\contentsline {subsubsection}{Definitions}{20}{section*.8}
-\contentsline {subsubsection}{Proof outline}{24}{section*.9}
-\contentsline {subsubsection}{Formalization}{41}{section*.10}
-\contentsline {subsection}{\numberline {1.3.3}Proof of backtracking resistance}{42}{subsection.1.3.3}
-\contentsline {subsection}{\numberline {1.3.4}On proving prediction resistance}{48}{subsection.1.3.4}
-\contentsline {subsection}{\numberline {1.3.5}On adaptivity of the adversary}{48}{subsection.1.3.5}
-\contentsline {section}{\numberline {1.4}Overview of the Foundational Cryptography Framework}{49}{section.1.4}
-\contentsline {section}{\numberline {1.5}Formal proof outline}{53}{section.1.5}
-\contentsline {subsection}{\numberline {1.5.1}Starting HMAC-DRBG definitions}{53}{subsection.1.5.1}
-\contentsline {subsection}{\numberline {1.5.2}Prior work on abstract PRF-DRBG}{53}{subsection.1.5.2}
-\contentsline {subsection}{\numberline {1.5.3}Proof of indistinguishability}{54}{subsection.1.5.3}
-\contentsline {subsubsection}{Main games}{55}{section*.11}
-\contentsline {subsection}{\numberline {1.5.4}List of lemmas}{60}{subsection.1.5.4}
-\contentsline {subsection}{\numberline {1.5.5}Proof graph}{76}{subsection.1.5.5}
-\contentsline {subsection}{\numberline {1.5.6}Current limitations of the formal proof}{77}{subsection.1.5.6}
-\contentsline {subsection}{\numberline {1.5.7}Comments on the Coq development}{78}{subsection.1.5.7}
-\contentsline {subsection}{\numberline {1.5.8}Comments on HMAC-DRBG's design}{78}{subsection.1.5.8}
-\contentsline {section}{\numberline {1.6}Linking our crypto spec with the functional spec}{79}{section.1.6}
-\contentsline {subsection}{\numberline {1.6.1}Bridging the gaps between the specifications}{80}{subsection.1.6.1}
-\contentsline {section}{\numberline {1.7}Future work}{81}{section.1.7}
-\contentsline {section}{\numberline {1.8}Conclusion}{82}{section.1.8}
-\contentsline {section}{\numberline {.1}Code}{85}{section.Alph0.1}
+\contentsline {chapter}{\numberline {2}Related work}{3}{chapter.2}
+\contentsline {chapter}{\numberline {3}HMAC-DRBG overview}{6}{chapter.3}
+\contentsline {section}{\numberline {3.1}Security properties}{10}{section.3.1}
+\contentsline {chapter}{\numberline {4}Proofs}{11}{chapter.4}
+\contentsline {section}{\numberline {4.1}Indistinguishability proof for one call}{11}{section.4.1}
+\contentsline {section}{\numberline {4.2}Indistinguishability proof for a simplified HMAC-DRBG}{23}{section.4.2}
+\contentsline {subsection}{\numberline {4.2.1}Definitions}{23}{subsection.4.2.1}
+\contentsline {subsection}{\numberline {4.2.2}Proof outline}{27}{subsection.4.2.2}
+\contentsline {subsection}{\numberline {4.2.3}Formalization}{43}{subsection.4.2.3}
+\contentsline {section}{\numberline {4.3}Proof of backtracking resistance}{44}{section.4.3}
+\contentsline {section}{\numberline {4.4}On proving prediction resistance}{51}{section.4.4}
+\contentsline {section}{\numberline {4.5}On adaptivity of the adversary}{51}{section.4.5}
+\contentsline {chapter}{\numberline {5}Overview of the Foundational Cryptography Framework}{52}{chapter.5}
+\contentsline {chapter}{\numberline {6}Formal proof outline}{57}{chapter.6}
+\contentsline {section}{\numberline {6.1}Starting HMAC-DRBG definitions}{57}{section.6.1}
+\contentsline {section}{\numberline {6.2}Prior work on abstract PRF-DRBG}{58}{section.6.2}
+\contentsline {section}{\numberline {6.3}Proof of indistinguishability}{58}{section.6.3}
+\contentsline {subsection}{\numberline {6.3.1}Main games}{59}{subsection.6.3.1}
+\contentsline {section}{\numberline {6.4}List of lemmas}{64}{section.6.4}
+\contentsline {section}{\numberline {6.5}Proof graph}{81}{section.6.5}
+\contentsline {section}{\numberline {6.6}Current limitations of the formal proof}{81}{section.6.6}
+\contentsline {section}{\numberline {6.7}Comments on the Coq development}{83}{section.6.7}
+\contentsline {section}{\numberline {6.8}Comments on HMAC-DRBG's design}{83}{section.6.8}
+\contentsline {chapter}{\numberline {7}Linking our crypto spec with the functional spec}{85}{chapter.7}
+\contentsline {section}{\numberline {7.1}Bridging the gaps between the specifications}{85}{section.7.1}
+\contentsline {chapter}{\numberline {8}Future work}{88}{chapter.8}
+\contentsline {chapter}{\numberline {9}Conclusion}{89}{chapter.9}
+\contentsline {chapter}{\numberline {A}Code}{93}{appendix.A}

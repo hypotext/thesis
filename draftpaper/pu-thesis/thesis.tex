@@ -23,13 +23,14 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\
 %%%% Author & title page info
 
-\title{The Notorious PRG:\\
-Formal verification of the HMAC-DRBG pseudorandom number generator}
+\title{The Notorious \textsc{PRG}:\\
+Formal verification of the \textsc{HMAC-DRBG} pseudorandom number generator}
 
 \submitted{April 2016}  % degree conferral date (January, April, June, September, or November)
 % \copyrightyear{2010}  % year in which the copyright is secured by publication of the dissertation.
 \author{Katherine Qinru Ye}
-\adviser{Andrew W. Appel and Matthew Green}  %replace with the full name of your adviser
+\adviser{Andrew W. Appel (Princeton University) \\
+  and Matthew Green (Johns Hopkins University)}  %replace with the full name of your adviser
 %\departmentprefix{Program in}  % defaults to "Department of", but programs need to change this.
 \department{Computer Science}
 
@@ -63,6 +64,18 @@ Formal verification of the HMAC-DRBG pseudorandom number generator}
 %%%% Use packages
 
 %\usepackage{amsfonts}
+\usepackage{mathpazo}
+
+% change section fonts
+% \usepackage{color}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{titlesec}
+\titleformat{\chapter}[display]
+  {\normalfont\sffamily\huge\bfseries\color{Black}}
+  {\chaptertitlename\ \thechapter}{20pt}{\Huge}
+\titleformat{\section}
+  {\normalfont\sffamily\Large\bfseries\color{Black}}
+  {\thesection}{1em}{}
 
 %%% For figures
 \usepackage{graphicx}
@@ -372,7 +385,7 @@ Additionally, we plan to connect our proof of security with an existing proof of
 
 %TODO: include precise theorem statement
 
-\section{Related work}
+\chapter{Related work}
 
 Andrew Appel's group has done the most similar related work in the area. Appel (2015) presents a ``full formal machine-checked verification of a C program: the OpenSSL implementation of SHA-256.'' Beringer et al. (2015) build on this work to do the same for HMAC, adding a proof of security that relies on the security of SHA. We plan to use the same approach for fully verifying HMAC-DRBG.
 
@@ -392,7 +405,7 @@ Our approach is unique because it provides an end-to-end and foundational verifi
 
 % (TODO: fix these citations)
 
-\section{HMAC-DRBG overview}
+\chapter{HMAC-DRBG overview}
 % **
 A pseudorandom number generator is used to stretch a small amount of randomness into a large amount of pseudorandomness, often for use in cryptosystems. HMAC-DRBG, formalized in NIST SP 800-90A, is one such pseudorandom number generator. It generates output by iterating HMAC, a keyed-hash message authentication function widely believed to be difficult to invert [cite] and that proven to be a pseudorandom function (PRF) given that HMAC's internal hash function is a PRF. % [mention key?]
 
@@ -454,7 +467,7 @@ $\textbf{Reseed}(k, v, entropy) := $
 \item[] $ret \s (k,v, reseed\_counter)$ \\
 \end{game}
 
-$Generate$ generates $n$ blocks of pseudorandom bits.
+$Generate$ generates $n$ blocks of pseudorandom bits.\\
 % $Gen\_loop$ is the internal bit-generating loop of $Generate$, rephrased in a functional and recursive manner from the original imperative $while$ loop. $c$ is the input/output size of $f_k$ (HMAC). \\
 
 % $\textbf{Gen\_loop(n, k, v)} :=$
@@ -488,7 +501,7 @@ From the user's point of view, only the $Instantiate$ and $Generate$ functions a
 
 We discuss our proof of security for a simplified PRG, consisting of only one call to the internal loop in $Generate$, in section REFERENCE. We discuss our proof of security for a simplified version of HMAC-DRBG in section REFERENCE.
 
-\subsection{Security properties}
+\section{Security properties}
 
 The most important property for a PRG is that its output is indistinguishable from ideal randomness. This definition will be formally stated in the proof in section REFERENCE.
 % If an attacker can predict, then it can...
@@ -505,13 +518,13 @@ Prediction resistance is the complementary property. If a PRG is prediction resi
 
 We do not prove that HMAC-DRBG is prediction resistant. This is because the definition is slippery, and because it is difficult to prove.
 
-\section{Proofs}
+\chapter{Proofs}
 
 In this section we will write proofs as a conventional cryptographer would. We prove three things: indistinguishability for a simple PRG constructed from a PRF, indistinguishability for a real-world PRG constructed from a PRF, and backtracking resistance for the same PRG.
 
 For any game $G$ that returns a boolean, let $\Pr[G]$ denote the probability that $G$ returns true. 
 
-\subsection{Indistinguishability proof for one call}
+\section{Indistinguishability proof for one call}
 % TODO mention EasyCrypt tutorial -- it's on this level
 % hardness of PRF
 
@@ -794,9 +807,9 @@ Thus, $H$ is a secure PRG. Moreover, since we did our proof in the concrete secu
 % TODO: remove this break (here for legibility)
 % \break
 
-\subsection{Indistinguishability proof for a simplified HMAC-DRBG}
+\section{Indistinguishability proof for a simplified HMAC-DRBG}
 % ^^
-\subsubsection{Definitions}
+\subsection{Definitions}
 To prove indistinguishability for HMAC-DRBG, we must extend the proof for $H$ to apply for multiple calls of $H$, with $(k, v)$ being updated after each call.
 
 As summarized in section REFERENCE, the HMAC-DRBG functions are $Instantiate$, $Generate$, $Update$, and $Reseed$. The state is $(k, v)$.
@@ -884,7 +897,7 @@ $\textbf{G\_ideal} := $
 % sometimes latexmk complains about this
 % \break
 
-\subsubsection{Proof outline}
+\subsection{Proof outline}
 Again, we must extend the proof for the security of $H$ to the security of multiple calls of $H$ with $(k,v)$ being updated after each call. This problem often arises when proving the security of PRGs, and it is solved by using a powerful technique called the \emph{hybrid argument}. We will briefly summarize the use of the hybrid argument in the setting of concrete security.
 
 % TODO mathcal. also this could be summarized better in the context of reductions...
@@ -1319,7 +1332,7 @@ I'm not sure what $PRF\_Advantage\_Max$ is. Under the assumption that HMAC is a 
 
 Assuming real-world usage: the adversary makes 30 billion requests of 10,000 blocks each. The DRBG is never compromised or reseeded. Then the probability of the adversary being able to distinguish is about TODO.
 
-\subsubsection{Formalization}
+\subsection{Formalization}
 
 These are more code-related. Should I talk about them later?
 
@@ -1350,10 +1363,10 @@ New oracles:
 $Oi\_prg$
 $Oi\_oc$
 
-%\subsubsection{Comments on proof technique}
+%\subsection{Comments on proof technique}
 % compare to campagna/hirose?
 
-\subsection{Proof of backtracking resistance}
+\section{Proof of backtracking resistance}
 
 It is not enough for a real-world DRBG to possess pseudorandomness. As a motivating example, say Alice and Bob want to communicate secretly. Perhaps they are sneaky vegans who want to trade insider information about the future stock prices of Earth Balance Inc. Thus, they use a simple hybrid cryptosystem to communicate, consisting of some public-key encryption scheme $P$ and some symmetric-key encryption scheme $S$. (Such schemes are used in practice; one example is OpenPGP. They are used because the symmetric-key scheme is typically faster than the public-key scheme.)
 
@@ -1482,18 +1495,18 @@ The bound on the probability that $A_{BR}$ breaks backtracking resistance is the
 
 \end{proof}
 
-\subsection{On proving prediction resistance}
+\section{On proving prediction resistance}
 
 %@cite
 NIST also specifies that HMAC-DRBG possesses the complementary property of prediction resistance. That is, if it is compromised at time $T$, the adversary will find it difficult to distinguish HMAC-DRBG's future output from ideal random strings. Naively, if given $(k, v)$ at time $T$, the adversary should be able to compute all future DRBG output and thus distinguish. Thus, the $Reseed$ function is supposed to ensure prediction resistance by injecting fresh entropy into the DRBG that is unknown to the adversary. (It refreshes the $(k,v)$ by re-HMACing them with some entropy appended to the previous $(k,v)$)
 
 However, proving things about this is difficult. Dodis et al. (2013) proved that the Linux PRNG was insecure and did not possess prediction resistance. However, they had to do tricky reasoning about how much entropy was injected at once and where. They had to reason about, for example, the difference between injecting entropy as five bits per call over ten calls, versus fifty bits in one call, and relative difficulties for the adversary. 
 
-\subsection{On adaptivity of the adversary}
+\section{On adaptivity of the adversary}
 
 How would I prove this on paper?
 
-\section{Overview of the Foundational Cryptography Framework}
+\chapter{Overview of the Foundational Cryptography Framework}
 
 We give a brief overview of FCF. For more details, a tutorial, and the theory behind it, see Petcher (2015).
 
@@ -1586,9 +1599,9 @@ Qed.
 \end{lstlisting}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Formal proof outline}
+\chapter{Formal proof outline}
 
-\subsection{Starting HMAC-DRBG definitions}
+\section{Starting HMAC-DRBG definitions}
 
 The core inner loop of HMAC-DRBG that generates pseudorandom blocks. 
 
@@ -1618,7 +1631,7 @@ Definition GenUpdate_original (state : KV) (n : nat) :
 \end{lstlisting}
 
 % @ where should this go?
-\subsection{Prior work on abstract PRF-DRBG}
+\section{Prior work on abstract PRF-DRBG}
 
 Petcher did some prior work on proving the security of the core loop seen above, run once. His definition is similar to ours, but more abstract. Here $f$ is any $PRF$.
 
@@ -1636,7 +1649,7 @@ We reuse his proof techniques to replace the PRF with a random function, then th
 
 TODO: move the explanation of identical until bad (in $oracleCompMap$) here
 
-\subsection{Proof of indistinguishability}
+\section{Proof of indistinguishability}
 
 Here are the statement and the proof in Coq. Note that the proof relies on four main lemmas, which we discuss below.
 
@@ -1659,7 +1672,7 @@ TODO: discuss pseudorandom functions, random functions, uniformly sampling rando
 
 TODO: Indistinguishability definition
 
-\subsubsection{Main games}
+\subsection{Main games}
 
 TODO: talk about what a game is
 
@@ -1806,7 +1819,7 @@ Replace PRF with random function.
 
 Replace random function with random bits.
 
-\subsection{List of lemmas}
+\section{List of lemmas}
 
 From the top down (roughly breadth-first traversal of the proof tree).
 
@@ -2352,11 +2365,11 @@ Then we do a case analysis on whether the newest input is a duplicate (that is, 
 
 The commented Coq proof of this can be found in the appendix.
 
-\subsection{Proof graph}
+\section{Proof graph}
 
 To add, after I break up \li| Gi_rb_rf_no_bad_same|. I've already made one using \li|coq-dpdgraph|.
 
-\subsection{Current limitations of the formal proof}
+\section{Current limitations of the formal proof}
 
 We abstracted or ignored a few parts of HMAC-DRBG.
 
@@ -2370,7 +2383,7 @@ We abstracted or ignored a few parts of HMAC-DRBG.
 \item Entropy failure
 \end{itemize}
 
-% \subsection{Comparison to existing proof of HMAC-DRBG security}
+% \section{Comparison to existing proof of HMAC-DRBG security}
 
 % To write after I've read the Hirose paper. %@cite
 
@@ -2379,7 +2392,7 @@ We abstracted or ignored a few parts of HMAC-DRBG.
 % \item Why is formalizing our proof so much work? (Number of hours and lines of code?)
 % \end{itemize}
 
-\subsection{Comments on the Coq development}
+\section{Comments on the Coq development}
 
 There are 17 main lemmas and many small ones. Not all are proven, but I've proved the four most difficult ones and am confident about the rest, which are mostly game equivalence proofs. There are 22 admitted lemmas (including medium-sized lemmas but not the smallest ones.
 
@@ -2393,7 +2406,7 @@ Besides proving the admitted lemmas, here's what's left to do in the near future
 \item The spec equivalence proof. (Discussed in the following section.)
 \end{itemize}
 
-\subsection{Comments on HMAC-DRBG's design}
+\section{Comments on HMAC-DRBG's design}
 
 Formally verifying HMAC-DRBG helped us notice several NIST design decisions that made our job either harder or easier.
 
@@ -2403,7 +2416,7 @@ Formally verifying HMAC-DRBG helped us notice several NIST design decisions that
 \item In $Update$, NIST does (++ [v]) instead of (v ::). The former is intuitive on paper; the latter is much easier to reason about by induction in Coq.
 \end{itemize}
 
-\section{Linking our crypto spec with the functional spec}
+\chapter{Linking our crypto spec with the functional spec}
 
 Sanguansin (2016) proved functional correctness of the mbed TLS implementation of HMAC-DRBG using a different functional specification, also written in Gallina. He did this proof using the Verified Software Toolchain (VST) framework, which provides a logic for reasoning that the outputs of some C function satisfy some postcondition given that the inputs satisfied some precondition.
 
@@ -2424,7 +2437,7 @@ To create a truly end-to-end proof of correctness, we must prove that our crypto
 % \item My prior work for HMAC.
 % \end{itemize}
 
-\subsection{Bridging the gaps between the specifications}
+\section{Bridging the gaps between the specifications}
 
 We must prove lemmas about at least the following differences between the specifications.
 
@@ -2435,7 +2448,7 @@ We must prove lemmas about at least the following differences between the specif
 
 Beringer (2015)'s verification of HMAC was similarly structured. They started with separate proofs of cryptographic security (in this case, that HMAC is a PRF given that SHA is a PRF) and of functional correctness (of an OpenSSL implementation of HMAC). Thus, they also had two separate specifications of HMAC, one using dependent types to enable cryptographic proofs in FCF, and one closely modeling the NIST standard for HMAC. Thus, they also had to do a similar proof of equivalence between the specifications. (I was the one who did this proof, with help from Beringer. See Ye (2014) for a detailed description of the proof.) This gives us confidence that such a proof can be done, and that proving equivalence does not require adding too many weakening assumptions on security or correctness. 
 
-\section{Future work}
+\chapter{Future work}
 
 HMAC is slow. AES is fast. Thus, AES CTR-DRBG, which uses AES in CTR mode, is much more widely used in practice than HMAC-DRBG (e.g. Amazon uses AES CTR-DRBG). It would be practically useful to formally verify HMAC-DRBG, but also theoretically interesting. How do our proofs generalize? (Some things would be different; e.g. HMAC is assumed a PRF, and AES is assumed a pseudorandom permutation. Their respective DRBGs are slightly different as well. Some things would break; e.g. to refresh the key without a collision, NIST cannot length-extend the input.) Can we build a general framework for verifying DRBGs? How automated can it be? Is the concrete security bound better?
 
@@ -2443,7 +2456,7 @@ All of this effort was predicated on the fact that HMAC-DRBG's specification wil
 
 Also, there have been rumors that OpenSSL's team is picking or designing a new PRNG. In this situation, and in similar situations, we hope our work encourages implementors to co-design their libraries with formal methods researchers.
 
-\section{Conclusion}
+\chapter{Conclusion}
 
 We have contributed a paper proof of the pseudorandomness of a simplified version of HMAC-DRBG. Hirose (2008) had already written paper proofs, but they were complicated and not linked to functional specifications or implementations. No prior proof considered real-world use of HMAC-DRBG (or any similar DRBG) over multiple calls to the Generate function, or including updating of the state. Also, no prior proof has proven backtracking resistance for this type of DRBG.
 
@@ -2518,21 +2531,21 @@ Ye, Katherine. ``Formally proving equivalence between abstract and concrete spec
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  \appendix
 
-\section{Code}
+\chapter{Code}
 
-The HMAC-DRBG pseudorandomness proof may be found in this file. (The backtracking proof will be added in that repository in a month or two.) \\
+The HMAC-DRBG pseudorandomness proof may be found in this file. (The backtracking proof will be added in that repository in a month or two.) 
 
-\li|https://github.com/hypotext/fcf/blob/master/src/examples/HMAC_DRBG_nonadaptive.v| \\
+\li|github.com/hypotext/fcf/blob/master/src/examples/HMAC_DRBG_nonadaptive.v| \\
 
-The HMAC-DRBG functional correctness proof may be found in this repository. \\
+\noindent The HMAC-DRBG functional correctness proof may be found in this repository. 
 
 \li|https://bitbucket.org/naphatkrit/rng| \\
 
-The Foundational Cryptography Framework may be found in this repository. 
+\noindent The Foundational Cryptography Framework may be found in this repository. 
 
 \li|https://github.com/adampetcher/fcf| \\
 
-The full verification of HMAC may be found in this repository, subdirectories $sha$, $fcf$, and $hmacfcf$. \\
+\noindent The full verification of HMAC may be found in this repository, subdirectories $sha$, $fcf$, and $hmacfcf$. 
 
 \li|https://github.com/PrincetonUniversity/VST/|
 
