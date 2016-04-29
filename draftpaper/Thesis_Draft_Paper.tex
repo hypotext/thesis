@@ -148,24 +148,25 @@ Additionally, we plan to connect our proof of security with an existing proof of
 
 %TODO: include precise theorem statement
 
-\section{Problem background and related work}
+\section{Related work}
 
-Andrew Appel's group has done the most significant related work in the area. Appel (2015) presents a ``full formal machine-checked verification of a C program: the OpenSSL implementation of SHA-256.'' Beringer et al. (2015) build on this work to do the same for HMAC, adding a proof of security that relies on the security of SHA. We plan to use the same approach for CTR-DRBG and HMAC-DRBG.
+Andrew Appel's group has done the most similar related work in the area. Appel (2015) presents a ``full formal machine-checked verification of a C program: the OpenSSL implementation of SHA-256.'' Beringer et al. (2015) build on this work to do the same for HMAC, adding a proof of security that relies on the security of SHA. We plan to use the same approach for fully verifying HMAC-DRBG.
 
 In addition, there exist paper proofs of the security of CTR-DRBG and HMAC-DRBG (Campagna (2006), Hirose (2008)), though (as mentioned earlier) the former hasn't appeared in a peer-reviewed venue and does proofs in the random oracle model, and the latter does not prove security over multiple calls to $Generate$ or account for state updating.
 
-In the area of checking game-based proofs of cryptographic security within a proof assistant, there are two main tools: EasyCrypt and its cousin CertiCrypt (neither of which is foundational) (Barthe (2011)), and the Foundational Cryptography Framework (Petcher (2015)).
+In the area of checking game-based proofs of cryptographic security within a proof assistant, there are two main tools. The long-established tools are EasyCrypt and its cousin CertiCrypt (Barthe (2011)), only the latter of which is foundational, but it is no longer maintained. A newer tool, is the Foundational Cryptography Framework (Petcher (2015)). The EasyCrypt tutorial (Barthe (2014)) proves the pseudorandomness of a simple stateful PRG. The PRG is very similar to the core loop construction discussed in Section REFERENCE, and the bound is also very similar (it is essentially the same one described in Hirose (2008)). The tutorial's concrete bound is quantified over ``For all PRG-distinguisher D that makes at most qn queries to its next oracle,'' so their PRG doesn't involve updating the PRF's key and then making more queries.
 
 % TODO fix quotes
-In the general area of formalizing PRNGs, several crypto papers analyze the security of PRNGs and propose new security properties. Dodis et al. (2013) propose the ``robustness'' property and show that the built-in Linux PRNG, /dev/random, is not robust.
+In the general area of formalizing PRNGs, several crypto papers analyze the security of PRNGs and propose new security properties. Dodis et al. (2013) propose the ``robustness'' property and show that the built-in Linux PRNG, \texttt{/dev/random}, is not robust.
 
-There's not much prior work on formal verification of PRNGs in our style. D{\"o}rre and Klebanov (2015)  focus on verifying that a PRNG uses all its entropy. They perform this logic-based information flow verification using the KeY system for Java, which uses symbolic execution. This only defends against one particular attack (that of ﾒsquandering entropyﾓ) and does not guarantee functional correctness or other security properties we may care about, such as indistinguishability from randomness and backtracking resistance.
+There's not much prior work on formal verification of PRNGs in our style. D{\"o}rre and Klebanov (2015)  focus on verifying that a PRNG uses all its entropy. They perform this logic-based information flow verification using the KeY system for Java, which uses symbolic execution. This only defends against one particular attack (that of ``squandering entropy'') and does not guarantee functional correctness or other security properties we may care about, such as indistinguishability from randomness and backtracking.
 
-Affeldt (2009) do include game-playing proofs of provable security in Coq. However, they focus on doing so directly on an assembly implementation of a PRNG, not on a high-level functional specification. They also verified their own assembly implementation, not a widely used existing one. One advantage of this approach is that it avoids mismatches between the functional specification of the C code and the functional specification used for cryptographic proofs.
+% what did they prove? about what kind of PRG?
+Affeldt (2009) prove that their assembly implementation of the Blum-Blum-Shub PRNG satisfies ``unpredictability'' (equivalent to pseudorandomness) in the game-playing style in Coq. They do so directly on an assembly implementation of the PRNG, not on a high-level functional specification. They also verified their own assembly implementation, not a widely used existing one. One advantage of this approach is that it avoids mismatches between the functional specification of the C code and the functional specification used for cryptographic proofs.
 
 Our approach is unique because it provides an end-to-end and foundational verification that guarantees both correctness and security. Our stack consists of Coq, the Foundational Cryptography Framework, the Verified Software Toolchain (using separation logic), and CompCert (a verified C compiler). In addition, we verify an existing widely used PRG implementation in C, making our approach more useful in practice. 
 
-(TODO: fix these citations)
+% (TODO: fix these citations)
 
 \section{HMAC-DRBG overview}
 % **
@@ -614,9 +615,9 @@ Similarly to $H$:\\
   \item[] $Gen\_loop(k, v_0, 2) = (f_k(v_0) || f_k(f_k(v_0)), f_k(f_k((v_0))))$\\
 \end{game}
 
-In our simplified model of HMAC-DRBG, which we will call HMAC-DRBG', a typical run would look like $Instantiate$ followed by some number of calls to $GenUpdate$, each call requesting an some number of pseudorandom blocks.
+In our simplified model of HMAC-DRBG, which we will call HMAC-DRBG$'$, a typical run would look like $Instantiate$ followed by some number of calls to $GenUpdate$, each call requesting an some number of pseudorandom blocks.
 
-This suggests the definition of security (indistinguishability) for HMAC-DRBG'. A non-uniform PPT adversary can make a number of calls to GenUpdate (polynomial in $c$), requesting a number of blocks (polynomial in $c$) each time. It receives the list of blocks, which are the bitvectors it requested. Then it must output a guess as to whether the bits are ideally random or pseudorandom.
+This suggests the definition of security (indistinguishability) for HMAC-DRBG$'$. A non-uniform PPT adversary can make a number of calls to GenUpdate (polynomial in $c$), requesting a number of blocks (polynomial in $c$) each time. It receives the list of blocks, which are the bitvectors it requested. Then it must output a guess as to whether the bits are ideally random or pseudorandom.
 % TODO is this right? (polynom in $c$)
 
 We need to now consider whether the adversary is adaptive or non-adaptive. That is, should the adversary be allowed to make choices (e.g. numbers of blocks to query) based on previous results (e.g. pseudorandom bits returned so far)? This is a new concern. Previously, when proving the security of $H$, the adversary could only make one call to $H$. So it couldn't make any decision after picking $n$ (the number of blocks). 
@@ -1088,6 +1089,12 @@ This is a negligible quantity for sufficiently large $c$. Usually $c$ is 256, si
 This completes our bound on the total probability of distinguishing between the real-world and ideal-world games.
 \end{proof}
 
+Hirose (2008) estimates the probability of being able to distinguish for the core loop to be around TODO.
+
+I'm not sure what $PRF\_Advantage\_Max$ is. Under the assumption that HMAC is a PRF, the max probability of being able to distinguish ought to be negligible in the number of queries made. I'll estimate this as TODO.
+
+Assuming real-world usage: the adversary makes 30 billion requests of 10,000 blocks each. The DRBG is never compromised or reseeded. Then the probability of the adversary being able to distinguish is about TODO.
+
 \subsubsection{Formalization}
 
 These are more code-related. Should I talk about them later?
@@ -1262,20 +1269,97 @@ However, proving things about this is difficult. Dodis et al. (2013) proved that
 
 How would I prove this on paper?
 
-\section{Foundational Cryptography Framework summary}
+\section{Overview of the Foundational Cryptography Framework}
 
-TODO: cover the following topics:
+We give a brief overview of FCF. For more details, a tutorial, and the theory behind it, see Petcher (2015).
 
-\begin{enumerate}
-\item Shallowly embedded into Coq
-\item Game-based crypto proofs
-\item Comp monad (probabilistic computations)
-\item Relating pairs of games using probabilistic relational Hoare logic (postconditions, $comp\_spec$)
-\item Oracles, hidden state, and oracle computations (OracleComp)
-\item Modeling the adversary as any abstract probabilistic polynomial time algorithm
-\item Writing games
-\item FCF example
-\end{enumerate}
+As the abstract summarizes: ``FCF provides an environment for developing and checking proofs of security of cryptographic schemes in Coq. ...  Proofs may provide concrete bounds as well as asymptotic conclusions. FCF provides a language for probabilistic programs, a theory that is used to reason about programs, and a library of tactics and definitions that are useful in proofs about cryptography.'' 
+
+A cryptographic game may be viewed as an imperative, probabilistic program (Bellare (2004)). FCF defines the syntax of probabilistic programs as the type $Comp \s A$, the type of a probabilistic program that returns a value of type $A$. The most notable operation is $Rnd$, which produces $n$ uniformly random bits. Other operations are sequencing statements in an imperative manner, repeating a statement, and returning a value.
+
+In FCF, the standard non-uniform probabilistic polynomial time (PPT) adversary is modeled as a parameter $A : I -> Comp \s bool$. This denotes that the adversary $A$ could be any non-uniform PPT adversary that takes as input some $I$ and returns a guess of $0$ or $1$. $Comp$ denotes that the adversary may flip coins internally. FCF has a mechanism to limit the adversary to a polynomial number of queries in some security parameter; refer to Petcher (2015) for details.
+
+Cryptographic security definitions often involve giving the adversary some oracle that it can query, where the oracle must maintain some hidden state across multiple interactions with the adversary. Thus, FCF extends the $Comp$ type, where $Comp \s A$ is a probabilistic program returning a value of type $A$, to the $OracleComp$ type, where $OracleComp \s A \s B \s C$ is a probabilistic program that returns a value of type $C$, and has access to an oracle that takes a value of type $A$ and returns a value of type $B$. (The type of the oracle itself includes a state as input and a new state as output.) Oracle computations include the standard returning and binding operations, as well as an oracle query operations and an operation that can run a program using a different oracle that can access the current oracle.
+
+Refer to Petcher (2015) for examples of simple games written in FCF and a walkthrough of proving security of a simple encryption scheme. A game typically has type $Comp \s bool$, because it is a probabilistic computation that usually returns an adversary's guess.
+
+In game-playing proofs, we commonly do two things. First, we might make a slight change to a game then prove the former game equivalent to the latter, where ``equivalent'' can be taken in two senses. Either they are equivalent programs that return the same outputs, or they have computationally indistinguishable output distributions. Or, we might seek to bound the distance between two games by some negligible functions, where ``distance'' refers to the probability that some computationally-bounded adversary in both games can distinguish between two different distributions.
+
+To aid with this kind of reasoning, FCF provides a program logic called Probabilistic Relational Postcondition Logic (PRPL). PRPL behaves like a Hoare logic, except there are no preconditions, and we write a specification relating pairs of probabilistic programs instead of a specification on a single deterministic program.
+
+As a short example demonstrating PRPL, take the following proof goal in Coq.
+
+\begin{lstlisting}
+Theorem PRPL_demo : forall (n m : nat),
+  comp_spec (fun a b => a = fst b)
+            (x <-$ {0,1}^n;
+             ret x)
+            (c <-$ {0,1}^n;
+             d <-$ {0,1}^m;
+             ret (c,d)).
+Proof.
+  intros.
+\end{lstlisting}
+
+\li|comp_spec| denotes a PRPL specification, or postcondition, that we want to prove about the two probabilistic programs that follow. Namely, we want to prove that the output of the first program is equal to the first output of the second program. \li|x <-$ {0,1]^n| denotes sampling a bitvector of $n$ bits uniformly at random.
+%$
+
+To continue the proof, we note that the first lines of each program yield the same output if both programs are given the same coins to flip, so we may ``skip'' them, and the relation that holds on the remaining programs will be the same. (This is the intuitive description. A more rigorous and detailed description of every tactic may be found in the $Tactics.v$ file in the FCF repository, linked in the appendix.)
+
+\begin{lstlisting}
+  fcf_skip. 
+\end{lstlisting}
+
+Now this is the new proof state. Note the two remaining programs. 
+
+\begin{lstlisting}
+  n : nat
+  m : nat
+  b : Bvector n
+  H0 : In b (getSupport ({ 0 , 1 }^n))
+  H : In b (getSupport ({ 0 , 1 }^n))
+  ============================
+   comp_spec (fun (a : Bvector n)
+                  (b0 : Bvector n * Bvector m)
+                  => a = fst b0)
+     (ret b)
+     (d <-$ { 0 , 1 }^m; ret (b, d))
+\end{lstlisting}
+
+The first line of the second program is irrelevant because our specification on the outputs does not mention it. Therefore, we can eliminate that line with the following tactic.
+
+\begin{lstlisting}
+fcf_irr_r.
+\end{lstlisting}
+
+This is the remaining proof state. Note that $b$ is the the same between both programs, which is what we wanted to prove.
+
+\begin{lstlisting}
+  n : nat
+  m : nat
+  b : Bvector n
+  H0 : In b (getSupport ({ 0 , 1 }^n))
+  H : In b (getSupport ({ 0 , 1 }^n))
+  b0 : Bvector m
+  H1 : In b0 (getSupport ({ 0 , 1 }^m))
+  ============================
+   comp_spec (fun (a : Bvector n)
+                  (b1 : Bvector n * Bvector m)
+                  => a = fst b1)
+     (ret b) (ret (b, b0))
+\end{lstlisting}
+
+When we have whittled down both programs such that they both only return values, we can use the following tactic to apply the specification to the return values and prove that it holds. 
+
+\begin{lstlisting}
+  fcf_spec_ret.
+\end{lstlisting}
+
+In this case, FCF is smart enough to figure out that the specification holds, so it discharges the goal. We have proven that the given specification relates these two probabilistic programs. 
+
+\begin{lstlisting}
+Qed.
+\end{lstlisting}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Formal proof outline}
@@ -2097,7 +2181,9 @@ Formally verifying HMAC-DRBG helped us notice several NIST design decisions that
 
 \section{Linking our crypto spec with the functional spec}
 
-Naphat Sanguansin '16 proved functional correctness of the mbed TLS implementation of HMAC-DRBG using a different functional specification, also written in Gallina. To create a truly end-to-end proof of correctness, we must prove that our cryptographic specification of HMAC-DRBG is the same as his specification. This is the labeled arrow in Figure \ref{fig:project_diagram}.
+Sanguansin (2016) proved functional correctness of the mbed TLS implementation of HMAC-DRBG using a different functional specification, also written in Gallina. He did this proof using the Verified Software Toolchain (VST) framework, which provides a logic for reasoning that the outputs of some C function satisfy some postcondition given that the inputs satisfied some precondition.
+
+To create a truly end-to-end proof of correctness, we must prove that our cryptographic specification of HMAC-DRBG is the same as his specification. This is the labeled arrow in Figure \ref{fig:project_diagram}.
 
 \begin{figure}
   \includegraphics[width=\linewidth]{images/project_diagram.png}
@@ -2105,33 +2191,33 @@ Naphat Sanguansin '16 proved functional correctness of the mbed TLS implementati
   \label{fig:project_diagram}
 \end{figure}
 
-\subsection{Proving functional correctness of HMAC-DRBG}
-
-To add: 
-\begin{itemize}
-\item VST overview. 
-\item Hoare logic overview. 
-\item Summary of Naphat's proof. 
-\item A diagram of the whole project, similar to the HMAC diagram. 
-\item My prior work for HMAC.
-\end{itemize}
+% To add: 
+% \begin{itemize}
+% \item VST overview. 
+% \item Hoare logic overview. 
+% \item Summary of Naphat's proof. 
+% \item A diagram of the whole project, similar to the HMAC diagram. 
+% \item My prior work for HMAC.
+% \end{itemize}
 
 \subsection{Bridging the gaps between the specifications}
 
 We must prove lemmas about at least the following differences between the specifications.
 
 \begin{enumerate}
-\item Naphat's code has essentially the same core loop ($Gen\_loop$) and $Generate$ and $Update$ code. However, it's surrounded by many layers of error checking code, e.g. for \li|prediction_resistance_request|. We need to prove equivalence modulo error checking.
-\item Naphat's code also models failures in the type for the entropy stream. It is an infinite stream of either bit or failure. Also, it is not necessarily ideal randomness. We need to relate FCF's sampling uniformly at random to this more realistic entropy model. Adam Petcher's thesis provides some theorems about the operational semantics of FCF that can help us with this.
+\item Sanguansin (2016)'s code has essentially the same core loop ($Gen\_loop$) and $Generate$ and $Update$ code. However, it's surrounded by many layers of error checking code, e.g. for \li|prediction_resistance_request|. We need to prove equivalence modulo error checking.
+\item Sanguansin (2016)'s code also models failures in the type for the entropy stream. It is an infinite stream of either bit or failure. Also, it is not necessarily ideally random. We need to relate FCF's sampling uniformly at random to this more realistic entropy model. Petcher (2015)'s doctoral thesis provides relevant theorems about the operational semantics of FCF that can help in proving this relation.
 \end{enumerate}
+
+Beringer (2015)'s verification of HMAC was similarly structured. They started with separate proofs of cryptographic security (in this case, that HMAC is a PRF given that SHA is a PRF) and of functional correctness (of an OpenSSL implementation of HMAC). Thus, they also had two separate specifications of HMAC, one using dependent types to enable cryptographic proofs in FCF, and one closely modeling the NIST standard for HMAC. Thus, they also had to do a similar proof of equivalence between the specifications. (I was the one who did this proof, with help from Beringer. See Ye (2014) for a detailed description of the proof.) This gives us confidence that such a proof can be done, and that proving equivalence does not require adding too many weakening assumptions on security or correctness. 
 
 \section{Future work}
 
 HMAC is slow. AES is fast. Thus, AES CTR-DRBG, which uses AES in CTR mode, is much more widely used in practice than HMAC-DRBG (e.g. Amazon uses AES CTR-DRBG). It would be practically useful to formally verify HMAC-DRBG, but also theoretically interesting. How do our proofs generalize? (Some things would be different; e.g. HMAC is assumed a PRF, and AES is assumed a pseudorandom permutation. Their respective DRBGs are slightly different as well. Some things would break; e.g. to refresh the key without a collision, NIST cannot length-extend the input.) Can we build a general framework for verifying DRBGs? How automated can it be? Is the concrete security bound better?
 
-All of this effort was predicated on the fact that HMAC-DRBG's specification will not change, and mbedTLS's implementation of HMAC-DRBG does not change. TODO: how modular are our proofs?
+All of this effort was predicated on the fact that HMAC-DRBG's specification will not change, and mbedTLS's implementation of HMAC-DRBG does not change. The test of time will show how modular our proofs are.
 
-Also, OpenSSL's team is picking or designing a new PRNG (TODO correct this)--we hope our work encourages implementors to co-design with formal methods researchers.
+Also, there have been rumors that OpenSSL's team is picking or designing a new PRNG. In this situation, and in similar situations, we hope our work encourages implementors to co-design their libraries with formal methods researchers.
 
 \section{Conclusion}
 
@@ -2221,16 +2307,29 @@ Goldreich, Oded. \emph{Foundations of cryptography: a primer}. Vol. 1. Now Publi
 Hirose, Shoichi. "Security analysis of DRBG using HMAC in NIST SP 800-90." In \emph{Information Security Applications}, pp. 278-291. Springer Berlin Heidelberg, 2008.
 
 \bibitem{petcher2015}
-Petcher, Adam, and Greg Morrisett. "The foundational cryptography framework." In \emph{Principles of Security and Trust}, pp. 53-72. Springer Berlin Heidelberg, 2015.
+Petcher, Adam, and Greg Morrisett. ``The foundational cryptography framework.'' In \emph{Principles of Security and Trust}, pp. 53-72. Springer Berlin Heidelberg, 2015.
+
+\bibitem{petcherthesis2015}
+Petcher, Adam. \emph{A Foundational Proof Framework for Cryptography.} Diss. 2015.
 
 \bibitem{sanguansin2016}
-Sanguansin, Naphat. "Verification of a Deterministic Random Bits Generator." Independent work paper, Princeton University. 2016.
+Sanguansin, Naphat. ``Verification of a Deterministic Random Bits Generator.'' Independent work paper, Princeton University. 2016.
+
+\bibitem{ye2014}
+Ye, Katherine. ``Formally proving equivalence between abstract and concrete specifications of HMAC.'' Junior paper, Princeton University. 2014.
+
 \end{thebibliography}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  \appendix
 
 \section{Definitions and proofs}
+
+My repository.
+
+FCF repository.
+
+HMAC repository.
 
 Will add worked examples of Coq proofs using FCF tactics. 
 

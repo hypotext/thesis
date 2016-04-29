@@ -1,22 +1,24 @@
 4/27/16
 
 HAVE A DRAFT FOR ANDREW BY FRIDAY, 8 AM.!!!!
-Goal for Wednesday->Thursday (3:30 am):
-- Write FCF (30)
-- Write spec equivalence (30)
-- Read Affeldt and compare (15)
-- Read Barthe and compare (15)
-- Estimate failure probability (15)
----> 2.5 hrs
---> finish by 3:30!!!
+Goal for Thursday->Friday (11:45-2 am):
+1:03->2:21->2:51
+--> 2 hrs
 
-Goal for Thursday->Friday (8 am): 
+Goal for Thursday->Friday (3 am-7 am): 
 - Move to new format 
   - Rewrite in 2-column
   - Coq correctness edits, possible renaming
+
+  - Write section on formal verification
+  - Estimate failure probability (15)
   - Move NoV presentation
+  --> 2 hrs
 - Edit list of lemmas
 - Proof structure
+  --> 2 hrs
+==== 6 hrs
+so, finish by 8 am
 
 Friday (midnight):
 - Typesetting (Andrew's edits), ToC
@@ -25,12 +27,12 @@ Friday (midnight):
 - Edit intro/conclusion/prior work
 - Lemma diagram
 - Appendix
-- Acknowledgments, thesis phrase
+- Acknowledgments
+- Go through and remove inline/commented TODOs, weird symbols in source
 - Print and edit
 
 ---
 
-- Write up backtracking resistance proof (games and idea)
 - Write section on FCF 
 - Quickly write section on proving spec equivalence
 
@@ -41,7 +43,6 @@ Andrew's edits
 - Move to new format
   - Merge formal section and Coq section (2-column)
   - Rename Coq code
-- Read Affeldt's paper and compare
 - Diagram of proof structure (could be ToC)
   - Asterisk the unfinished ones
 - Estimate actual failure probability (Adam/Matt: PRF_Advantage)
@@ -66,6 +67,8 @@ Andrew's edits
 - Cite entropy extractor paper and summarize
 
 - Cite Naphat
+- Adam -> Petcher
+- Indistinguishability -> pseudorandomness
 - Fix Pr_1 notation
 - PRNG -> PRG, DRBG
 - Math font -> serif
