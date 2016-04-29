@@ -1,20 +1,92 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% writeLaTeX Example: Academic Paper Template
-%
-% Source: http://www.writelatex.com
-% 
-% Feel free to distribute this example, but please keep the referral
-% to writelatex.com
-% 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \synctex=1
-\documentclass[twocolumn,showpacs,%
-  nofootinbib,aps,superscriptaddress,%
-  eqsecnum,prd,notitlepage,showkeys,10pt]{revtex4-1}
 
+% ****************************************************************************************** % Dissertation template and document class for Princeton University
+% Author  : Jeffrey Scott Dwoskin <jdwoskin@princeton.edu>
+% Adapted from: http://www.math.princeton.edu/graduate/tex/puthesis.html
+% ****************************************************************************************** %
+
+
+%%% For print copies
+%% set 'singlespace' option to set entire thesis to single space, and define "\printmode" to remove all hyperlinks for printed copies of the thesis. Delete all output files before changing this mode -- it will turn hyperref package on and off
+%\documentclass[12pt,lot, lof, singlespace]{puthesis}
+%\newcommand{\printmode}{}
+
+%%% For the electronic copy, use doublespacing, define "\proquestmode" to use outlined links, instead of colored links. 
+\documentclass[12pt,lot, lof]{puthesis}
+\newcommand{\proquestmode}{}
+% I prefer proquestmode to be off for electronic copies for normal use, since the colored links are less distracting. However when printed in black and white, the colored links are difficult to read. 
+
+%%% For early drafts without some of the frontmatter
+% Also see the "ifodd" command below to disable more frontmatter
+%\documentclass[12pt]{puthesis}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\
+%%%% Author & title page info
+
+\title{The Notorious PRG:\\
+Formal verification of the HMAC-DRBG pseudorandom number generator}
+
+\submitted{April 2016}  % degree conferral date (January, April, June, September, or November)
+% \copyrightyear{2010}  % year in which the copyright is secured by publication of the dissertation.
+\author{Katherine Qinru Ye}
+\adviser{Andrew W. Appel and Matthew Green}  %replace with the full name of your adviser
+%\departmentprefix{Program in}  % defaults to "Department of", but programs need to change this.
+\department{Computer Science}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\
+%%%% Tweak float placements
+% From: http://mintaka.sdsu.edu/GF/bibliog/latex/floats.html "Controlling LaTeX Floats"
+% and based on: http://www.tex.ac.uk/cgi-bin/texfaq2html?label=floats
+% LaTeX defaults listed at: http://people.cs.uu.nl/piet/floats/node1.html
+
+% Alter some LaTeX defaults for better treatment of figures:
+    % See p.105 of "TeX Unbound" for suggested values.
+    % See pp. 199-200 of Lamport's "LaTeX" book for details.
+    %   General parameters, for ALL pages:
+    \renewcommand{\topfraction}{0.85}	% max fraction of floats at top
+    \renewcommand{\bottomfraction}{0.6}	% max fraction of floats at bottom
+    %   Parameters for TEXT pages (not float pages):
+    \setcounter{topnumber}{2}
+    \setcounter{bottomnumber}{2}
+    \setcounter{totalnumber}{4}     % 2 may work better
+    \setcounter{dbltopnumber}{2}    % for 2-column pages
+    \renewcommand{\dbltopfraction}{0.66}	% fit big float above 2-col. text
+    \renewcommand{\textfraction}{0.15}	% allow minimal text w. figs
+    %   Parameters for FLOAT pages (not text pages):
+    \renewcommand{\floatpagefraction}{0.66}	% require fuller float pages
+	% N.B.: floatpagefraction MUST be less than topfraction !!
+    \renewcommand{\dblfloatpagefraction}{0.66}	% require fuller float pages
+
+% The documentclass already sets parameters to make a high penalty for widows and orphans. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\
+%%%% Use packages
+
+%\usepackage{amsfonts}
+
+%%% For figures
+\usepackage{graphicx}
+%\usepackage{subfig,rotate}
+
+%%% for comments
+\usepackage{verbatim}
+
+%%% For tables
+\usepackage{multirow}
+% Longtable lets you have tables that span multiple pages.
+\usepackage{longtable}
+
+% Booktabs produces far nicer tables than the standard LaTeX tables.
+%   see: http://en.wikibooks.org/wiki/LaTeX/Tables
+\usepackage{booktabs}
+
+%set parameters for longtable:
+% default caption width is 4in for longtable, but wider for normal tables
+\setlength{\LTcapwidth}{\textwidth}
+
+% ADDED
 % \usepackage{hyphenat}
-\usepackage{natbib}
+% \usepackage{natbib}
 % \usepackage[square,numbers]{natbib} % TODO
 \bibliographystyle{unsrtnat}
 
@@ -47,6 +119,63 @@ breaklines=true
 \usepackage{dcolumn}
 \usepackage{hyperref}
 \usepackage{enumitem}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Printed vs. online formatting
+\ifdefined\printmode
+
+% Printed copy
+% url package understands urls (with proper line-breaks) without hyperlinking them
+\usepackage{url}
+
+
+\else
+
+\ifdefined\proquestmode
+%ProQuest copy -- http://www.princeton.edu/~mudd/thesis/Submissionguide.pdf
+
+% ProQuest requires a double spaced version (set previously). They will take an electronic copy, so we want links in the pdf, but also copies may be printed or made into microfilm in black and white, so we want outlined links instead of colored links.
+\usepackage{hyperref}
+\hypersetup{bookmarksnumbered}
+
+% copy the already-set title and author to use in the pdf properties
+\makeatletter
+\hypersetup{pdftitle=\@title,pdfauthor=\@author}
+\makeatother
+
+\else
+% Online copy
+
+% adds internal linked references, pdf bookmarks, etc
+
+% turn all references and citations into hyperlinks:
+%  -- not for printed copies
+% -- automatically includes url package
+% options:
+%   colorlinks makes links by coloring the text instead of putting a rectangle around the text.
+\usepackage{hyperref}
+\hypersetup{colorlinks,bookmarksnumbered}
+
+% copy the already-set title and author to use in the pdf properties
+\makeatletter
+\hypersetup{pdftitle=\@title,pdfauthor=\@author}
+\makeatother
+
+% make the page number rather than the text be the link for ToC entries
+%\hypersetup{linktocpage}
+\fi % proquest or online formatting
+\fi % printed or online formatting
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\
+%%%% Define commands
+
+% Define any custom commands that you want to use.
+% For example, highlight notes for future edits to the thesis
+%\newcommand{\todo}[1]{\textbf{\emph{TODO:}#1}}
+
+% ADDED 
 
 \newenvironment{game}
 { \begin{itemize}[noitemsep,nolistsep] 
@@ -95,31 +224,127 @@ breaklines=true
 \newtheorem{lem}{Lemma}[thm]
 \newtheorem{ex}{Example}[thm]
 
-\begin{document}
 
-\title{The Notorious PRG:\\
-Formal verification of the HMAC-DRBG pseudorandom number generator}
-\author{Katherine Ye, advised by Andrew W. Appel}
-\affiliation{Princeton University}
-\author{and Matthew Green}
-\affiliation{Johns Hopkins University}
+% create an environment that will indent text
+% see: http://latex.computersci.org/Reference/ListEnvironments
+% 	\raggedright makes them left aligned instead of justified
+\newenvironment{indenttext}{
+    \begin{list}{}{ \itemsep 0in \itemindent 0in
+    \labelsep 0in \labelwidth 0in
+    \listparindent 0in
+    \topsep 0in \partopsep 0in \parskip 0in \parsep 0in
+    \leftmargin 1em \rightmargin 0in
+    \raggedright
+    }
+    \item
+  }
+  {\end{list}}
 
-% TODO revise to remove unfinished work
-\begin{abstract}
+% another environment that's an indented list, with no spaces between items -- if we want multiple items/lines. Useful in tables. Use \item inside the environment.
+% 	\raggedright makes them left aligned instead of justified
+\newenvironment{indentlist}{
+    \begin{list}{}{ \itemsep 0in \itemindent 0in
+    \labelsep 0in \labelwidth 0in
+    \listparindent 0in
+    \topsep 0in \partopsep 0in \parskip 0in \parsep 0in
+    \leftmargin 1em \rightmargin 0in
+    \raggedright
+    }
+
+  }
+  {\end{list}}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\
+%%%% Front-matter
+
+% For early drafts, you may want to disable some of the frontmatter. Simply change this to "\ifodd 1" to do so.
+\ifodd 0
+% front-matter disabled while writing chapters
+\renewcommand{\maketitlepage}{}
+% \renewcommand*{\makecopyrightpage}{}
+\renewcommand*{\makeabstract}{}
+
+% you can just skip the \acknowledgements and \dedication commands to leave out these sections.
+
+\else
+
+
+\abstract{
+% Abstract can be any length, but should be max 350 words for a Dissertation for ProQuest's print indicies (150 words for a Master's Thesis) or it will be truncated for those uses.
+% \input{abstract}
   We have proved, with machine-checked proofs, that the output produced by HMAC-DRBG is indistinguishable from random by a computationally bounded adversary. We proved this about a high-level specification of a simplified version of HMAC-DRBG written in the probabilistic language provided by the Foundational Cryptography Framework (FCF), which is embedded in the Coq proof assistant. We have also proven on paper that HMAC-DRBG is backtracking-resistant. Our work comprises the first formal verification of a real-world PRG.
   Our functional specification can be linked to a proof of functional correctness of mbedTLS's C implementation of HMAC-DRBG. This will allow our proofs of cryptographic security properties to transfer to this implementation.
-\end{abstract}
+}
 
-\maketitle
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\acknowledgements{
+%I would like to thank...
+% \input{acknowledgements}
+I'd like to thank the following people for their help.
 
-\tableofcontents
-\newpage
+Adam Petcher provided a lot of help by walking me through using FCF, doing the proof of security for the core loop of the PRG, and debugging many of my proofs via (lengthy) email.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Matt Green came up with the proof of security for the simplified HMAC-DRBG, asked many tough questions about the Coq development, and patiently walked me through the crypto math. 
 
-\section{Introduction}
+Andrew Appel provided lots of help with Coq proofs and suggestions for the future proof of equivalence. I'm glad he had the confidence that I would be able to do and verify crypto math (though it's not done yet!). Andrew has been a very active, supportive, and patient advisor during my JP, the grad school application process, and this thesis.
+
+Lennart Beringer came to all of my thesis meetings and went above and beyond by helping me debug my proofs on Sundays.
+
+Naphat Sanguansin did the work that would allow my proofs to actually hold on an implementation of HMAC-DRBG.
+
+I want to thank Matt and Andrew again for suggesting a thesis topic that was cool and well-motivated, as well as providing detailed feedback on drafts of this thesis.
+
+Thanks to everyone in 2D for general encouragement, cooking great food that sustained me at late hours, sending me thesis jams (thanks, Angela), and camping out with me in the dining room (hi, Jaehwan).
+
+Thanks to Jean Juang, Frederic Koehler, and Xiaoyan Han for being great friends and thesis buddies, and Carolyn Chen and Pallavi Koppol for being great friends during the grad school application process.
+
+Thanks to the Recurse Center for being a community of excellent people who are happy to listen to me ramble about research. 
+}
+
+% \dedication{To my parents. Wow}
+
+\fi  % disable frontmatter
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\
+%%%% Hide some chapters
+
+%%% If you want to produce a pdf that includes only certain chapters, specify them with includeonly, in addition to including all chapters below.
+%\includeonly{ch-intro/chapter-intro}
+%%% You can also specify multiple chapters.
+%\includeonly{ch-intro/chapter-intro,ch-usage/chapter-usage}
+%\includeonly{chap1,chap2,chap3}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%% Notes:
+
+% Footnotes should be placed after punctuation.\footnote{place here.}
+% Generally, place citations before the period~\cite{anotherauthor}.
+% The proper usage for i.e., and e.g., include commas ``(e.g., option A, option B)''
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%% Import chapters
+
+\begin{document}
+
+\makefrontmatter
+
+
+% If you've disabled frontmatter, you can insert the toc manually
+%\tableofcontents\clearpage
+
+% \include lets us split up the document (and each include starts a new page):
+% \include{ch-intro/chapter-intro}
+% \include{ch-pastwork/chapter-pastwork}
+% \include{ch-usage/chapter-usage}
+% \include{ch-conclusion/chapter-conclusion}
+% \appendix % all chapters following will be labeled as appendices
+% \include{ch-appendicies/implementation}
+% \include{ch-appendicies/printing}
+
+\chapter{Introduction}
 
 Most modern cryptosystems rely on random numbers, which they use to generate secrets that need to be known to users and unknown and unpredictable to attackers. Reducing the entropy of a cryptosystem's pseudorandom number generator (PRNG) is an easy way to break the entire cryptosystem. A weak PRNG will generate output predictable to an attacker, allowing her to guess private keys, yet most statistical tests will not be able to detect the regularities in the output. Plus, the rest of the cryptosystem will function normally, since PRNGs tend to be single self-contained components. These two factors make PRNGs very attractive targets to attackers.
 
@@ -2230,35 +2455,6 @@ We plan to link this security proof to a functional correctness proof. Thus, mbe
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Acknowledgments}
-
-I'd like to thank the following people for their help.
-
-Adam Petcher provided a lot of help by walking me through using FCF, doing the proof of security for the core loop of the PRG, and debugging many of my proofs via (lengthy) email.
-
-Matt Green came up with the proof of security for the simplified HMAC-DRBG, asked many tough questions about the Coq development, and patiently walked me through the crypto math. 
-
-Andrew Appel provided lots of help with Coq proofs and suggestions for the future proof of equivalence. I'm glad he had the confidence that I would be able to do and verify crypto math (though it's not done yet!). Andrew has been a very active, supportive, and patient advisor during my JP, the grad school application process, and this thesis.
-
-Lennart Beringer came to all of my thesis meetings and went above and beyond by helping me debug my proofs on Sundays.
-
-Naphat Sanguansin did the work that would allow my proofs to actually hold on an implementation of HMAC-DRBG.
-
-I want to thank Matt and Andrew again for suggesting a thesis topic that was cool and well-motivated, as well as providing detailed feedback on drafts of this thesis.
-
-Thanks to everyone in 2D for general encouragement, cooking great food that sustained me at late hours, sending me thesis jams (thanks, Angela), and camping out with me in the dining room (hi, Jaehwan).
-
-Thanks to Jean Juang, Frederic Koehler, and Xiaoyan Han for being great friends and thesis buddies, and Carolyn Chen and Pallavi Koppol for being great friends during the grad school application process.
-
-Thanks to the Recurse Center for being a community of excellent people who are happy to listen to me ramble about research. 
-
-% Signing out,\\
-% \indent \it{Notorious P.R.G.}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% \section{References}
-
 \bibliographystyle{plainnat}
 
 \begin{thebibliography}{99}
@@ -2340,36 +2536,7 @@ The full verification of HMAC may be found in this repository, subdirectories $s
 
 \li|https://github.com/PrincetonUniversity/VST/|
 
-% Will add worked examples of Coq proofs using FCF tactics. 
-
- \end{document}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+\end{document}
 
 
 %%% Local Variables:

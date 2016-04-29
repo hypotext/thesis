@@ -1,0 +1,29 @@
+\begin{thebibliography}{1}
+
+\bibitem{fear2005booktabs}
+S.~Fear.
+\newblock {Publication quality tables in LaTeX}.
+\newblock Available from CTAN, macros/latex/contrib/booktabs,
+  \url{http://www.ctan.org/tex-archive/macros/latex/contrib/booktabs/booktabs.pdf},
+  2005.
+
+\bibitem{muddthesis2009}
+{Princeton University Library}.
+\newblock {Doctor of Philosophy Dissertation and Master's Thesis Requirements}.
+\newblock
+  \url{http://www.princeton.edu/~mudd/thesis/MuddDissertationRequirements.pdf},
+  September 2009.
+
+\bibitem{proquest2006}
+{ProQuest}.
+\newblock {PQ/UMI GradWorks Guide F2006}.
+\newblock \url{http://www.princeton.edu/~mudd/thesis/Submissionguide.pdf},
+  2006.
+
+\bibitem{mudd2009}
+{Seeley G. Mudd Manuscript Library}.
+\newblock {Submitting your Doctoral Dissertation or Master�s Thesis to the
+  Mudd Manuscript Library}.
+\newblock \url{http://www.princeton.edu/~mudd/thesis/}, May 2009.
+
+\end{thebibliography}

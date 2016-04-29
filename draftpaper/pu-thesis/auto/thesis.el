@@ -1,8 +1,8 @@
 (TeX-add-style-hook
- "Thesis_Draft_Paper"
+ "thesis"
  (lambda ()
    (TeX-add-to-alist 'LaTeX-provided-class-options
-                     '(("revtex4-1" "twocolumn" "showpacs" "nofootinbib" "aps" "superscriptaddress" "eqsecnum" "prd" "notitlepage" "showkeys" "10pt")))
+                     '(("puthesis" "12pt" "lot" "lof")))
    (TeX-add-to-alist 'LaTeX-provided-package-options
                      '(("sfmath" "cm")))
    (add-to-list 'LaTeX-verbatim-environments-local "lstlisting")
@@ -17,22 +17,26 @@
    (add-to-list 'LaTeX-verbatim-macros-with-delims-local "path")
    (TeX-run-style-hooks
     "latex2e"
-    "revtex4-1"
-    "revtex4-110"
-    "natbib"
-    "sfmath"
+    "puthesis"
+    "puthesis12"
     "graphicx"
     "verbatim"
+    "multirow"
+    "longtable"
+    "booktabs"
+    "sfmath"
     "listings"
     "amssymb"
     "amsmath"
     "amsthm"
     "dcolumn"
     "hyperref"
-    "enumitem")
+    "enumitem"
+    "url")
    (TeX-add-symbols
     '("ct" 2)
     '("eqn" 1)
+    "proquestmode"
     "spc"
     "s"
     "bv"
@@ -86,7 +90,9 @@
     "sanguansin2016"
     "ye2014")
    (LaTeX-add-environments
-    "game")
+    "game"
+    "indenttext"
+    "indentlist")
    (LaTeX-add-amsthm-newtheorems
     "thm"
     "dfn"
