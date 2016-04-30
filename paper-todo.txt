@@ -1,7 +1,6 @@
 4/27/16
 
-- Fix inline references
-- Go through and remove inline/commented TODOs, weird symbols in source
+- Remove weird symbols/quotes in source
 - Label tables
 - Typesetting (Andrew's edits)
 - Typesetting (line breaks; code; real-world/ideal-world; whitespace)

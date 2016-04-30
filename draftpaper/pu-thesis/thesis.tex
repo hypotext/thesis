@@ -404,7 +404,7 @@ Andrew Appel's group has done the most similar related work in the area. Appel (
 
 In addition, there exist paper proofs of the security of CTR-DRBG and HMAC-DRBG (Campagna (2006), Hirose (2008)), though (as mentioned earlier) the former hasn't appeared in a peer-reviewed venue and does proofs in the random oracle model, and the latter does not prove security over multiple calls to $Generate$ or account for state updating.
 
-In the area of checking game-based proofs of cryptographic security within a proof assistant, there are two main tools. The long-established tools are EasyCrypt and its cousin CertiCrypt (Barthe (2011)), only the latter of which is foundational, but it is no longer maintained. A newer tool, is the Foundational Cryptography Framework (Petcher (2015)). The EasyCrypt tutorial (Barthe (2014)) proves the pseudorandomness of a simple stateful PRG. The PRG is very similar to the core loop construction discussed in Section REFERENCE, and the bound is also very similar (it is essentially the same one described in Hirose (2008)). The tutorial's concrete bound is quantified over ``For all PRG-distinguisher D that makes at most qn queries to its next oracle,'' so their PRG doesn't involve updating the PRF's key and then making more queries.
+In the area of checking game-based proofs of cryptographic security within a proof assistant, there are two main tools. The long-established tools are EasyCrypt and its cousin CertiCrypt (Barthe (2011)), only the latter of which is foundational, but it is no longer maintained. A newer tool, is the Foundational Cryptography Framework (Petcher (2015)). The EasyCrypt tutorial (Barthe (2014)) proves the pseudorandomness of a simple stateful PRG. The PRG is very similar to the core loop construction discussed in Section \ref{sec:indistinguishability_proof_for_one_call}, and the bound is also very similar (it is essentially the same one described in Hirose (2008)). The tutorial's concrete bound is quantified over ``For all PRG-distinguisher D that makes at most qn queries to its next oracle,'' so their PRG doesn't involve updating the PRF's key and then making more queries.
 
 % TODO fix quotes
 In the general area of formalizing PRNGs, several crypto papers analyze the security of PRNGs and propose new security properties. Dodis et al. (2013) propose the ``robustness'' property and show that the built-in Linux PRNG, \texttt{/dev/random}, is not robust.
@@ -516,18 +516,16 @@ $\textbf{Generate(k, v, n)} := $
 
 From the user's point of view, only the $Instantiate$ and $Generate$ functions are visible. The state is, of course, hidden. Typical usage would be a call to $Instantiate$, followed by any number of calls to $Generate$ some number of pseudorandom bits. $Generate$ automatically calls $Update$ every time it is called, and $Generate$ may call $Reseed$.
 
-We discuss our proof of security for a simplified PRG, consisting of only one call to the internal loop in $Generate$, in section REFERENCE. We discuss our proof of security for a simplified version of HMAC-DRBG in section REFERENCE.
+We discuss our proof of security for a simplified PRG, consisting of only one call to the internal loop in $Generate$, in Section \ref{sec:indistinguishability_proof_for_one_call}. We discuss our proof of security for a simplified version of HMAC-DRBG in Section \ref{sec:indistinguishability_proof_for_a_simplified_hmac_drbg}.
 
 \subsection{Security properties} \label{sec:security_properties}
 
-The most important property for a PRG is that its output is indistinguishable from ideal randomness. This definition will be formally stated in the proof in Section REFERENCE.
+The most important property for a PRG is that its output is indistinguishable from ideal randomness. This definition will be formally stated in the proof in Section \ref{sec:indistinguishability_proof_for_a_simplified_hmac_drbg}.
 % If an attacker can predict, then it can...
 
 A good PRG ought to also possess \emph{backtracking resistance} and \emph{prediction resistance}.
 
-If a PRG is backtracking resistant, then if the working state of the PRG is compromised at some time, any of its (previously unseen) output from before that time remains indistinguishable from ideal randomness.
-
-This definition will be formally stated in the proof in section REFERENCE.
+If a PRG is backtracking resistant, then if the working state of the PRG is compromised at some time, any of its (previously unseen) output from before that time remains indistinguishable from ideal randomness. This definition will be formally stated in Section \ref{sec:proof_of_backtracking_resistance}. 
 
 Prediction resistance is the complementary property. If a PRG is prediction resistant, then if the working state of the PRG is compromised at some time, after a certain recovery or reseeding interval, it is again indistinguishable from ideal randomness for any time afterward.
 
@@ -638,7 +636,7 @@ Qed.
 
 In this section we will write proofs as a conventional cryptographer would. We prove three things: indistinguishability for a simple PRG constructed from a PRF, indistinguishability for a real-world PRG constructed from a PRF, and backtracking resistance for the same PRG.
 
-If, after seeing the paper definitions of the main games and functions, you wish to compare them with the corresponding definitions in the Coq development, they can be found in Appendix REFERENCE. We will also annotate some theorems inline with their names in the Coq development. In Chapter REFERENCE, we give a brief outline of the structure of the Coq development, comment on mechanization-specific problems, and the benefits of mechanization. In Appendix REFERENCE, we give a detailed explanation of each lemma, as well as walkthroughs of Coq proofs for two lemmas.
+If, after seeing the paper definitions of the main games and functions, you wish to compare them with the corresponding definitions in the Coq development, they can be found in Appendix \ref{sec:main_definitions_in_the_coq_development}. We will also annotate some theorems inline with their names in the Coq development. In Chapter \ref{sec:comments_on_the_machine_checked_proofs}, we give a brief outline of the structure of the Coq development, comment on mechanization-specific problems, and the benefits of mechanization. In Appendix \ref{sec:explanations_of_each_lemma_in_the_coq_development}, we give a detailed explanation of each lemma, as well as walkthroughs of Coq proofs for two lemmas. 
 
 A comment on notation: for any game $G$ that returns a boolean, let $\Pr[G]$ denote the probability that $G$ returns true. 
 
@@ -789,8 +787,8 @@ $H\_{oc}(o, n, v) :=$
 \item[] else return $o.query(v) || H(o, n-1, o.query(v)).$
 \end{game}
 
-\begin{lem} \begin{gather*}|\Pr[G\_real\_2] - \Pr[G\_intermediate\_2]| \leq PRF\_Advantage.\end{gather*} \end{lem}
-\begin{proof} By the definition of $PRF\_Advantage$, with \\ $D_p := PRF\_A$. \end{proof}
+\begin{lem} \label{lem:prf_advantage_one} \begin{gather*}|\Pr[G\_real\_2] - \Pr[G\_intermediate\_2]| \leq PRF\_Advantage.\end{gather*} \end{lem}
+\begin{proof} By the definition of $PRF\_Advantage$, with $D_p := PRF\_A$. \end{proof}
 
 And our two rewrites don't change the probability that the adversary returns $1$ in a particular game.
 
@@ -805,7 +803,7 @@ $$|\Pr[G\_real] - \Pr[G\_intermediate]| \leq PRF\_Advantage.$$ \end{proof}
 
 Next, we bound the difference between the intermediate and the ideal-world game. This requires making a combinatorial argument.
 
-\begin{thm} $| \Pr[G\_intermediate] - \Pr[G\_ideal]| \leq \f{n^2}{2^c}. $ \end{thm}
+\begin{thm} \label{thm:pr_collisions} $| \Pr[G\_intermediate] - \Pr[G\_ideal]| \leq \f{n^2}{2^c}. $ \end{thm}
 \begin{proof} 
 
 We use Bellare's \emph{fundamental lemma of game-playing} to bound the distance between these two games.
@@ -909,7 +907,7 @@ To be more precise, $inputsOf(state))$ in $G\_ideal\_3B$ is a list of $n-1$ such
 
 Thus, we need only upper-bound the probability that there is a duplicate in a list of $n$ uniformly-sampled bitvectors of length $c$. This is the probability that the bad event happens.
 
-\begin{lem}$$\Pr[G\_ideal\_4] \leq \f{n^2}{2^c}$$\end{lem}
+\begin{lem} \label{lem:collision_bound} $$\Pr[G\_ideal\_4] \leq \f{n^2}{2^c}$$\end{lem}
 \begin{proof} There are $n \choose 2$ $= \f{n(n-1)}{2}$ pairs of bitvectors in the list, and the probability that there is a collision in a pair is $\f{1}{2^c}$. By the union bound, the probability that there is no collision is $\f{n(n-1)}{2} \cdot \f{1}{2^c} \leq \f{n^2}{2^c}.$ \end{proof}
 
 This completes our bound on the difference between $G\_intermediate$ and $G\_ideal$.
@@ -931,7 +929,7 @@ Thus, $H$ is a secure PRG. Moreover, since we did our proof in the concrete secu
 \subsection{Definitions} \label{sec:definitions}
 To prove indistinguishability for HMAC-DRBG, we must extend the proof for $H$ to apply for multiple calls of $H$, with $(k, v)$ being updated after each call.
 
-As summarized in Section REFERENCE, the HMAC-DRBG functions are $Instantiate$, $Generate$, $Update$, and $Reseed$. The state is $(k, v)$.
+As summarized in Section \ref{sec:summary_of_hmac_drbg}, the HMAC-DRBG functions are $Instantiate$, $Generate$, $Update$, and $Reseed$. The state is $(k, v)$.
 
 We make two main simplifications to HMAC-DRBG (in addition to the simplifications we made when first describing HMAC-DRBG). First, we do not model reseeding the PRG, because we are not proving that it possesses prediction resistance. Second, we do not model non-ideal randomness. As a corollary, we assume that $Instantiate$ initializes $k$ and $v$ with ideal randomness, which makes the proof much easier. Lastly, for convenience, we only output lists of pseudorandom bits whose lengths are multiples of the block size $c$. \\
 
@@ -941,7 +939,7 @@ $\textbf{Instantiate} := $
   \item[] $v \samp^c$ \\
 \end{game}
 
-For the remaining two functions, $Generate$ and $Update$, we note that $Generate$ always calls $Update$ at the end. Thus, we inline $Update$ to produce one function called $GenUpdate\_original$. (It is labeled $original$ because we will be using a different version in our proof, which we cover in Section REFERENCE.)\\
+For the remaining two functions, $Generate$ and $Update$, we note that $Generate$ always calls $Update$ at the end. Thus, we inline $Update$ to produce one function called $GenUpdate\_original$. (It is labeled $original$ because we will be using a different version in our proof, which we cover in Lemma \ref{lem:prf_advantage_max}.)\\
 
 $GenUpdate\_original((k, v), n) :=$
 \begin{game}
@@ -979,7 +977,7 @@ This suggests the definition of security (indistinguishability) for HMAC-DRBG$'$
 We need to now consider whether the adversary is adaptive or non-adaptive. That is, should the adversary be allowed to make choices (e.g. numbers of blocks to query) based on previous results (e.g. pseudorandom bits returned so far)? This is a new concern. Previously, when proving the security of $H$, the adversary could only make one call to $H$. So it couldn't make any decision after picking $n$ (the number of blocks). 
 
 % TODO proof for adaptive adversary?
-Here, we choose to prove security against a non-adaptive adversary. Proving security against an adaptive adversary, and formalizing that proof, would be substantially harder. We discuss reasons for this decision in Section REFERENCE.
+Here, we choose to prove security against a non-adaptive adversary. Proving security against an adaptive adversary, and formalizing that proof, would be substantially harder. We discuss this decision in more detail in Section \ref{sec:whats_left_to_prove_in_the_coq_development}.
 
 That said, here is the formal statement of what we want to prove.
 
@@ -999,7 +997,7 @@ $\textbf{G\_real} := $
 \item[] $ret \s A(bits)$ \\
 \end{game}
 
-Given an input state, the function $oracleMap$ repeatedly applies the provided oracle $f$ on a list of inputs $l$, and returns its final state and a list of outputs. An oracle is a function that takes a state and an input and outputs a new state and an output. \footnote{For brevity, we will elide the code of most function definitions in this proof. We discuss some of them in the section on formalization (Section REFERENCE), and all of them are defined in the Coq development. This function is also named $oracleMap$ in the Coq development.}
+Given an input state, the function $oracleMap$ repeatedly applies the provided oracle $f$ on a list of inputs $l$, and returns its final state and a list of outputs. An oracle is a function that takes a state and an input and outputs a new state and an output. \footnote{For brevity, we will elide the code of most function definitions in this proof. Some definitions are given in Appendix \ref{sec:main_definitions_in_the_coq_development}, and all of them are defined in the Coq development. This function is named $oracleMap$ in the Coq development.}
 
 In the ideal-world game, $GenRand$ takes the list $l$ outputted by the adversary and generates $\sum_0^{|l|-1} l_i$ blocks of ideal randomness.\\
 
@@ -1115,7 +1113,7 @@ Now we provide a random function as the oracle for $G\_hybrid\_useO$. So the bit
 
 To get all the games in a uniform format, we will take $G\_hybrid'(i) := (G\_hybrid\_useO(f\_oracle, i))$ and $G\_hybrid'(i+1) := (G\_hybrid\_useO(rb\_oracle, i))$. $f\_oracle$ is the PRF oracle and $rb\_oracle$ is an oracle that uniformly samples random blocks on each query. Both store their input/output state. These two rewrites can be proven equal, and we will use the game and its oracle-rewritten form interchangeable. (The proof is omitted for brevity.)
 
-As in Section REFERENCE, we bound the distance between $G\_hybrid(i)$ and $G\_hybrid(i+1)$ via the triangle inequality. The proof is also very similar to our proof in Theorem REFERENCE. 
+As in Section \ref{sec:indistinguishability_proof_for_one_call}, we bound the distance between $G\_hybrid(i)$ and $G\_hybrid(i+1)$ via the triangle inequality. The proof is also very similar to our proof in \ref{sec:indistinguishability_proof_for_one_call}. 
 %Reduces to Adam's because of the hybrid ordering (reduces to $Instantiate$)
 
 \begin{lem}\label{lem:hybrid_triangle}
@@ -1174,14 +1172,14 @@ $$\begin{tabular}{ l || r |  r | r}
 
 Now we tackle each part of the bound separately in Lemma \ref{lem:hybrid_triangle} separately. 
 
-\begin{lem}
+\begin{lem} \label{lem:prf_advantage_max}
 \begin{gather*}
 |\Pr[G\_hybrid(i)] - \Pr[G\_hybrid\_rf(i)] | \leq PRF\_Advantage\_i \s i \\
 \leq \max_i PRF\_Advantage\_i \s i.
 \end{gather*} 
 \end{lem}
 \begin{proof} 
-This proof is not as easy as the proof-by-definition in Lemma REFERENCE. There are two added complexities. Because the $(k,v)$ is updated at an inconvenient place, in order to rewrite the two games above in the form of a $PRF\_Adversary$, we must move one of the lines of update code. Additionally, there is one $PRF\_Adversary$ for each $i$, so there are multiple $PRF\_Advantages$.
+This proof is not as easy as the proof-by-definition in Lemma \ref{lem:prf_advantage_one}. There are two added complexities. Because the $(k,v)$ is updated at an inconvenient place, in order to rewrite the two games above in the form of a $PRF\_Adversary$, we must move one of the lines of update code. Additionally, there is one $PRF\_Adversary$ for each $i$, so there are multiple $PRF\_Advantages$. 
 
 Here we work with $G\_hybrid'(i)$ instead of $G\_hybrid(i)$ because it's in the same form as $G\_hybrid\_rf$. 
 
@@ -1286,7 +1284,7 @@ $\textbf{G\_hybrid\_rf\_oc(i)} := $
 \begin{proof}
 More precisely, $PRF\_Advantage$ is parametrized by the $PRF\_Adversary$ passed in, which is parametrized by the hybrid index $i$. The bits generated differ depending on $i$.
 
-This is similar to Lemma REFERENCE, but does not reduce to it.
+This is similar to Lemma \ref{lem:prf_advantage_one}, but does not reduce to it.
 \end{proof}
 
 As is evident from the lemma above, there are multiple PRF adversaries, one for each $i$. So, we take the final bound to be the greatest of the $PRF\_Advantage$s: 
@@ -1306,10 +1304,10 @@ $$|\Pr[G\_hybrid\_rf(i)] - \Pr[G\_hybrid(i+1)] | \leq \f{(l_i + 1)^2}{2^c}.$$ \e
 We define the bad event, show that the two games are identical until bad, and bound the probability of the bad event happening.
 
 \begin{dfn}The \textbf{bad event} is that there are duplicates in the inputs to the oracle used on the $i+1$th call. 
-Intuitively, we need to ``zoom in'' on the inputs and outputs to the oracles in only the $i+1$th call of each game. Then, the bad event becomes the same as the bad event discussed in Theorem REFERENCE, in the proof about the simpler PRG.
+Intuitively, we need to ``zoom in'' on the inputs and outputs to the oracles in only the $i+1$th call of each game. Then, the bad event becomes the same as the bad event discussed in Theorem \ref{thm:pr_collisions}, in the proof about the simpler PRG.
 \end{dfn} 
 
-Theorem REFERENCE gives a detailed overview of why the bad event is bad, the fundamental lemma of game-playing, the definition of ``identical until bad'', the technique of exposing the bad event, and the $\Pr_1$ and $\Pr_2$ notation. This section will omit that discussion.
+Theorem \ref{thm:pr_collisions} gives a detailed overview of why the bad event is bad, the fundamental lemma of game-playing, the definition of ``identical until bad'', the technique of exposing the bad event, and the $\Pr_1$ and $\Pr_2$ notation. This section will omit that discussion. 
 
 As before, we expose the bad event in both games by returning both the generated bits and a boolean indicating whether the bad event occurred in the oracle's state.
 
@@ -1330,17 +1328,16 @@ $\textbf{G\_hybrid\_rf\_oc\_2(i)} := $
 \end{game} 
 
 \begin{lem} for all $i$,
-$G\_hybrid\_rf\_oc\_2(i)$ and \\
-  $G\_hybrid\_rb\_oc\_2(i)$ are identical until bad. \end{lem}
+$G\_hybrid\_rf\_oc\_2(i)$ and $G\_hybrid\_rb\_oc\_2(i)$ are identical until bad. \end{lem}
 \begin{proof} 
-They satisfy the two requirements. The reasoning is the same as in Theorem REFERENCE, because we only have to reason about the one call between the computations that uses the two different oracles. The only difference between here and Theorem REFERENCE is that the oracle is queried either one or two additional times when we update $k$ and $v$ at the end of $GenUpdate$.
+They satisfy the two requirements. The reasoning is the same as in Theorem \ref{thm:pr_collisions}, because we only have to reason about the one call between the computations that uses the two different oracles. The only difference between here and Theorem \ref{thm:pr_collisions} is that the oracle is queried either one or two additional times when we update $k$ and $v$ at the end of $GenUpdate$.
 
   \begin{enumerate}
-  \item If the bad event does not happen, their output distributions are identical. If there are no duplicates in the inputs to the oracle ($rb\_oracle$ or $randomFunc_withDups$), they behave the same.
+  \item If the bad event does not happen, their output distributions are identical. If there are no duplicates in the inputs to the oracle ($rb\_oracle$ or $randomFunc\_withDups$), they behave the same.
   \item The probability of the bad event happening is the same in both. Again, this is obvious.
   \end{enumerate}
 
-Incidentally, this lemma is very obvious on paper, but took a lot of effort to formalize. We had to do a tricky induction over the list of blocks $l$ that the adversary requested. See the discussion of $oracleCompMap\_\_oracle\_eq\_until\_bad\_dups$ in Section REFERENCE.
+Incidentally, this lemma is very obvious on paper, but took a lot of effort to formalize. We had to do a tricky induction over the list of blocks $l$ that the adversary requested. See the discussion of $oracleCompMap\_\_oracle\_eq\_until\_bad\_dups$ in Appendix \ref{sec:adjacent_hybrids_are_close}.
 \end{proof}
 
 Then we may bound the distance between the two games by the probability of the bad event happening.
@@ -1356,7 +1353,7 @@ Because we just proved that the two games are identical until bad, we apply the 
 \end{proof}
 
 % >>
-Now we need only reason about the bad event in the second game, which replaces the PRF with ideal randomness in the $i+1$th oracle call. We rewrite the game into several simpler forms and prove that each preserves the probability of the bad event happening, then reduce it to the bound proven earlier in Lemma REFERENCE.
+Now we need only reason about the bad event in the second game, which replaces the PRF with ideal randomness in the $i+1$th oracle call. We rewrite the game into several simpler forms and prove that each preserves the probability of the bad event happening, then reduce it to the bound proven earlier in Lemma \ref{lem:collision_bound}. 
 
 Intuitively, we only care about the computation that queries the oracle, which is one iteration of $GenUpdate\_oc$. We can discard the other calls to $GenUpdate\_oc$. By the ordering of the hybrid argument, we know that the state coming into this call is ideally random. (This was an important reason we picked this hybrid ordering.) 
 
@@ -1386,7 +1383,7 @@ $$k_1 \lar f_k(v || 0 \ldots 0)$$
 
 $(v||0 \ldots 0)$ can never be a duplicate input for that particular PRF, because the PRF was always queried previously with inputs of length $c$, and this input is longer. (Our guess is that NIST made this design decision so that for that PRF, the new key would always be ideally random.) Therefore, we can remove the key input from our list of possible duplicate inputs. 
 
-We are left with essentially the same situation as in Lemma REFERENCE. The total number of inputs is the sum of the total number of blocks requested (minus 1 because the last one is an output; plus 1 for the initial $v$), plus one more input because $GenUpdate$ made one more query to the oracle to update $v$ at the end. (The $v$-updating is not present in $GenUpdate\_noV$, but the bound still holds.)\\
+We are left with essentially the same situation as in Theorem \ref{thm:pr_collisions}. The total number of inputs is the sum of the total number of blocks requested (minus 1 because the last one is an output; plus 1 for the initial $v$), plus one more input because $GenUpdate$ made one more query to the oracle to update $v$ at the end. (The $v$-updating is not present in $GenUpdate\_noV$, but the bound still holds.)\\
 
 $\textbf{G\_hybrid\_rb\_oc\_bad\_2(i)} := $
 \begin{game}
@@ -1533,7 +1530,7 @@ The PRG modeled on HMAC-DRBG is backtracking-resistant if for all non-uniform no
 \end{gather*}
 \end{dfn}
 
-By this definition of backtracking resistance, the real-world and ideal-world games are very similar to the respective games in the definition of pseudorandomness, discussed in section REFERENCE. The only difference is that in the real-world game, the new adversary is given the final state, and in the ideal-world game, the new adversary is given an ideally random state. Thus, intuitively, the proof of backtracking resistance can reuse many of the steps and reductions we used to prove pseudorandomness.
+By this definition of backtracking resistance, the real-world and ideal-world games are very similar to the respective games in the definition of pseudorandomness, discussed in Section \ref{sec:indistinguishability_proof_for_a_simplified_hmac_drbg}. The only difference is that in the real-world game, the new adversary is given the final state, and in the ideal-world game, the new adversary is given an ideally random state. Thus, intuitively, the proof of backtracking resistance can reuse many of the steps and reductions we used to prove pseudorandomness.
 
 % $\textbf{G\_real} := $
 % \begin{game}
@@ -1563,9 +1560,9 @@ By this definition of backtracking resistance, the real-world and ideal-world ga
 
 Note that in every proof we reuse from the pseudorandomness proof, we have to check that the result holds for an adversary that also receives the state. We run into such a problem in the first step.
 
-We reuse Lemma REFERENCE to move each $v$-update in $GenUpdate$ to the beginning of the next call. Because this is a program equivalence proof, the result holds as-is on the output. However, the \emph{state} at the end of a $GenUpdate\_noV$ call is not the same as it would be at the end of a $GenUpdate$ call. 
+We reuse the work in Lemma \ref{lem:prf_advantage_max} to move each $v$-update in $GenUpdate$ to the beginning of the next call. Because this is a program equivalence proof, the result holds as-is on the output. However, the \emph{state} at the end of a $GenUpdate\_noV$ call is not the same as it would be at the end of a $GenUpdate$ call. 
 
-This breaks backtracking resistance. Referring to $GenUpdate\_original$ (in Section REFERENCE), the adversary would receive $v_1$, not $v_2$. But if $A_{BR}$ knows that the last block of the PRG's output is $v_1$. So if $A_{BR}$ is in the real-world game, it can simply check if this is true. This happening has a negligible probability of happening in the ideal-world game, since the $v$ that $A_{BR}$ receives is ideally random. To fix this, we simply update $v_1$ before giving the state to $A_{BR}$ \footnote{One could change the ideal-world definition to give $A_{BR}$ the last block of the ideally random output as $v$, but that would weaken the definition. Anyway, we still need to fix the $v$-updating in order to rewrite the game in terms of the PRF adversary, as discussed in Section REFERENCE.}
+This breaks backtracking resistance. Referring to $GenUpdate\_original$ (in Section \ref{sec:indistinguishability_proof_for_a_simplified_hmac_drbg}), the adversary would receive $v_1$, not $v_2$. But if $A_{BR}$ knows that the last block of the PRG's output is $v_1$. So if $A_{BR}$ is in the real-world game, it can simply check if this is true. This happening has a negligible probability of happening in the ideal-world game, since the $v$ that $A_{BR}$ receives is ideally random. To fix this, we simply update $v_1$ before giving the state to $A_{BR}$. \footnote{One could change the ideal-world definition to give $A_{BR}$ the last block of the ideally random output as $v$, but that would weaken the definition. Anyway, we still need to fix the $v$-updating in order to rewrite the game in terms of the PRF adversary, as discussed in Section \ref{sec:indistinguishability_proof_for_a_simplified_hmac_drbg}.}
 
 Here is the new game with $v$-updating.\\
 
@@ -1589,7 +1586,7 @@ Afterward, we take the same strategy. We define the same hybrids: $H_i$ replaces
 
 The first step in the bound between adjacent hybrids is the same as in the pseudorandomness proof. We use the same intermediate hybrid $H_i'$: we rewrite $G\_real\_BR\_noV$ in the form of a game $G\_real\_BR\_noV\_RF(i)$ that passes a random function oracle to some PRF adversary, which uses ideal randomness in place of the PRF on calls $\leq i$, the provided oracle on call $i+1$, and the PRF afterward. We rewrite the beginning hybrid $H_i$ in the same form, just passing the PRF adversary the PRF as an oracle instead.
 
-The distance between $H_i$ and $H_i'$ is $PRF\_Advantage\_Max$ by definition and by taking the maximum $PRF\_Advantage$ over all hybrids (discussed in Section REFERENCE). In this step, we don't need to reason about the $A_{BR}$ being given the state; no matter what happens, the bound is $PRF\_Advantage\_Max$ by definition.
+The distance between $H_i$ and $H_i'$ is $PRF\_Advantage\_Max$ by definition and by taking the maximum $PRF\_Advantage$ over all hybrids (discussed in Section \ref{sec:indistinguishability_proof_for_a_simplified_hmac_drbg}). In this step, we don't need to reason about the $A_{BR}$ being given the state; no matter what happens, the bound is $PRF\_Advantage\_Max$ by definition.
 
 The second step in the bound between adjacent hybrids is to rewrite the ideal-world game in the form of a game that instead passes the PRF adversary the oracle $rb\_oracle$ for all calls. (This oracle uniformly samples random bits and records the input-output pairs.) Then, we reason that this new game, $G\_real\_BR\_noV\_RB$, is related to the intermediate game because they are identical until bad. This is true. To see this, we consider the distribution of the output $(bits, (k_f, v_f))$ instead of just $bits$ as before.
 
@@ -1632,9 +1629,9 @@ However, proving things about this is difficult. Dodis et al. (2013) proved that
 
 \section{Proof tree} \label{sec:proof_tree}
 
-The main definitions and games were given in Section REFERENCE, and each lemma in the Coq development is explained in detail in Appendix REFERENCE. Here we give only an outline of the structure of the Coq development. A dagger ($^\dag$) denotes a lemma proven by Petcher. When a lemma is specific to the Coq development and is too obvious to mention in the paper proof, I denote it with an asterisk ($^*$). 
+The main definitions and games were given in Section \ref{sec:indistinguishability_proof_for_a_simplified_hmac_drbg}, and each lemma in the Coq development is explained in detail in Appendix \ref{sec:explanations_of_each_lemma_in_the_coq_development}. Here we give only an outline of the structure of the Coq development. A dagger ($^\dag$) denotes a lemma proven by Petcher. When a lemma is specific to the Coq development and is too obvious to mention in the paper proof, I denote it with an asterisk ($^*$). 
 
-I am confident that all the lemmas are true; paper proofs are given in Appendix REFERENCE. However, some rely on admitted lemmas, which are either proofs of game equivalence or inductions that I haven't had time to fill in. \\
+I am confident that all the lemmas are true; paper proofs are given in Appendix \ref{sec:explanations_of_each_lemma_in_the_coq_development}. However, some rely on admitted lemmas, which are either proofs of game equivalence or inductions that I haven't had time to fill in. 
 
 This is the main theorem and its Coq proof. It states that the probability that the adversary can distinguish between the real-world and ideal-world games is bounded by the length of the list of blocks requested, multiplied by a constant upper bound on the difference between adjacent hybrids.
 
@@ -1715,8 +1712,8 @@ Besides proving the admitted lemmas, we also want to extend our proof to yield m
 \begin{itemize}
 \item We adapt the indistinguishability proof to a nonadaptive adversary that picks any list of $blocksPerCall$ and $numCalls$ beforehand, not the hardcoded $maxBlocksPerCall$ and $maxCalls$. One can imagine a pathological DRBG that outputs its key for only $numCalls = 7$, for example. The paper proof here already holds for the more general adversary.
 \item We need to figure out how to extend the indistinguishability proof, as well as the backtracking resistance proof, to an adaptive adversary. This adversary can choose the number of calls and number of blocks per call, then once it receives output, can call again as many times as it wishes with parameters of its choice. One can imagine a pathological DRBG that "encourages" an adversary to input $7$ as $blocksPerCall$ and outputs its secret key after 3 such calls, so that if it discovers that $7$ is a "bad" input, it keeps inputting it. A non-adaptive adversary would have negligible chance of making this experiment or this discovery.
-\item Reuse the indistinguishability proofs to show backtracking resistance. The proof is outlined in Section REFERENCE.
-\item Prove that our cryptographic specification of HMAC-DRBG and a different, functional specification of HMAC-DRBG are equivalent. This is discussed in Section REFERENCE.
+\item Reuse the indistinguishability proofs to show backtracking resistance. The proof is outlined in Section \ref{sec:proof_of_backtracking_resistance}.
+\item Prove that our cryptographic specification of HMAC-DRBG and a different, functional specification of HMAC-DRBG are equivalent. This is discussed in Section \ref{sec:linking_our_crypto_spec_with_the_functional_spec}.
 \end{itemize}
 
 We also abstracted or ignored a few aspects of HMAC-DRBG and would like to extend our proof to include them.
@@ -1899,7 +1896,7 @@ The HMAC-DRBG pseudorandomness proof may be found in this file. (The backtrackin
 
 \section{PRF-DRBG definitions} \label{sec:prf_drbg_definitions}
 
-This function corresponds to the core loop, $H$, discussed in Section REFERENCE.
+This function corresponds to the core loop, $H$, discussed in Section \ref{sec:indistinguishability_proof_for_one_call}.
 
 \begin{lstlisting}
   Fixpoint PRF_DRBG_f (v : D)(n : nat)(k : Key) :=
@@ -2105,7 +2102,7 @@ Refer to \li|HMAC_DRBG_nonadaptive.v| in the FCF repository for the rest.
 
 \chapter{Explanations of each lemma in the Coq development} \label{sec:explanations_of_each_lemma_in_the_coq_development}
 
-We explain the proof tree described in Section REFERENCE from the top down (roughly breadth-first).
+We explain the proof tree described in Section \ref{sec:proof_tree} from the top down (roughly breadth-first).
 
 Note that the hybrid numbering is slightly different from the numbering in the paper proof. We replace the PRF in the $i$th call with the provided oracle, not the $i+1$th call as in the paper proof.
 

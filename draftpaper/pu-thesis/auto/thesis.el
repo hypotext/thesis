@@ -6,15 +6,15 @@
    (TeX-add-to-alist 'LaTeX-provided-package-options
                      '(("xcolor" "dvipsnames") ("sfmath" "cm")))
    (add-to-list 'LaTeX-verbatim-environments-local "lstlisting")
-   (add-to-list 'LaTeX-verbatim-macros-with-braces-local "lstinline")
-   (add-to-list 'LaTeX-verbatim-macros-with-braces-local "path")
-   (add-to-list 'LaTeX-verbatim-macros-with-braces-local "url")
-   (add-to-list 'LaTeX-verbatim-macros-with-braces-local "nolinkurl")
-   (add-to-list 'LaTeX-verbatim-macros-with-braces-local "hyperbaseurl")
-   (add-to-list 'LaTeX-verbatim-macros-with-braces-local "hyperimage")
    (add-to-list 'LaTeX-verbatim-macros-with-braces-local "hyperref")
-   (add-to-list 'LaTeX-verbatim-macros-with-delims-local "lstinline")
+   (add-to-list 'LaTeX-verbatim-macros-with-braces-local "hyperimage")
+   (add-to-list 'LaTeX-verbatim-macros-with-braces-local "hyperbaseurl")
+   (add-to-list 'LaTeX-verbatim-macros-with-braces-local "nolinkurl")
+   (add-to-list 'LaTeX-verbatim-macros-with-braces-local "url")
+   (add-to-list 'LaTeX-verbatim-macros-with-braces-local "path")
+   (add-to-list 'LaTeX-verbatim-macros-with-braces-local "lstinline")
    (add-to-list 'LaTeX-verbatim-macros-with-delims-local "path")
+   (add-to-list 'LaTeX-verbatim-macros-with-delims-local "lstinline")
    (TeX-run-style-hooks
     "latex2e"
     "puthesis"
@@ -73,7 +73,10 @@
     "sec:proofs"
     "sec:paper_proofs_vs_machine_checked_proofs"
     "sec:indistinguishability_proof_for_one_call"
+    "lem:prf_advantage_one"
     "intermediate2"
+    "thm:pr_collisions"
+    "lem:collision_bound"
     "sec:indistinguishability_proof_for_a_simplified_hmac_drbg"
     "sec:definitions"
     "def:indist"
@@ -82,6 +85,7 @@
     "thm:adjacent_hybrids"
     "lem:hybrid_triangle"
     "ex:hybrid_intermediate"
+    "lem:prf_advantage_max"
     "thm:hybrids"
     "sec:proof_of_backtracking_resistance"
     "thm:br"
@@ -129,14 +133,14 @@
     "game"
     "indenttext"
     "indentlist")
+   (LaTeX-add-enumitem-newlists
+    '("longenum" "enumerate"))
    (LaTeX-add-amsthm-newtheorems
     "thm"
     "dfn"
     "cor"
     "lem"
     "ex"
-    "rem")
-   (LaTeX-add-enumitem-newlists
-    '("longenum" "enumerate")))
+    "rem"))
  :latex)
 
