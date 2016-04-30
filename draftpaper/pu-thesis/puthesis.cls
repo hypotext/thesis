@@ -83,6 +83,7 @@
   \vspace{.3in}
   \extravspace{.3in}
   \begin{center}
+    Princeton University \\
     Department of \@dept \\
     Advisors: \@adviser
   \end{center}

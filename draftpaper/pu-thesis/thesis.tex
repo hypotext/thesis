@@ -385,7 +385,7 @@ Additionally, we plan to connect our proof of security with an existing proof of
 
 %TODO: include precise theorem statement
 
-\chapter{Related work}
+\section{Related work}
 
 Andrew Appel's group has done the most similar related work in the area. Appel (2015) presents a ``full formal machine-checked verification of a C program: the OpenSSL implementation of SHA-256.'' Beringer et al. (2015) build on this work to do the same for HMAC, adding a proof of security that relies on the security of SHA. We plan to use the same approach for fully verifying HMAC-DRBG.
 
@@ -405,7 +405,11 @@ Our approach is unique because it provides an end-to-end and foundational verifi
 
 % (TODO: fix these citations)
 
-\chapter{HMAC-DRBG overview}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{Background}
+
+\section{Summary of HMAC-DRBG}
 % **
 A pseudorandom number generator is used to stretch a small amount of randomness into a large amount of pseudorandomness, often for use in cryptosystems. HMAC-DRBG, formalized in NIST SP 800-90A, is one such pseudorandom number generator. It generates output by iterating HMAC, a keyed-hash message authentication function widely believed to be difficult to invert [cite] and that proven to be a pseudorandom function (PRF) given that HMAC's internal hash function is a PRF. % [mention key?]
 
@@ -501,7 +505,7 @@ From the user's point of view, only the $Instantiate$ and $Generate$ functions a
 
 We discuss our proof of security for a simplified PRG, consisting of only one call to the internal loop in $Generate$, in section REFERENCE. We discuss our proof of security for a simplified version of HMAC-DRBG in section REFERENCE.
 
-\section{Security properties}
+\subsection{Security properties}
 
 The most important property for a PRG is that its output is indistinguishable from ideal randomness. This definition will be formally stated in the proof in section REFERENCE.
 % If an attacker can predict, then it can...
@@ -518,9 +522,330 @@ Prediction resistance is the complementary property. If a PRG is prediction resi
 
 We do not prove that HMAC-DRBG is prediction resistant. This is because the definition is slippery, and because it is difficult to prove.
 
+\section{Overview of the Foundational Cryptography Framework}
+
+We give a brief overview of FCF. For more details, a tutorial, and the theory behind it, see Petcher (2015).
+
+As the abstract summarizes: ``FCF provides an environment for developing and checking proofs of security of cryptographic schemes in Coq. ...  Proofs may provide concrete bounds as well as asymptotic conclusions. FCF provides a language for probabilistic programs, a theory that is used to reason about programs, and a library of tactics and definitions that are useful in proofs about cryptography.'' 
+
+A cryptographic game may be viewed as an imperative, probabilistic program (Bellare (2004)). FCF defines the syntax of probabilistic programs as the type $Comp \s A$, the type of a probabilistic program that returns a value of type $A$. The most notable operation is $Rnd$, which produces $n$ uniformly random bits. Other operations are sequencing statements in an imperative manner, repeating a statement, and returning a value.
+
+In FCF, the standard non-uniform probabilistic polynomial time (PPT) adversary is modeled as a parameter $A : I -> Comp \s bool$. This denotes that the adversary $A$ could be any non-uniform PPT adversary that takes as input some $I$ and returns a guess of $0$ or $1$. $Comp$ denotes that the adversary may flip coins internally. FCF has a mechanism to limit the adversary to a polynomial number of queries in some security parameter; refer to Petcher (2015) for details.
+
+Cryptographic security definitions often involve giving the adversary some oracle that it can query, where the oracle must maintain some hidden state across multiple interactions with the adversary. Thus, FCF extends the $Comp$ type, where $Comp \s A$ is a probabilistic program returning a value of type $A$, to the $OracleComp$ type, where $OracleComp \s A \s B \s C$ is a probabilistic program that returns a value of type $C$, and has access to an oracle that takes a value of type $A$ and returns a value of type $B$. (The type of the oracle itself includes a state as input and a new state as output.) Oracle computations include the standard returning and binding operations, as well as an oracle query operations and an operation that can run a program using a different oracle that can access the current oracle.
+
+Refer to Petcher (2015) for examples of simple games written in FCF and a walkthrough of proving security of a simple encryption scheme. A game typically has type $Comp \s bool$, because it is a probabilistic computation that usually returns an adversary's guess.
+
+In game-playing proofs, we commonly do two things. First, we might make a slight change to a game then prove the former game equivalent to the latter, where ``equivalent'' can be taken in two senses. Either they are equivalent programs that return the same outputs, or they have computationally indistinguishable output distributions. Or, we might seek to bound the distance between two games by some negligible functions, where ``distance'' refers to the probability that some computationally-bounded adversary in both games can distinguish between two different distributions.
+
+To aid with this kind of reasoning, FCF provides a program logic called Probabilistic Relational Postcondition Logic (PRPL). PRPL behaves like a Hoare logic, except there are no preconditions, and we write a specification relating pairs of probabilistic programs instead of a specification on a single deterministic program.
+
+\subsection{A simple example of reasoning about programs in PRPL}
+
+As a short example demonstrating PRPL, take the following proof goal in Coq.
+
+\begin{lstlisting}
+Theorem PRPL_demo : forall (n m : nat),
+  comp_spec (fun a b => a = fst b)
+            (x <-$ {0,1}^n;
+             ret x)
+            (c <-$ {0,1}^n;
+             d <-$ {0,1}^m;
+             ret (c,d)).
+Proof.
+  intros.
+\end{lstlisting}
+
+\li|comp_spec| denotes a PRPL specification, or postcondition, that we want to prove about the two probabilistic programs that follow. Namely, we want to prove that the output of the first program is equal to the first output of the second program. \li|x <-$ {0,1]^n| denotes sampling a bitvector of $n$ bits uniformly at random.
+%$
+
+To continue the proof, we note that the first lines of each program yield the same output if both programs are given the same coins to flip, so we may ``skip'' them, and the relation that holds on the remaining programs will be the same. (This is the intuitive description. A more rigorous and detailed description of every tactic may be found in the $Tactics.v$ file in the FCF repository, linked in the appendix.)
+
+\begin{lstlisting}
+  fcf_skip. 
+\end{lstlisting}
+
+Now this is the new proof state. Note the two remaining programs. 
+
+\begin{lstlisting}
+  n : nat
+  m : nat
+  b : Bvector n
+  H0 : In b (getSupport ({ 0 , 1 }^n))
+  H : In b (getSupport ({ 0 , 1 }^n))
+  ============================
+   comp_spec (fun (a : Bvector n)
+                  (b0 : Bvector n * Bvector m)
+                  => a = fst b0)
+     (ret b)
+     (d <-$ { 0 , 1 }^m; ret (b, d))
+\end{lstlisting}
+
+The first line of the second program is irrelevant because our specification on the outputs does not mention it. Therefore, we can eliminate that line with the following tactic.
+
+\begin{lstlisting}
+fcf_irr_r.
+\end{lstlisting}
+
+This is the remaining proof state. Note that $b$ is the the same between both programs, which is what we wanted to prove.
+
+\begin{lstlisting}
+  n : nat
+  m : nat
+  b : Bvector n
+  H0 : In b (getSupport ({ 0 , 1 }^n))
+  H : In b (getSupport ({ 0 , 1 }^n))
+  b0 : Bvector m
+  H1 : In b0 (getSupport ({ 0 , 1 }^m))
+  ============================
+   comp_spec (fun (a : Bvector n)
+                  (b1 : Bvector n * Bvector m)
+                  => a = fst b1)
+     (ret b) (ret (b, b0))
+\end{lstlisting}
+
+When we have whittled down both programs such that they both only return values, we can use the following tactic to apply the specification to the return values and prove that it holds. 
+
+\begin{lstlisting}
+  fcf_spec_ret.
+\end{lstlisting}
+
+In this case, FCF is smart enough to figure out that the specification holds, so it discharges the goal. We have proven that the given specification relates these two probabilistic programs. 
+
+\begin{lstlisting}
+Qed.
+\end{lstlisting}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Definitions to merge in below}
+
+\section{Starting HMAC-DRBG definitions}
+
+The core inner loop of HMAC-DRBG that generates pseudorandom blocks. 
+
+\begin{lstlisting}
+(* save the last v and output it as part of the state *)
+Fixpoint Gen_loop (k : Bvector eta) (v : Bvector eta) (n : nat)
+  : list (Bvector eta) * Bvector eta :=
+  match n with
+  | O => (nil, v)
+  | S n' =>
+    let v' := f k (Vector.to_list v) in
+    let (bits, v'') := Gen_loop k v' n' in
+    (v' :: bits, v'')           
+  end.
+\end{lstlisting}
+
+We combined the $Generate$ and $Update$ functions into one program, since they're always called together.
+
+\begin{lstlisting}
+Definition GenUpdate_original (state : KV) (n : nat) :
+  Comp (list (Bvector eta) * KV) :=
+  [k, v] <-2 state;
+  [bits, v'] <-2 Gen_loop k v n;
+  k' <- f k (to_list v' ++ zeroes);
+  v'' <- f k' (to_list v');
+  ret (bits, (k', v'')).
+\end{lstlisting}
+
+% @ where should this go?
+\section{Prior work on abstract PRF-DRBG}
+
+Petcher did some prior work on proving the security of the core loop seen above, run once. His definition is similar to ours, but more abstract. Here $f$ is any $PRF$.
+
+\begin{lstlisting}
+  Fixpoint PRF_DRBG_f (v : D)(n : nat)(k : Key) :=
+    match n with
+        | O => nil
+        | S n' => 
+          r <- (f k v);
+            r :: (PRF_DRBG_f (injD r) n' k)
+    end.
+\end{lstlisting}
+
+We reuse his proof techniques to replace the PRF with a random function, then the random function with random bits. The first is bounded by \li|PRF_Advantage|, the second by the collision bound. (TODO: elaborate on this)
+
+TODO: move the explanation of identical until bad (in $oracleCompMap$) here
+
+\section{Proof of indistinguishability}
+
+Here are the statement and the proof in Coq. Note that the proof relies on four main lemmas, which we discuss below.
+
+\begin{lstlisting}
+Theorem G1_G2_close :
+  | Pr[G1_prg_original] - Pr[G2_prg] | <= 
+  (numCalls / 1) * Gi_Gi_plus_1_bound.
+Proof.
+  rewrite G1_Gi_O_equal.
+  rewrite G2_Gi_n_equal.
+  (* inductive argument *)
+  specialize (distance_le_prod_f 
+  	(fun i => Pr[Gi_prg i]) 
+	Gi_Gi_plus_1_close numCalls).
+  intuition.
+Qed.
+\end{lstlisting}
+
+TODO: discuss pseudorandom functions, random functions, uniformly sampling random bits.
+
+TODO: Indistinguishability definition
+
+\subsection{Main games}
+
+TODO: talk about what a game is
+
+Updating the v immediately after re-keying the PRF, in the same oracle call, is hard to reason about. This is because at the beginning of each call, by the hybrid argument, we can assume that the $(k,v)$ have been randomly sampled. Now we have to replace the key with a random key to reason about updating the v. The solution is simple: we move each v-update to the beginning of the next call and prove that the new sequence of programs is indistinguishable to the adversary. (TODO explain this with pictures)
+
+\begin{lstlisting}
+(* [GenUpdate_original, GenUpdate_original, ...] = [GenUpdate_noV, GenUpdate, Genupdate, ...] *)
+  (* use this for the first call *)
+Definition GenUpdate_noV (state : KV) (n : nat) :
+  Comp (list (Bvector eta) * KV) :=
+  [k, v] <-2 state;
+  [bits, v'] <-2 Gen_loop k v n;
+  k' <- f k (to_list v' ++ zeroes);
+  ret (bits, (k', v')).
+
+Definition GenUpdate (state : KV) (n : nat) :
+  Comp (list (Bvector eta) * KV) :=
+  [k, v] <-2 state;
+  v' <- f k (to_list v);
+  [bits, v''] <-2 Gen_loop k v' n;
+  k' <- f k (to_list v'' ++ zeroes);
+  ret (bits, (k', v'')).
+\end{lstlisting}
+
+The adversary, an abstract probabilistic polynomial time algorithm. It takes a list of blocks and returns a guess.
+
+\begin{lstlisting}
+(* Non-adaptive adversary. *)
+Variable A : list (list (Bvector eta)) -> Comp bool.
+Hypothesis A_wf: forall ls, well_formed_comp (A ls).
+\end{lstlisting}
+
+The first game: modeling normal usage of the PRG with the PRF.
+
+\begin{lstlisting}
+(* blocks generated by GenLoop *)
+Variable blocksPerCall : nat.      
+(* number of calls to GenUpdate *) 
+Variable numCalls : nat.        
+Hypothesis H_numCalls : numCalls > 0. 
+
+Definition maxCallsAndBlocks : list nat := replicate numCalls blocksPerCall.
+
+(* only first call uses GenUpdate_noV; assumes numCalls > 0 *)
+Definition G1_prg : Comp bool :=
+  [k, v] <-$2 Instantiate;
+  [head_bits, state'] <-$2 GenUpdate_noV (k, v) blocksPerCall;
+  (* call the oracle numCalls times, each time requesting blocksPerCall blocks *)
+  [tail_bits, _] <-$2 oracleMap _ _ GenUpdate state' (tail maxCallsAndBlocks);
+  A (head_bits :: tail_bits).
+\end{lstlisting}
+
+The end game: everything returned is a uniformly sampled random bit vector.
+
+\begin{lstlisting}
+(* simpler version of GenUpdate only requires compMap. prove the two games equivalent *)
+Definition G2_prg : Comp bool :=
+  [k, v] <-$2 Instantiate;
+  bits <-$ compMap _ GenUpdate_rb maxCallsAndBlocks;
+  A bits.
+\end{lstlisting}
+
+Hybrid games. 
+TODO: define notation, talk about why hybrid and why in this order, talk about oracles
+
+Game $i$ uses RBs for all calls less than $i$ and PRF for all calls greater than or equal to $i$. Call numbering starts at $0$. It passes $i$ to oracle $i$, which chooses the appropriate oracle to use.
+
+\begin{lstlisting}
+
+(* oracle i *)
+(* number of calls: first call is 0, last call is (numCalls - 1) for numCalls calls total
+G0: PRF PRF PRF
+G1: RB  PRF PRF
+G2: RB  RB  PRF
+G3: RB  RB  RB 
+there should be (S numCalls) games, so games are numbered from 0 through numCalls *)
+Definition Oi_prg (i : nat) (sn : nat * KV) (n : nat)
+  : Comp (list (Bvector eta) * (nat * KV)) :=
+  [callsSoFar, state] <-2 sn;
+  let GenUpdate_choose := if lt_dec callsSoFar i (* callsSoFar < i *)
+                          then GenUpdate_rb_intermediate
+                          (* first call does not update v, to make proving equiv. easier*)
+                          else if beq_nat callsSoFar O then GenUpdate_noV
+                               else GenUpdate in
+  (* note: have to use intermediate, not final GenUpdate_rb here *)
+  [bits, state'] <-$2 GenUpdate_choose state n;
+  ret (bits, (S callsSoFar, state')).
+
+(* game i (Gi 0 = G1 and Gi q = G2) *)
+Definition Gi_prg (i : nat) : Comp bool :=
+  [k, v] <-$2 Instantiate;
+  [bits, _] <-$2 oracleMap _ _ (Oi_prg i) (O, (k, v)) maxCallsAndBlocks;
+  A bits.
+\end{lstlisting}  
+
+The PRF adversary. It uses the existing adversary so we can go from PRF to RF, which is much easier to reason about. (TODO: explained already below) Game $i$ here is more complicated because we can pass in any oracle to use on only the $i$th call, instead of the the hardcoding in game $i$ above. (TODO: talk about motivation for this)
+
+\begin{lstlisting}
+Definition PRF_Adversary (i : nat) : OracleComp Blist (Bvector eta) bool :=
+  bits <--$ oracleCompMap_outer _ _ (Oi_oc' i) maxCallsAndBlocks;
+  $ A bits.
+
+(* ith game: use RF oracle *)
+Definition Gi_rf (i : nat) : Comp bool :=
+  [b, _] <-$2 PRF_Adversary i _ _ (randomFunc ({0,1}^eta) eqdbl) nil;
+  ret b.
+\end{lstlisting}
+
+Oracle $i$: like previous oracle $i$, but uses the provided oracle on the $i$th call.
+
+\begin{lstlisting}
+(* same as Oi_prg but each GenUpdate in it has been converted to OracleComp *)
+(* number of calls starts at 0 and ends at q. e.g.
+G1:      RB  PRF PRF
+Gi_rf 1: RB  RF  PRF (i = 1 here)
+G2:      RB  RB  PRF *)
+(* number of calls: first call is 0, last call is (numCalls - 1) for numCalls calls total
+G0: PRF PRF PRF <-- Gi_prf 0
+    RF  PRF PRF <-- Gi_rf 0
+G1: RB  PRF PRF <-- Gi_prf 1
+    RB  RF  PRF <-- Gi_rf 1
+G2: RB  RB  PRF
+    RB  RB  RF
+G3: RB  RB  RB  <-- note that there is no oracle slot to replace here
+    RB  RB  RB  <-- likewise
+there should be (S numCalls) games, so games are numbered from 0 through numCalls *)
+Definition Oi_oc' (i : nat) (sn : nat * KV) (n : nat) 
+  : OracleComp Blist (Bvector eta) (list (Bvector eta) * (nat * KV)) :=
+  [callsSoFar, state] <-2 sn;
+  [k, v] <-2 state;
+  let GenUpdate_choose := 
+      if lt_dec callsSoFar i (* callsSoFar < i *)
+      then GenUpdate_rb_intermediate_oc
+      else if beq_nat callsSoFar i (* callsSoFar = i *)
+           then GenUpdate_oc    (* uses provided oracle (PRF or RF) *)
+      else if beq_nat callsSoFar O 
+           then GenUpdate_noV_oc  (* first call does not update v *)
+      else GenUpdate_PRF_oc in        (* uses PRF with (k,v) updating *)
+  [bits, state'] <--$2 GenUpdate_choose (k, v) n;
+  $ ret (bits, (S callsSoFar, state')).
+  \end{lstlisting}
+
+Replace PRF with random function.
+
+Replace random function with random bits.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \chapter{Proofs}
 
+\section{Paper proofs vs. machine-checked proofs}
+
 In this section we will write proofs as a conventional cryptographer would. We prove three things: indistinguishability for a simple PRG constructed from a PRF, indistinguishability for a real-world PRG constructed from a PRF, and backtracking resistance for the same PRG.
+
+TODO: approach to dealing with machine-checked stuff
 
 For any game $G$ that returns a boolean, let $\Pr[G]$ denote the probability that $G$ returns true. 
 
@@ -1497,326 +1822,232 @@ NIST also specifies that HMAC-DRBG possesses the complementary property of predi
 
 However, proving things about this is difficult. Dodis et al. (2013) proved that the Linux PRNG was insecure and did not possess prediction resistance. However, they had to do tricky reasoning about how much entropy was injected at once and where. They had to reason about, for example, the difference between injecting entropy as five bits per call over ten calls, versus fifty bits in one call, and relative difficulties for the adversary. 
 
-\section{On adaptivity of the adversary}
+% \section{On adaptivity of the adversary}
 
-How would I prove this on paper?
-
-\chapter{Overview of the Foundational Cryptography Framework}
-
-We give a brief overview of FCF. For more details, a tutorial, and the theory behind it, see Petcher (2015).
-
-As the abstract summarizes: ``FCF provides an environment for developing and checking proofs of security of cryptographic schemes in Coq. ...  Proofs may provide concrete bounds as well as asymptotic conclusions. FCF provides a language for probabilistic programs, a theory that is used to reason about programs, and a library of tactics and definitions that are useful in proofs about cryptography.'' 
-
-A cryptographic game may be viewed as an imperative, probabilistic program (Bellare (2004)). FCF defines the syntax of probabilistic programs as the type $Comp \s A$, the type of a probabilistic program that returns a value of type $A$. The most notable operation is $Rnd$, which produces $n$ uniformly random bits. Other operations are sequencing statements in an imperative manner, repeating a statement, and returning a value.
-
-In FCF, the standard non-uniform probabilistic polynomial time (PPT) adversary is modeled as a parameter $A : I -> Comp \s bool$. This denotes that the adversary $A$ could be any non-uniform PPT adversary that takes as input some $I$ and returns a guess of $0$ or $1$. $Comp$ denotes that the adversary may flip coins internally. FCF has a mechanism to limit the adversary to a polynomial number of queries in some security parameter; refer to Petcher (2015) for details.
-
-Cryptographic security definitions often involve giving the adversary some oracle that it can query, where the oracle must maintain some hidden state across multiple interactions with the adversary. Thus, FCF extends the $Comp$ type, where $Comp \s A$ is a probabilistic program returning a value of type $A$, to the $OracleComp$ type, where $OracleComp \s A \s B \s C$ is a probabilistic program that returns a value of type $C$, and has access to an oracle that takes a value of type $A$ and returns a value of type $B$. (The type of the oracle itself includes a state as input and a new state as output.) Oracle computations include the standard returning and binding operations, as well as an oracle query operations and an operation that can run a program using a different oracle that can access the current oracle.
-
-Refer to Petcher (2015) for examples of simple games written in FCF and a walkthrough of proving security of a simple encryption scheme. A game typically has type $Comp \s bool$, because it is a probabilistic computation that usually returns an adversary's guess.
-
-In game-playing proofs, we commonly do two things. First, we might make a slight change to a game then prove the former game equivalent to the latter, where ``equivalent'' can be taken in two senses. Either they are equivalent programs that return the same outputs, or they have computationally indistinguishable output distributions. Or, we might seek to bound the distance between two games by some negligible functions, where ``distance'' refers to the probability that some computationally-bounded adversary in both games can distinguish between two different distributions.
-
-To aid with this kind of reasoning, FCF provides a program logic called Probabilistic Relational Postcondition Logic (PRPL). PRPL behaves like a Hoare logic, except there are no preconditions, and we write a specification relating pairs of probabilistic programs instead of a specification on a single deterministic program.
-
-\section{A simple example of reasoning about programs in PRPL}
-
-As a short example demonstrating PRPL, take the following proof goal in Coq.
-
-\begin{lstlisting}
-Theorem PRPL_demo : forall (n m : nat),
-  comp_spec (fun a b => a = fst b)
-            (x <-$ {0,1}^n;
-             ret x)
-            (c <-$ {0,1}^n;
-             d <-$ {0,1}^m;
-             ret (c,d)).
-Proof.
-  intros.
-\end{lstlisting}
-
-\li|comp_spec| denotes a PRPL specification, or postcondition, that we want to prove about the two probabilistic programs that follow. Namely, we want to prove that the output of the first program is equal to the first output of the second program. \li|x <-$ {0,1]^n| denotes sampling a bitvector of $n$ bits uniformly at random.
-%$
-
-To continue the proof, we note that the first lines of each program yield the same output if both programs are given the same coins to flip, so we may ``skip'' them, and the relation that holds on the remaining programs will be the same. (This is the intuitive description. A more rigorous and detailed description of every tactic may be found in the $Tactics.v$ file in the FCF repository, linked in the appendix.)
-
-\begin{lstlisting}
-  fcf_skip. 
-\end{lstlisting}
-
-Now this is the new proof state. Note the two remaining programs. 
-
-\begin{lstlisting}
-  n : nat
-  m : nat
-  b : Bvector n
-  H0 : In b (getSupport ({ 0 , 1 }^n))
-  H : In b (getSupport ({ 0 , 1 }^n))
-  ============================
-   comp_spec (fun (a : Bvector n)
-                  (b0 : Bvector n * Bvector m)
-                  => a = fst b0)
-     (ret b)
-     (d <-$ { 0 , 1 }^m; ret (b, d))
-\end{lstlisting}
-
-The first line of the second program is irrelevant because our specification on the outputs does not mention it. Therefore, we can eliminate that line with the following tactic.
-
-\begin{lstlisting}
-fcf_irr_r.
-\end{lstlisting}
-
-This is the remaining proof state. Note that $b$ is the the same between both programs, which is what we wanted to prove.
-
-\begin{lstlisting}
-  n : nat
-  m : nat
-  b : Bvector n
-  H0 : In b (getSupport ({ 0 , 1 }^n))
-  H : In b (getSupport ({ 0 , 1 }^n))
-  b0 : Bvector m
-  H1 : In b0 (getSupport ({ 0 , 1 }^m))
-  ============================
-   comp_spec (fun (a : Bvector n)
-                  (b1 : Bvector n * Bvector m)
-                  => a = fst b1)
-     (ret b) (ret (b, b0))
-\end{lstlisting}
-
-When we have whittled down both programs such that they both only return values, we can use the following tactic to apply the specification to the return values and prove that it holds. 
-
-\begin{lstlisting}
-  fcf_spec_ret.
-\end{lstlisting}
-
-In this case, FCF is smart enough to figure out that the specification holds, so it discharges the goal. We have proven that the given specification relates these two probabilistic programs. 
-
-\begin{lstlisting}
-Qed.
-\end{lstlisting}
+% How would I prove this on paper?
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\chapter{Outline of machine-checked proofs}
+\chapter{Comments on the machine-checked proofs}
 
-\section{Starting HMAC-DRBG definitions}
+\section{Proof tree}
 
-The core inner loop of HMAC-DRBG that generates pseudorandom blocks. 
+The main definitions and games were given in Section REFERENCE, and each lemma in the Coq development is explained in detail in Appendix REFERENCE. Here we give only an outline of the structure of the Coq development.
 
-\begin{lstlisting}
-(* save the last v and output it as part of the state *)
-Fixpoint Gen_loop (k : Bvector eta) (v : Bvector eta) (n : nat)
-  : list (Bvector eta) * Bvector eta :=
-  match n with
-  | O => (nil, v)
-  | S n' =>
-    let v' := f k (Vector.to_list v) in
-    let (bits, v'') := Gen_loop k v' n' in
-    (v' :: bits, v'')           
-  end.
-\end{lstlisting}
+An asterisk ($^*$) denotes a lemma I admitted. A dagger ($\dag$) denotes a lemma proven by Petcher. I proved all other lemmas fully, aside from the admitted lemmas they rely on. \\
 
-We combined the $Generate$ and $Update$ functions into one program, since they're always called together.
+\textbf{Theorem name. Statement.}
 
-\begin{lstlisting}
-Definition GenUpdate_original (state : KV) (n : nat) :
-  Comp (list (Bvector eta) * KV) :=
-  [k, v] <-2 state;
-  [bits, v'] <-2 Gen_loop k v n;
-  k' <- f k (to_list v' ++ zeroes);
-  v'' <- f k' (to_list v');
-  ret (bits, (k', v'')).
-\end{lstlisting}
+\begin{enumerate}
+\item Lemma
+  \begin{enumerate}
+  \item Lemma 
+    \begin{enumerate}
+    \item Lemma 
+      % \begin{enumerate}
+      % \item Lemma 
+      % \item Lemma 
+      % \item Lemma 
+      % \end{enumerate} 
+    \item Lemma 
+    \item Lemma 
+    \end{enumerate} 
+  \item Lemma 
+  \item Lemma 
+  \end{enumerate} 
+\item Lemma 
+  \begin{enumerate}
+  \item Lemma 
+  \item Lemma 
+  \item Lemma 
+  \end{enumerate} 
+\item Lemma 
+\end{enumerate}
 
-% @ where should this go?
-\section{Prior work on abstract PRF-DRBG}
+\section{Coq-specific reasoning}
 
-Petcher did some prior work on proving the security of the core loop seen above, run once. His definition is similar to ours, but more abstract. Here $f$ is any $PRF$.
+TODO, see appendix
 
-\begin{lstlisting}
-  Fixpoint PRF_DRBG_f (v : D)(n : nat)(k : Key) :=
-    match n with
-        | O => nil
-        | S n' => 
-          r <- (f k v);
-            r :: (PRF_DRBG_f (injD r) n' k)
-    end.
-\end{lstlisting}
+\section{What's left to prove in the Coq development}
 
-We reuse his proof techniques to replace the PRF with a random function, then the random function with random bits. The first is bounded by \li|PRF_Advantage|, the second by the collision bound. (TODO: elaborate on this)
+The development spans 2000 lines of code. Petcher's proof for the core loop spans less than 1000 lines.
 
-TODO: move the explanation of identical until bad (in $oracleCompMap$) here
+First, we want to prove the 22 remaining admitted lemmas. There are 17 main lemmas (off of which the admitted ones branch) and many small ones. I've proved the four most difficult ones and am confident about the rest, which are mostly game equivalence proofs. 
 
-\section{Proof of indistinguishability}
+Besides proving the admitted lemmas, we also want to extend our proof to yield more general and powerful results.
 
-Here are the statement and the proof in Coq. Note that the proof relies on four main lemmas, which we discuss below.
+\begin{itemize}
+\item We need to figure out how to adapt the indistinguishability proof to a nonadaptive adversary that picks any list of $blocksPerCall$ and $numCalls$ beforehand, not the hardcoded $maxBlocksPerCall$ and $maxCalls$. One can imagine a pathological DRBG that outputs its key for only $numCalls = 7$, for example. The paper proof here already holds for the more general adversary.
+\item We need to figure out how to adapt the indistinguishability proof to an adaptive adversary. This adversary can choose the number of calls and number of blocks per call, then once it receives output, can call again as many times as it wishes with parameters of its choice. One can imagine a pathological DRBG that "encourages" an adversary to input $7$ as $blocksPerCall$ and outputs its secret key after 3 such calls, so that if it discovers that $7$ is a "bad" input, it keeps inputting it. A non-adaptive adversary would have negligible chance of making this experiment or this discovery.
+\item Reuse the indistinguishability proofs to show backtracking resistance. The proof is outlined in Section REFERENCE.
+\item Prove that our cryptographic specification of HMAC-DRBG and a different, functional specification of HMAC-DRBG are equivalent. This is discussed in Section REFERENCE.
+\end{itemize}
 
-\begin{lstlisting}
-Theorem G1_G2_close :
-  | Pr[G1_prg_original] - Pr[G2_prg] | <= 
-  (numCalls / 1) * Gi_Gi_plus_1_bound.
-Proof.
-  rewrite G1_Gi_O_equal.
-  rewrite G2_Gi_n_equal.
-  (* inductive argument *)
-  specialize (distance_le_prod_f 
-  	(fun i => Pr[Gi_prg i]) 
-	Gi_Gi_plus_1_close numCalls).
-  intuition.
-Qed.
-\end{lstlisting}
+We also abstracted or ignored a few aspects of HMAC-DRBG and would like to extend our proof to include them.
 
-TODO: discuss pseudorandom functions, random functions, uniformly sampling random bits.
+\begin{itemize}
+%@write this out
+\item NIST specifies that $Instantiate$ produces the \kv  by calling $Update$ using hardcoded constant \kv and some additional entropy. The entropy might not be uniformly random, so to reason about this construction, we would have to show that HMAC is an "entropy extractor." This seems not worth the trouble, so we assume that $Instantiate$ samples \kv uniformly at random. % TODO cite entropy extractor papers
+\item $Update$ includes a call to $Reseed$ if the reseed counter is greater than reseed count, or the DRBG's state is compromised. ($Reseed$ provides prediction resistance by injecting entropy unknown to the adversary into the DRBG). We remove the call to $Reseed$ because again, it's hard to reason about entropy, so our DRBG is not prediction resistant. Also, reseed count is a very large number that means you would naturally reseed about once every million years.
+\item We ignore the "additional input" and "personalization string" parameters of $Generate$, $Update$, and $Instantiate$. These are generally used for fork-safety. If you fork the DRBG process, the child process starts with exactly the same internal state, so one would update the state with something unique to that process, generally the process ID.
+\item We have made the simplifying assumption we can always get as much ideal randomness as desired. In the real world, when the DRBG requests entropy, it may receive a failure and have to try again.
+\end{itemize}
 
-TODO: Indistinguishability definition
+% \section{Comparison to existing proof of HMAC-DRBG security}
 
-\subsection{Main games}
+% To write after I've read the Hirose paper. %@cite
 
-TODO: talk about what a game is
+% \begin{itemize}
+% \item How does it compare to our paper proof? Our computer proof?
+% \item Why is formalizing our proof so much work? (Number of hours and lines of code?)
+% \end{itemize}
 
-Updating the v immediately after re-keying the PRF, in the same oracle call, is hard to reason about. This is because at the beginning of each call, by the hybrid argument, we can assume that the $(k,v)$ have been randomly sampled. Now we have to replace the key with a random key to reason about updating the v. The solution is simple: we move each v-update to the beginning of the next call and prove that the new sequence of programs is indistinguishable to the adversary. (TODO explain this with pictures)
+\section{How verification helped}
 
-\begin{lstlisting}
-(* [GenUpdate_original, GenUpdate_original, ...] = [GenUpdate_noV, GenUpdate, Genupdate, ...] *)
-  (* use this for the first call *)
-Definition GenUpdate_noV (state : KV) (n : nat) :
-  Comp (list (Bvector eta) * KV) :=
-  [k, v] <-2 state;
-  [bits, v'] <-2 Gen_loop k v n;
-  k' <- f k (to_list v' ++ zeroes);
-  ret (bits, (k', v')).
+Stuff about how verification helped TODO
 
-Definition GenUpdate (state : KV) (n : nat) :
-  Comp (list (Bvector eta) * KV) :=
-  [k, v] <-2 state;
-  v' <- f k (to_list v);
-  [bits, v''] <-2 Gen_loop k v' n;
-  k' <- f k (to_list v'' ++ zeroes);
-  ret (bits, (k', v'')).
-\end{lstlisting}
+\subsection{Comments on HMAC-DRBG's design}
 
-The adversary, an abstract probabilistic polynomial time algorithm. It takes a list of blocks and returns a guess.
+Formally verifying HMAC-DRBG helped us notice several NIST design decisions that made our job either harder or easier.
 
-\begin{lstlisting}
-(* Non-adaptive adversary. *)
-Variable A : list (list (Bvector eta)) -> Comp bool.
-Hypothesis A_wf: forall ls, well_formed_comp (A ls).
-\end{lstlisting}
+\begin{itemize}
+\item NIST re-keys the PRF with a length-extended input. This is good because HMAC can take inputs of any length, and all previous inputs for HMAC with that key were of fixed length (since HMAC has a fixed output). So we know the new key won't collide with previous outputs.
+\item Updating the v immediately after re-keying the PRF, in the same oracle call, is hard to reason about. This is because at the beginning of each call, by the hybrid argument, we can assume that the \kv have been randomly sampled. Now we have to replace the key with a random key to reason about updating the v. The solution is simple: we move each v-update to the beginning of the next call and prove that the new sequence of programs is indistinguishable to the adversary. (TODO explain this with pictures)
+\item In $Update$, NIST does (++ [v]) instead of (v ::). The former is intuitive on paper; the latter is much easier to reason about by induction in Coq.
+\end{itemize}
 
-The first game: modeling normal usage of the PRG with the PRF.
+\chapter{Future work}
+\section{Linking our crypto spec with the functional spec}
 
-\begin{lstlisting}
-(* blocks generated by GenLoop *)
-Variable blocksPerCall : nat.      
-(* number of calls to GenUpdate *) 
-Variable numCalls : nat.        
-Hypothesis H_numCalls : numCalls > 0. 
+Sanguansin (2016) proved functional correctness of the mbed TLS implementation of HMAC-DRBG using a different functional specification, also written in Gallina. He did this proof using the Verified Software Toolchain (VST) framework, which provides a logic for reasoning that the outputs of some C function satisfy some postcondition given that the inputs satisfied some precondition.
 
-Definition maxCallsAndBlocks : list nat := replicate numCalls blocksPerCall.
+To create a truly end-to-end proof of correctness, we must prove that our cryptographic specification of HMAC-DRBG is the same as his specification. This is the labeled arrow in Figure \ref{fig:project_diagram}.
 
-(* only first call uses GenUpdate_noV; assumes numCalls > 0 *)
-Definition G1_prg : Comp bool :=
-  [k, v] <-$2 Instantiate;
-  [head_bits, state'] <-$2 GenUpdate_noV (k, v) blocksPerCall;
-  (* call the oracle numCalls times, each time requesting blocksPerCall blocks *)
-  [tail_bits, _] <-$2 oracleMap _ _ GenUpdate state' (tail maxCallsAndBlocks);
-  A (head_bits :: tail_bits).
-\end{lstlisting}
+\begin{figure}
+  \includegraphics[width=\linewidth]{images/project_diagram.png}
+  \caption{A fully verified HMAC-DRBG.}
+  \label{fig:project_diagram}
+\end{figure}
 
-The end game: everything returned is a uniformly sampled random bit vector.
+% To add: 
+% \begin{itemize}
+% \item VST overview. 
+% \item Hoare logic overview. 
+% \item Summary of Naphat's proof. 
+% \item A diagram of the whole project, similar to the HMAC diagram. 
+% \item My prior work for HMAC.
+% \end{itemize}
 
-\begin{lstlisting}
-(* simpler version of GenUpdate only requires compMap. prove the two games equivalent *)
-Definition G2_prg : Comp bool :=
-  [k, v] <-$2 Instantiate;
-  bits <-$ compMap _ GenUpdate_rb maxCallsAndBlocks;
-  A bits.
-\end{lstlisting}
+To bridge this gap, we must prove lemmas about at least the following differences between the specifications.
 
-Hybrid games. 
-TODO: define notation, talk about why hybrid and why in this order, talk about oracles
+\begin{enumerate}
+\item Sanguansin (2016)'s code has essentially the same core loop ($Gen\_loop$) and $Generate$ and $Update$ code. However, it's surrounded by many layers of error checking code, e.g. for \li|prediction_resistance_request|. We need to prove equivalence modulo error checking.
+\item Sanguansin (2016)'s code also models failures in the type for the entropy stream. It is an infinite stream of either bit or failure. Also, it is not necessarily ideally random. We need to relate FCF's sampling uniformly at random to this more realistic entropy model. Petcher (2015)'s doctoral thesis provides relevant theorems about the operational semantics of FCF that can help in proving this relation.
+\end{enumerate}
 
-Game $i$ uses RBs for all calls less than $i$ and PRF for all calls greater than or equal to $i$. Call numbering starts at $0$. It passes $i$ to oracle $i$, which chooses the appropriate oracle to use.
+Beringer (2015)'s verification of HMAC was similarly structured. They started with separate proofs of cryptographic security (in this case, that HMAC is a PRF given that SHA is a PRF) and of functional correctness (of an OpenSSL implementation of HMAC). Thus, they also had two separate specifications of HMAC, one using dependent types to enable cryptographic proofs in FCF, and one closely modeling the NIST standard for HMAC. Thus, they also had to do a similar proof of equivalence between the specifications. (I was the one who did this proof, with help from Beringer. See Ye (2014) for a detailed description of the proof.) This gives us confidence that such a proof can be done, and that proving equivalence does not require adding too many weakening assumptions on security or correctness. 
 
-\begin{lstlisting}
+\section{Extending our work to other DRBGs}
 
-(* oracle i *)
-(* number of calls: first call is 0, last call is (numCalls - 1) for numCalls calls total
-G0: PRF PRF PRF
-G1: RB  PRF PRF
-G2: RB  RB  PRF
-G3: RB  RB  RB 
-there should be (S numCalls) games, so games are numbered from 0 through numCalls *)
-Definition Oi_prg (i : nat) (sn : nat * KV) (n : nat)
-  : Comp (list (Bvector eta) * (nat * KV)) :=
-  [callsSoFar, state] <-2 sn;
-  let GenUpdate_choose := if lt_dec callsSoFar i (* callsSoFar < i *)
-                          then GenUpdate_rb_intermediate
-                          (* first call does not update v, to make proving equiv. easier*)
-                          else if beq_nat callsSoFar O then GenUpdate_noV
-                               else GenUpdate in
-  (* note: have to use intermediate, not final GenUpdate_rb here *)
-  [bits, state'] <-$2 GenUpdate_choose state n;
-  ret (bits, (S callsSoFar, state')).
+HMAC is slow. AES is fast. Thus, AES CTR-DRBG, which uses AES in CTR mode, is much more widely used in practice than HMAC-DRBG (e.g. Amazon uses AES CTR-DRBG). It would be practically useful to formally verify HMAC-DRBG, but also theoretically interesting. How do our proofs generalize? (Some things would be different; e.g. HMAC is assumed a PRF, and AES is assumed a pseudorandom permutation. Their respective DRBGs are slightly different as well. Some things would break; e.g. to refresh the key without a collision, NIST cannot length-extend the input.) Can we build a general framework for verifying DRBGs? How automated can it be? Is the concrete security bound better?
 
-(* game i (Gi 0 = G1 and Gi q = G2) *)
-Definition Gi_prg (i : nat) : Comp bool :=
-  [k, v] <-$2 Instantiate;
-  [bits, _] <-$2 oracleMap _ _ (Oi_prg i) (O, (k, v)) maxCallsAndBlocks;
-  A bits.
-\end{lstlisting}  
+All of this effort was predicated on the fact that HMAC-DRBG's specification will not change, and mbedTLS's implementation of HMAC-DRBG does not change. The test of time will show how modular our proofs are.
 
-The PRF adversary. It uses the existing adversary so we can go from PRF to RF, which is much easier to reason about. (TODO: explained already below) Game $i$ here is more complicated because we can pass in any oracle to use on only the $i$th call, instead of the the hardcoding in game $i$ above. (TODO: talk about motivation for this)
+Also, there have been rumors that OpenSSL's team is picking or designing a new PRNG. In this situation, and in similar situations, we hope our work encourages implementors to co-design their libraries with formal methods researchers.
 
-\begin{lstlisting}
-Definition PRF_Adversary (i : nat) : OracleComp Blist (Bvector eta) bool :=
-  bits <--$ oracleCompMap_outer _ _ (Oi_oc' i) maxCallsAndBlocks;
-  $ A bits.
+\chapter{Conclusion}
 
-(* ith game: use RF oracle *)
-Definition Gi_rf (i : nat) : Comp bool :=
-  [b, _] <-$2 PRF_Adversary i _ _ (randomFunc ({0,1}^eta) eqdbl) nil;
-  ret b.
-\end{lstlisting}
+We have contributed a paper proof of the pseudorandomness of a simplified version of HMAC-DRBG. Hirose (2008) had already written paper proofs, but they were complicated and not linked to functional specifications or implementations. No prior proof considered real-world use of HMAC-DRBG (or any similar DRBG) over multiple calls to the Generate function, or including updating of the state. Also, no prior proof has proven backtracking resistance for this type of DRBG.
 
-Oracle $i$: like previous oracle $i$, but uses the provided oracle on the $i$th call.
+We have mostly formally verified the pseudorandomness of a simplified version of HMAC-DRBG. Simple PRGs have been verified before, but they were on the order of verifying the core loop in $Generate$ (e.g. in the EasyCrypt documentation), not real-world PRGs.
 
-\begin{lstlisting}
-(* same as Oi_prg but each GenUpdate in it has been converted to OracleComp *)
-(* number of calls starts at 0 and ends at q. e.g.
-G1:      RB  PRF PRF
-Gi_rf 1: RB  RF  PRF (i = 1 here)
-G2:      RB  RB  PRF *)
-(* number of calls: first call is 0, last call is (numCalls - 1) for numCalls calls total
-G0: PRF PRF PRF <-- Gi_prf 0
-    RF  PRF PRF <-- Gi_rf 0
-G1: RB  PRF PRF <-- Gi_prf 1
-    RB  RF  PRF <-- Gi_rf 1
-G2: RB  RB  PRF
-    RB  RB  RF
-G3: RB  RB  RB  <-- note that there is no oracle slot to replace here
-    RB  RB  RB  <-- likewise
-there should be (S numCalls) games, so games are numbered from 0 through numCalls *)
-Definition Oi_oc' (i : nat) (sn : nat * KV) (n : nat) 
-  : OracleComp Blist (Bvector eta) (list (Bvector eta) * (nat * KV)) :=
-  [callsSoFar, state] <-2 sn;
-  [k, v] <-2 state;
-  let GenUpdate_choose := 
-      if lt_dec callsSoFar i (* callsSoFar < i *)
-      then GenUpdate_rb_intermediate_oc
-      else if beq_nat callsSoFar i (* callsSoFar = i *)
-           then GenUpdate_oc    (* uses provided oracle (PRF or RF) *)
-      else if beq_nat callsSoFar O 
-           then GenUpdate_noV_oc  (* first call does not update v *)
-      else GenUpdate_PRF_oc in        (* uses PRF with (k,v) updating *)
-  [bits, state'] <--$2 GenUpdate_choose (k, v) n;
-  $ ret (bits, (S callsSoFar, state')).
-  \end{lstlisting}
+We have contributed knowledge about the challenges and benefits of formally verifying PRGs, and especially about proving things about hybrid arguments. The process of writing a machine-checked proof of security unearthed several subtle errors, such as off-by-one errors in hybrid numbering and the presence of multiple PRF adversaries.
 
-Replace PRF with random function.
+We plan to link this security proof to a functional correctness proof. Thus, mbedTLS's implementation of HMAC-DRBG will be fully certified.
 
-Replace random function with random bits.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{List of lemmas}
+\bibliographystyle{plainnat}
+
+\begin{thebibliography}{99}
+
+\bibitem{affeldt2009}
+Affeldt, Reynald, David Nowak, and Kiyoshi Yamada. "Certifying assembly with formal cryptographic proofs: the case of BBS." \emph{Electronic Communications of the EASST} 23 (2009).
+
+\bibitem{appel2015}
+Appel, Andrew W. "Verification of a cryptographic primitive: SHA-256." \emph{ACM Transactions on Programming Languages and Systems (TOPLAS)} 37, no. 2 (2015): 7.
+
+\bibitem{barak2005}
+Barak, Boaz, and Shai Halevi. ``A model and architecture for pseudo-random generation with applications to/dev/random.'' \emph{Proceedings of the 12th ACM conference on Computer and communications security.} ACM, 2005. 
+
+\bibitem{barker2012}
+Barker, Elaine, and John Kelsey. "NIST Special Publication 800-90A: Recommendation for random number generation using deterministic random bit generators." (2012).
+
+\bibitem{barthe2011}
+Barthe, Gilles, Benjamin Gr{\'e}goire, Sylvain Heraud, and Santiago Zanella-B{\'e}guelin. "Computer-aided security proofs for the working cryptographer." In \emph{Advances in Cryptology---CRYPTO} 2011, pp. 71-90. Springer Berlin Heidelberg, 2011.
+
+\bibitem{barthe2014}
+Barthe, Gilles, et al. ``Easycrypt: A tutorial.'' \emph{Foundations of Security Analysis and Design VII.} Springer International Publishing, 2014. 146-166.
+
+\bibitem{bellare2004}
+Bellare, Mihir, and Phillip Rogaway. "Code-Based Game-Playing Proofs and the Security of Triple Encryption." \emph{IACR Cryptology ePrint Archive} 2004 (2004): 331.
+
+\bibitem{beringer2015}
+Beringer, Lennart, Adam Petcher, Katherine Q. Ye, and Andrew W. Appel. "Verified correctness and security of OpenSSL HMAC." In \emph{24th USENIX Security Symposium (USENIX Security '15)}, pp. 207-221. 2015.
+
+\bibitem{campagna2006}
+Campagna, Matthew J. "Security Bounds for the NIST Codebook-based Deterministic Random Bit Generator." \emph{IACR Cryptology ePrint Archive 2006} (2006): 379.
+
+\bibitem{dodis2013}
+Dodis, Yevgeniy, David Pointcheval, Sylvain Ruhault, Damien Vergniaud, and Daniel Wichs. "Security analysis of pseudorandom number generators with input:/dev/random is not robust." In \emph{Proceedings of the 2013 ACM SIGSAC conference on Computer and Communications Security}, pp. 647-658. ACM, 2013.
+
+\bibitem{dorre2015}
+D{\"o}rre, Felix, and Vladimir Klebanov. "Pseudo-random Number Generator Verification: A Case Study." \emph{Proceedings, Verified Software: Theories, Tools, and Experiments (VSTTE)} (2015).
+
+\bibitem{fouque2008}
+Fouque, Pierre-Alain, David Pointcheval, and Sébastien Zimmer. ``HMAC is a randomness extractor and applications to TLS.'' \emph{Proceedings of the 2008 ACM symposium on Information, computer and communications security.} ACM, 2008.
+
+\bibitem{goldreich2005}
+Goldreich, Oded. \emph{Foundations of cryptography: a primer}. Vol. 1. Now Publishers Inc, 2005.
+
+\bibitem{hirose2008}
+Hirose, Shoichi. "Security analysis of DRBG using HMAC in NIST SP 800-90." In \emph{Information Security Applications}, pp. 278-291. Springer Berlin Heidelberg, 2008.
+
+\bibitem{petcher2015}
+Petcher, Adam, and Greg Morrisett. ``The foundational cryptography framework.'' In \emph{Principles of Security and Trust}, pp. 53-72. Springer Berlin Heidelberg, 2015.
+
+\bibitem{petcherthesis2015}
+Petcher, Adam. \emph{A Foundational Proof Framework for Cryptography.} Diss. 2015.
+
+\bibitem{sanguansin2016}
+Sanguansin, Naphat. ``Verification of a Deterministic Random Bits Generator.'' Independent work paper, Princeton University. 2016.
+
+\bibitem{ye2014}
+Ye, Katherine. ``Formally proving equivalence between abstract and concrete specifications of HMAC.'' Junior paper, Princeton University. 2014.
+
+\end{thebibliography}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ \appendix
+
+\chapter{Code}
+
+The HMAC-DRBG pseudorandomness proof may be found in this file. (The backtracking proof will be added in that repository in a month or two.) 
+
+\li|github.com/hypotext/fcf/blob/master/src/examples/HMAC_DRBG_nonadaptive.v| \\
+
+\noindent The HMAC-DRBG functional correctness proof may be found in this repository. 
+
+\li|https://bitbucket.org/naphatkrit/rng| \\
+
+\noindent The Foundational Cryptography Framework may be found in this repository. 
+
+\li|https://github.com/adampetcher/fcf| \\
+
+\noindent The full verification of HMAC may be found in this repository, subdirectories $sha$, $fcf$, and $hmacfcf$. 
+
+\li|https://github.com/PrincetonUniversity/VST/|
+
+\chapter{Explanations of each lemma in the Coq development}
 
 From the top down (roughly breadth-first traversal of the proof tree).
 
@@ -2359,192 +2590,6 @@ Then we do a case analysis on whether the newest input is a duplicate (that is, 
 \item For the \li|rb_oracle|, the state is also append-only. So, as above, if the state starts out with duplicates, no matter what we query or what we return, the state will continue to have duplicates. 
 
 \end{enumerate}
-
-The commented Coq proof of this can be found in the appendix.
-
-\section{Proof graph}
-
-To add, after I break up \li| Gi_rb_rf_no_bad_same|. I've already made one using \li|coq-dpdgraph|.
-
-\section{Current limitations of the formal proof}
-
-We abstracted or ignored a few parts of HMAC-DRBG.
-
-\begin{itemize}
-%@write this out
-\item NIST specifies that $Instantiate$ produces the \kv  by calling $Update$ using hardcoded constant \kv and some additional entropy. The entropy might not be uniformly random, so to reason about this construction, we would have to show that HMAC is an "entropy extractor." This seems not worth the trouble, so we assume that $Instantiate$ samples \kv uniformly at random. % TODO cite entropy extractor papers
-\item $Update$ includes a call to $Reseed$ if the reseed counter is greater than reseed count, or the DRBG's state is compromised. ($Reseed$ provides prediction resistance by injecting entropy unknown to the adversary into the DRBG). We remove the call to $Reseed$ because again, it's hard to reason about entropy, so our DRBG is not prediction resistant. Also, reseed count is a very large number that means you would naturally reseed about once every million years.
-\item We need to figure out how to adapt the indistinguishability proof to a nonadaptive adversary that picks any list of $blocksPerCall$ and $numCalls$ beforehand, not the hardcoded $maxBlocksPerCall$ and $maxCalls$. One can imagine a pathological DRBG that outputs its key for only $numCalls = 7$, for example.
-\item We need to figure out how to adapt the indistinguishability proof to an adaptive adversary. This adversary can choose the number of calls and number of blocks per call, then once it receives output, can call again as many times as it wishes with parameters of its choice. One can imagine a pathological DRBG that "encourages" an adversary to input $7$ as $blocksPerCall$ and outputs its secret key after 3 such calls, so that if it discovers that $7$ is a "bad" input, it keeps inputting it. A non-adaptive adversary would have negligible chance of making this experiment or this discovery.
-\item We ignore the "additional input" and "personalization string" parameters of $Generate$, $Update$, and $Instantiate$. These are generally used for fork-safety. If you fork the DRBG process, the child process starts with exactly the same internal state, so one would update the state with something unique to that process, generally the process ID.
-\item Entropy failure
-\end{itemize}
-
-% \section{Comparison to existing proof of HMAC-DRBG security}
-
-% To write after I've read the Hirose paper. %@cite
-
-% \begin{itemize}
-% \item How does it compare to our paper proof? Our computer proof?
-% \item Why is formalizing our proof so much work? (Number of hours and lines of code?)
-% \end{itemize}
-
-\section{Comments on the Coq development}
-
-There are 17 main lemmas and many small ones. Not all are proven, but I've proved the four most difficult ones and am confident about the rest, which are mostly game equivalence proofs. There are 22 admitted lemmas (including medium-sized lemmas but not the smallest ones.
-
-The development spans 2000 lines of code. Petcher's proof for the core loop spans less than 1000 lines.
-
-Besides proving the admitted lemmas, here's what's left to do in the near future:
-
-\begin{itemize}
-\item Adapt the indistinguishability proof to a nonadaptive adversary that picks any list of $blocksPerCall$ and $numCalls$ beforehand, not the hardcoded $maxBlocksPerCall$ and $maxCalls$. The paper proof here already holds for the more general adversary.
-\item Reuse the indistinguishability proofs to show backtracking resistance.
-\item The spec equivalence proof. (Discussed in the following section.)
-\end{itemize}
-
-\section{Comments on HMAC-DRBG's design}
-
-Formally verifying HMAC-DRBG helped us notice several NIST design decisions that made our job either harder or easier.
-
-\begin{itemize}
-\item NIST re-keys the PRF with a length-extended input. This is good because HMAC can take inputs of any length, and all previous inputs for HMAC with that key were of fixed length (since HMAC has a fixed output). So we know the new key won't collide with previous outputs.
-\item Updating the v immediately after re-keying the PRF, in the same oracle call, is hard to reason about. This is because at the beginning of each call, by the hybrid argument, we can assume that the \kv have been randomly sampled. Now we have to replace the key with a random key to reason about updating the v. The solution is simple: we move each v-update to the beginning of the next call and prove that the new sequence of programs is indistinguishable to the adversary. (TODO explain this with pictures)
-\item In $Update$, NIST does (++ [v]) instead of (v ::). The former is intuitive on paper; the latter is much easier to reason about by induction in Coq.
-\end{itemize}
-
-\chapter{Linking our crypto spec with the functional spec}
-
-Sanguansin (2016) proved functional correctness of the mbed TLS implementation of HMAC-DRBG using a different functional specification, also written in Gallina. He did this proof using the Verified Software Toolchain (VST) framework, which provides a logic for reasoning that the outputs of some C function satisfy some postcondition given that the inputs satisfied some precondition.
-
-To create a truly end-to-end proof of correctness, we must prove that our cryptographic specification of HMAC-DRBG is the same as his specification. This is the labeled arrow in Figure \ref{fig:project_diagram}.
-
-\begin{figure}
-  \includegraphics[width=\linewidth]{images/project_diagram.png}
-  \caption{A fully verified HMAC-DRBG.}
-  \label{fig:project_diagram}
-\end{figure}
-
-% To add: 
-% \begin{itemize}
-% \item VST overview. 
-% \item Hoare logic overview. 
-% \item Summary of Naphat's proof. 
-% \item A diagram of the whole project, similar to the HMAC diagram. 
-% \item My prior work for HMAC.
-% \end{itemize}
-
-\section{Bridging the gaps between the specifications}
-
-We must prove lemmas about at least the following differences between the specifications.
-
-\begin{enumerate}
-\item Sanguansin (2016)'s code has essentially the same core loop ($Gen\_loop$) and $Generate$ and $Update$ code. However, it's surrounded by many layers of error checking code, e.g. for \li|prediction_resistance_request|. We need to prove equivalence modulo error checking.
-\item Sanguansin (2016)'s code also models failures in the type for the entropy stream. It is an infinite stream of either bit or failure. Also, it is not necessarily ideally random. We need to relate FCF's sampling uniformly at random to this more realistic entropy model. Petcher (2015)'s doctoral thesis provides relevant theorems about the operational semantics of FCF that can help in proving this relation.
-\end{enumerate}
-
-Beringer (2015)'s verification of HMAC was similarly structured. They started with separate proofs of cryptographic security (in this case, that HMAC is a PRF given that SHA is a PRF) and of functional correctness (of an OpenSSL implementation of HMAC). Thus, they also had two separate specifications of HMAC, one using dependent types to enable cryptographic proofs in FCF, and one closely modeling the NIST standard for HMAC. Thus, they also had to do a similar proof of equivalence between the specifications. (I was the one who did this proof, with help from Beringer. See Ye (2014) for a detailed description of the proof.) This gives us confidence that such a proof can be done, and that proving equivalence does not require adding too many weakening assumptions on security or correctness. 
-
-\chapter{Future work}
-
-HMAC is slow. AES is fast. Thus, AES CTR-DRBG, which uses AES in CTR mode, is much more widely used in practice than HMAC-DRBG (e.g. Amazon uses AES CTR-DRBG). It would be practically useful to formally verify HMAC-DRBG, but also theoretically interesting. How do our proofs generalize? (Some things would be different; e.g. HMAC is assumed a PRF, and AES is assumed a pseudorandom permutation. Their respective DRBGs are slightly different as well. Some things would break; e.g. to refresh the key without a collision, NIST cannot length-extend the input.) Can we build a general framework for verifying DRBGs? How automated can it be? Is the concrete security bound better?
-
-All of this effort was predicated on the fact that HMAC-DRBG's specification will not change, and mbedTLS's implementation of HMAC-DRBG does not change. The test of time will show how modular our proofs are.
-
-Also, there have been rumors that OpenSSL's team is picking or designing a new PRNG. In this situation, and in similar situations, we hope our work encourages implementors to co-design their libraries with formal methods researchers.
-
-\chapter{Conclusion}
-
-We have contributed a paper proof of the pseudorandomness of a simplified version of HMAC-DRBG. Hirose (2008) had already written paper proofs, but they were complicated and not linked to functional specifications or implementations. No prior proof considered real-world use of HMAC-DRBG (or any similar DRBG) over multiple calls to the Generate function, or including updating of the state. Also, no prior proof has proven backtracking resistance for this type of DRBG.
-
-We have mostly formally verified the pseudorandomness of a simplified version of HMAC-DRBG. Simple PRGs have been verified before, but they were on the order of verifying the core loop in $Generate$ (e.g. in the EasyCrypt documentation), not real-world PRGs.
-
-We have contributed knowledge about the challenges and benefits of formally verifying PRGs, and especially about proving things about hybrid arguments. The process of writing a machine-checked proof of security unearthed several subtle errors, such as off-by-one errors in hybrid numbering and the presence of multiple PRF adversaries.
-
-We plan to link this security proof to a functional correctness proof. Thus, mbedTLS's implementation of HMAC-DRBG will be fully certified.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\bibliographystyle{plainnat}
-
-\begin{thebibliography}{99}
-
-\bibitem{affeldt2009}
-Affeldt, Reynald, David Nowak, and Kiyoshi Yamada. "Certifying assembly with formal cryptographic proofs: the case of BBS." \emph{Electronic Communications of the EASST} 23 (2009).
-
-\bibitem{appel2015}
-Appel, Andrew W. "Verification of a cryptographic primitive: SHA-256." \emph{ACM Transactions on Programming Languages and Systems (TOPLAS)} 37, no. 2 (2015): 7.
-
-\bibitem{barak2005}
-Barak, Boaz, and Shai Halevi. ``A model and architecture for pseudo-random generation with applications to/dev/random.'' \emph{Proceedings of the 12th ACM conference on Computer and communications security.} ACM, 2005. 
-
-\bibitem{barker2012}
-Barker, Elaine, and John Kelsey. "NIST Special Publication 800-90A: Recommendation for random number generation using deterministic random bit generators." (2012).
-
-\bibitem{barthe2011}
-Barthe, Gilles, Benjamin Gr{\'e}goire, Sylvain Heraud, and Santiago Zanella-B{\'e}guelin. "Computer-aided security proofs for the working cryptographer." In \emph{Advances in Cryptology---CRYPTO} 2011, pp. 71-90. Springer Berlin Heidelberg, 2011.
-
-\bibitem{barthe2014}
-Barthe, Gilles, et al. ``Easycrypt: A tutorial.'' \emph{Foundations of Security Analysis and Design VII.} Springer International Publishing, 2014. 146-166.
-
-\bibitem{bellare2004}
-Bellare, Mihir, and Phillip Rogaway. "Code-Based Game-Playing Proofs and the Security of Triple Encryption." \emph{IACR Cryptology ePrint Archive} 2004 (2004): 331.
-
-\bibitem{beringer2015}
-Beringer, Lennart, Adam Petcher, Katherine Q. Ye, and Andrew W. Appel. "Verified correctness and security of OpenSSL HMAC." In \emph{24th USENIX Security Symposium (USENIX Security '15)}, pp. 207-221. 2015.
-
-\bibitem{campagna2006}
-Campagna, Matthew J. "Security Bounds for the NIST Codebook-based Deterministic Random Bit Generator." \emph{IACR Cryptology ePrint Archive 2006} (2006): 379.
-
-\bibitem{dodis2013}
-Dodis, Yevgeniy, David Pointcheval, Sylvain Ruhault, Damien Vergniaud, and Daniel Wichs. "Security analysis of pseudorandom number generators with input:/dev/random is not robust." In \emph{Proceedings of the 2013 ACM SIGSAC conference on Computer and Communications Security}, pp. 647-658. ACM, 2013.
-
-\bibitem{dorre2015}
-D{\"o}rre, Felix, and Vladimir Klebanov. "Pseudo-random Number Generator Verification: A Case Study." \emph{Proceedings, Verified Software: Theories, Tools, and Experiments (VSTTE)} (2015).
-
-\bibitem{fouque2008}
-Fouque, Pierre-Alain, David Pointcheval, and Sébastien Zimmer. ``HMAC is a randomness extractor and applications to TLS.'' \emph{Proceedings of the 2008 ACM symposium on Information, computer and communications security.} ACM, 2008.
-
-\bibitem{goldreich2005}
-Goldreich, Oded. \emph{Foundations of cryptography: a primer}. Vol. 1. Now Publishers Inc, 2005.
-
-\bibitem{hirose2008}
-Hirose, Shoichi. "Security analysis of DRBG using HMAC in NIST SP 800-90." In \emph{Information Security Applications}, pp. 278-291. Springer Berlin Heidelberg, 2008.
-
-\bibitem{petcher2015}
-Petcher, Adam, and Greg Morrisett. ``The foundational cryptography framework.'' In \emph{Principles of Security and Trust}, pp. 53-72. Springer Berlin Heidelberg, 2015.
-
-\bibitem{petcherthesis2015}
-Petcher, Adam. \emph{A Foundational Proof Framework for Cryptography.} Diss. 2015.
-
-\bibitem{sanguansin2016}
-Sanguansin, Naphat. ``Verification of a Deterministic Random Bits Generator.'' Independent work paper, Princeton University. 2016.
-
-\bibitem{ye2014}
-Ye, Katherine. ``Formally proving equivalence between abstract and concrete specifications of HMAC.'' Junior paper, Princeton University. 2014.
-
-\end{thebibliography}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
- \appendix
-
-\chapter{Code}
-
-The HMAC-DRBG pseudorandomness proof may be found in this file. (The backtracking proof will be added in that repository in a month or two.) 
-
-\li|github.com/hypotext/fcf/blob/master/src/examples/HMAC_DRBG_nonadaptive.v| \\
-
-\noindent The HMAC-DRBG functional correctness proof may be found in this repository. 
-
-\li|https://bitbucket.org/naphatkrit/rng| \\
-
-\noindent The Foundational Cryptography Framework may be found in this repository. 
-
-\li|https://github.com/adampetcher/fcf| \\
-
-\noindent The full verification of HMAC may be found in this repository, subdirectories $sha$, $fcf$, and $hmacfcf$. 
-
-\li|https://github.com/PrincetonUniversity/VST/|
 
 \end{document}
 
