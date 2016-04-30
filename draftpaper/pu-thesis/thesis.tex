@@ -66,6 +66,21 @@ Formal verification of the \textsc{HMAC-DRBG} pseudorandom number generator}
 %\usepackage{amsfonts}
 \usepackage{mathpazo}
 
+\usepackage{enumitem}
+\newlist{longenum}{enumerate}{6}
+\setlist[longenum,1]{label=\arabic*.}
+\setlist[longenum,2]{label=\alph*.}
+\setlist[longenum,3]{label=\roman*.}
+\setlist[longenum,4]{label=(\arabic*)}
+\setlist[longenum,5]{label=(\alph*)}
+\setlist[longenum,6]{label=(\roman*)}
+
+% \setlist[longenum,1]{label=\roman*.}
+% \setlist[longenum,2]{label=\alph*.}
+% \setlist[longenum,3]{label=\arabic*.}
+% \setlist[longenum,4]{label=(\roman*)}
+% \setlist[longenum,5]{label=(\alph*)}
+
 % change section fonts
 % \usepackage{color}
 \usepackage[dvipsnames]{xcolor}
@@ -1831,37 +1846,71 @@ However, proving things about this is difficult. Dodis et al. (2013) proved that
 
 \section{Proof tree}
 
-The main definitions and games were given in Section REFERENCE, and each lemma in the Coq development is explained in detail in Appendix REFERENCE. Here we give only an outline of the structure of the Coq development.
+The main definitions and games were given in Section REFERENCE, and each lemma in the Coq development is explained in detail in Appendix REFERENCE. Here we give only an outline of the structure of the Coq development. A dagger ($^\dag$) denotes a lemma proven by Petcher. When a lemma is specific to the Coq development and is too obvious to mention in the paper proof, I denote it with an asterisk ($^*$).
 
-An asterisk ($^*$) denotes a lemma I admitted. A dagger ($\dag$) denotes a lemma proven by Petcher. I proved all other lemmas fully, aside from the admitted lemmas they rely on. \\
+I am confident that all the lemmas are true; paper proofs are given in Appendix REFERENCE. However, some rely on admitted lemmas, which are either proofs of game equivalence or inductions that I haven't had time to fill in. \\
 
-\textbf{Theorem name. Statement.}
+This is the main theorem and its Coq proof. It states that the probability that the adversary can distinguish between the real-world and ideal-world games is bounded by the length of the list of blocks requested, multiplied by a constant upper bound on the difference between adjacent hybrids.
 
-\begin{enumerate}
-\item Lemma
-  \begin{enumerate}
-  \item Lemma 
-    \begin{enumerate}
-    \item Lemma 
-      % \begin{enumerate}
-      % \item Lemma 
-      % \item Lemma 
-      % \item Lemma 
-      % \end{enumerate} 
-    \item Lemma 
-    \item Lemma 
-    \end{enumerate} 
-  \item Lemma 
-  \item Lemma 
-  \end{enumerate} 
-\item Lemma 
-  \begin{enumerate}
-  \item Lemma 
-  \item Lemma 
-  \item Lemma 
-  \end{enumerate} 
-\item Lemma 
-\end{enumerate}
+\begin{lstlisting}
+Theorem G1_G2_close :
+  | Pr[G1_prg_original] - Pr[G2_prg] | <= 
+  (numCalls / 1) * Gi_Gi_plus_1_bound.
+Proof.
+  rewrite G1_Gi_O_equal.
+  rewrite GenUpdate_v_output_probability.
+  rewrite G2_Gi_n_equal.
+  (* inductive argument *)
+  specialize (distance_le_prod_f 
+  	(fun i => Pr[Gi_prg i]) 
+	Gi_Gi_plus_1_close numCalls).
+  intuition.
+Qed.
+\end{lstlisting}
+
+This is its proof tree, with a very short explanation given for each lemma. For conciseness I use ``equivalent'' to mean either that two games are equal via program equivalence, or that their outputs have computationally indistinguishable distributions. 
+
+\begin{longenum}
+\item \li|G1_Gi_O_equal|$^*$: the real-world game is equal to the first hybrid.
+\item \li|GenUpdate_v_output_probability|: we can move each $v$-update to the beginning of the next $GenUpdate$ call.
+\item \li|G2_Gi_n_equal|$^*$: the ideal-world game is equal to the last hybrid.
+\item \li|distance_le_prod_f|$^\dag$: the triangle inequality, which lets us bound the distance between adjacent hybrids.
+% Main
+\item \li|Gi_Gi_plus_1_close|: the probability of distinguishing between adjacent hybrids is negligible.
+  \begin{longenum}
+  \item \li|Gi_normal_prf_eq|$^*$: program equivalence relating normal hybrids and oracle-replacing hybrids. (The two have different types.)
+    \begin{longenum}
+    \item \li|Gi_normal_prf_eq_compspec|$^*$: proving the above in PRPL, requiring a tricky induction over the list of block numbers.
+    \end{longenum}
+  \item \li|Gi_prf_rf_close|: replace the PRF in the $i$th call of $GenUpdate$ in the $i$th hybrid with a RF, and bound the difference by $PRF\_Advantage\_Max$.
+    \begin{longenum}
+      \item \li|PRF_Advantages_lt|$^*$: we can pick some $i$ for which $PRF\_Advantage$ is maximized.
+    \end{longenum}
+
+  \item \li|Gi_rf_rb_close|: replace the RF in the $i$th call of $GenUpdate$ in the $i$th hybrid with RB, and bound the difference by the probability of collisions in the oracle's inputs.
+    \begin{longenum}
+    \item \li|Gi_normal_rb_eq|$^*$: another program equivalence relating normal hybrids and oracle-replacing hybrids, along the lines of \li|Gi_normal_prf_eq|.
+    \item \li|Gi_rf_return_bad_eq|$^*$: expose the bad event in \li|Gi_rf|.
+    \item \li|Gi_rb_return_bad_eq|$^*$: expose the bad event in \li|Gi_rb|.
+    \item \li|Gi_rb_rf_identical_until_bad|: 
+      \begin{longenum}
+      \item \li|fundamental_lemma_h|$^\dag$: Bellare's fundamental lemma of game-playing.
+      \item \li|Gi_rb_rf_return_bad_same|: the first assumption of ``identical until bad'': the bad event has the same probability of happening in each game.
+      \item \li|Gi_rb_rf_no_bad_same|: the second assumption of ``identical until bad'': if the bad event does not happen, the two games have identically-distributed outputs.
+        \begin{longenum}
+        \item \li|oracleCompMap__oracle_eq_until_bad_dups|$^*$: we combine the two ``identical until bad'' assumptions as a postcondition on the bit-generation computation and prove that they hold using PRPL.
+          \begin{longenum}
+            \item \li|fcf_oracle_eq_until_bad|$^{\dag *}$: a theorem that lets us strip away extraneous oracle computations and prove the postcondition holds on a very simple oracle computation.
+          \end{longenum}
+        \end{longenum}
+      \end{longenum}
+    \item \li|Gi_rb_bad_collisions|: bound the probability of the bad event happening.
+      \begin{longenum}
+      \item Various game equivalences (\li|Gi_rb_bad_eq_i|)$^{\dag *}$: ruthlessly simplify the oracle computation using the RB oracle, and in the end apply Petcher's existing collision bound.
+      \end{longenum}
+    \end{longenum}
+  \end{longenum} 
+\end{longenum}
 
 \section{Coq-specific reasoning}
 
@@ -2049,7 +2098,9 @@ The HMAC-DRBG pseudorandomness proof may be found in this file. (The backtrackin
 
 \chapter{Explanations of each lemma in the Coq development}
 
-From the top down (roughly breadth-first traversal of the proof tree).
+We explain the proof tree described in Section REFERENCE from the top down (roughly breadth-first).
+
+Note that the hybrid numbering is slightly different from the numbering in the paper proof. We replace the PRF in the $i$th call with the provided oracle, not the $i+1$th call as in the paper proof.
 
 For the top-level theorem, 
 \begin{lstlisting}
@@ -2162,7 +2213,7 @@ Gi_prf_rf_close_i : forall (i : nat),
    Gi_rf 2:   RB RB   RF PRF
     \end{lstlisting}
 	
-	The difference in probability that any adversary can distinguish between the PRF and the RF is defined by cryptographers to be upper-bounded by a quantity called \lstinline|PRF_Advantage|. We call this adversary \li|PRF_Adversary|.
+	The probability that any adversary can distinguish between the PRF and the RF is defined by cryptographers to be upper-bounded by a quantity called \lstinline|PRF_Advantage|. We construct this adversary from the existing PRG adversary and call it \li|PRF_Adversary|.
 	
 \begin{lstlisting}
 Definition PRF_Advantage_Game i : Rat := 
@@ -2191,6 +2242,7 @@ Definition PRF_Adversary (i : nat) : OracleComp Blist (Bvector eta) bool :=
 % Using \li|PRF_Adversary| allows us to swap out the PRF for the random function, which is much easier to reason about, at the cost of adding \li|PRF_Advantage| to our final bound.
 
 %	It is a little questionable that this difference in probability (\lstinline|PRF_Advantage|) is defined to be the same upper bound no matter how many times the oracle in question is called within \li|GenUpdate| (and it is called $2 + numBlocks$ times, not just once). %@cite
+% $
   
 \par
 \item \begin{lstlisting}
@@ -2261,19 +2313,19 @@ Definition Gi_prf (i : nat) : Comp bool :=
   \par
 \item 
 \begin{lstlisting}
-    PRF_Advantages_lt :  forall (i : nat), 
-    PRF_Advantage_Game i <= PRF_Advantage_Game 0.
+    PRF_Advantages_lt :  forall (j : nat), exists (i : nat), 
+    PRF_Advantage_Game i <= PRF_Advantage_Game j.
     \end{lstlisting}
     
-    We would like to use a constant \li|PRF_Advantage| and eliminate the $i$, so we arbitrarily pick $i = 0$. 
+    We would like to use a constant \li|PRF_Advantage| and eliminate the $i$, and we want to get an accurate bound, so we pick the a \li|PRF_Advantage_Max| which maximizes \li|PRF_Advantage i| over $i$.
+  
+ Note that for $i=n$, \li|PRF_Advantage n| = 0, since everything has been replaced with random bits, so the two hybrids are equal. Hence the $\leq$ in the theorem.
     
   \begin{lstlisting}
   n = 4, i = 0
   Gi_prf 0: PRF PRF PRF PRF 
   Gi_rf 0:   RF   PRF PRF PRF 
   \end{lstlisting}
-  
-  The \li|PRF_Advantage|s are the same for all $i$ except $i=n$ (the number of calls to the \li|GenUpdate| oracle). For $i=n$, \li|PRF_Advantage n| = 0, since everything has been replaced with random bits, so the two hybrids are equal. Hence the $\leq$ in the theorem.
   
   \begin{lstlisting}
   n = 4, i = 4
@@ -2284,7 +2336,6 @@ Definition Gi_prf (i : nat) : Comp bool :=
 \end{enumerate}
 
 Identical until bad section. 
-\\ \textbf{Note.} This section is outlined but the theorems are not explained as fully as in the previous section. I'll finish this in the thesis.
 \\
 
 \lstinline|Gi_rf_rb_close|, number three for \lstinline|Gi_Gi_plus_1_close| above:
@@ -2380,7 +2431,7 @@ Concretely, this is true for \li|Gi_rb_bad| and \li|Gi_rf_bad| because the proba
    evalDist (Gi_rf_bad i) (a, false).
 \end{lstlisting}
 
-I don't work with it probabilistically; working in the program logic (TODO explain what this means), the goal becomes this:
+I don't work with it probabilistically; working in the program logic, the goal becomes this:
 
 \begin{lstlisting}
    comp_spec (fun b1 b2 : bool * bool => b1 = (a, false) <-> b2 = (a, false))
@@ -2514,7 +2565,7 @@ We use a powerful theorem called \li|fcf_oracle_eq_until_bad| to "strip away" th
 
 \end{enumerate}
 
-This identical until bad postcondition is (TODO write out). The full statement of the theorem is very long, so it is included in the appendix. The proof, done by Petcher (2015), is also included in the appendix. % TODO
+The full statement of the theorem is very long, so refer to \li|fcf_oracle_eq_until_bad| in \li|Tactics.v| in the FCF repository for more details.
 
 % TODO appendix
 

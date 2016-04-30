@@ -3,11 +3,6 @@
 - Interstitial paragraph on my approach to summarizing formal stuff
 - Rewrite in 2-column <-- Just for the stuff I have already (PRF_DRBG ideal/real world def / adversary / 2 games, same for the other one)
 
-- Lemma outline with short summary in body of paper
-  - Tree diagram
-- Edit lemmas for correctness
-- Move lemmas to appendix
-
 - Write section on stuff verification helped me catch
 - Write section on specifically annoying reasoning, pointing to list of lemmas
 
@@ -16,6 +11,7 @@ Goal for Saturday: -- should be able to turn it in by 8pm/6pm/what is yardpartie
 - Estimate failure probability (15)
 - Move NoV presentation
 - On adaptivity of the adversary
+
 - 2-column the FCF proofs
 - Label tables
 - Typesetting (Andrew's edits)
@@ -27,15 +23,7 @@ Goal for Saturday: -- should be able to turn it in by 8pm/6pm/what is yardpartie
 
 --
 
-- Fix abstract
-- Fix introduction
-- Fix conclusion
-
-- Replace dupsInIthInputCalls.* everywhere by hasDups, and explain it
-  - also rf_withDups (e.g. Gi_rb_rf_no_bad_same)
 - Fix "appending"
-- Flesh out explanation of collisions lemmas (didn't I already do this? integrate)
-- Add sections on "not being able to prove this helped me find these errors in my code" and "formal methods made us think about these theorems"
 - Cite entropy extractor paper and summarize
 
 - Proof for real Instantiate

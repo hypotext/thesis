@@ -20,6 +20,7 @@
     "puthesis"
     "puthesis12"
     "mathpazo"
+    "enumitem"
     "xcolor"
     "graphicx"
     "verbatim"
@@ -33,7 +34,6 @@
     "amsthm"
     "dcolumn"
     "hyperref"
-    "enumitem"
     "url")
    (TeX-add-symbols
     '("ct" 2)
@@ -100,6 +100,8 @@
     "dfn"
     "cor"
     "lem"
-    "ex"))
+    "ex")
+   (LaTeX-add-enumitem-newlists
+    '("longenum" "enumerate")))
  :latex)
 

@@ -26,13 +26,13 @@
 \contentsline {section}{\numberline {4.5}On proving prediction resistance}{40}{section.4.5}
 \contentsline {chapter}{\numberline {5}Comments on the machine-checked proofs}{41}{chapter.5}
 \contentsline {section}{\numberline {5.1}Proof tree}{41}{section.5.1}
-\contentsline {section}{\numberline {5.2}Coq-specific reasoning}{42}{section.5.2}
-\contentsline {section}{\numberline {5.3}What's left to prove in the Coq development}{42}{section.5.3}
-\contentsline {section}{\numberline {5.4}How verification helped}{43}{section.5.4}
-\contentsline {subsection}{\numberline {5.4.1}Comments on HMAC-DRBG's design}{43}{subsection.5.4.1}
-\contentsline {chapter}{\numberline {6}Future work}{44}{chapter.6}
-\contentsline {section}{\numberline {6.1}Linking our crypto spec with the functional spec}{44}{section.6.1}
-\contentsline {section}{\numberline {6.2}Extending our work to other DRBGs}{45}{section.6.2}
-\contentsline {chapter}{\numberline {7}Conclusion}{47}{chapter.7}
-\contentsline {chapter}{\numberline {A}Code}{50}{appendix.A}
-\contentsline {chapter}{\numberline {B}Explanations of each lemma in the Coq development}{51}{appendix.B}
+\contentsline {section}{\numberline {5.2}Coq-specific reasoning}{43}{section.5.2}
+\contentsline {section}{\numberline {5.3}What's left to prove in the Coq development}{43}{section.5.3}
+\contentsline {section}{\numberline {5.4}How verification helped}{44}{section.5.4}
+\contentsline {subsection}{\numberline {5.4.1}Comments on HMAC-DRBG's design}{44}{subsection.5.4.1}
+\contentsline {chapter}{\numberline {6}Future work}{46}{chapter.6}
+\contentsline {section}{\numberline {6.1}Linking our crypto spec with the functional spec}{46}{section.6.1}
+\contentsline {section}{\numberline {6.2}Extending our work to other DRBGs}{47}{section.6.2}
+\contentsline {chapter}{\numberline {7}Conclusion}{49}{chapter.7}
+\contentsline {chapter}{\numberline {A}Code}{52}{appendix.A}
+\contentsline {chapter}{\numberline {B}Explanations of each lemma in the Coq development}{53}{appendix.B}

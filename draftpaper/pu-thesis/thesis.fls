@@ -17,6 +17,8 @@ INPUT /usr/local/texlive/2012/texmf-dist/fonts/map/fontname/texfonts.map
 INPUT /usr/local/texlive/2012/texmf-dist/fonts/tfm/public/cm/cmr12.tfm
 INPUT /usr/local/texlive/2012/texmf-dist/tex/latex/psnfss/mathpazo.sty
 INPUT /usr/local/texlive/2012/texmf-dist/tex/latex/psnfss/mathpazo.sty
+INPUT /usr/local/texlive/2012/texmf-dist/tex/latex/enumitem/enumitem.sty
+INPUT /usr/local/texlive/2012/texmf-dist/tex/latex/enumitem/enumitem.sty
 INPUT /usr/local/texlive/2012/texmf-dist/tex/latex/xcolor/xcolor.sty
 INPUT /usr/local/texlive/2012/texmf-dist/tex/latex/xcolor/xcolor.sty
 INPUT /usr/local/texlive/2012/texmf-dist/tex/latex/latexconfig/color.cfg
@@ -111,8 +113,6 @@ INPUT /usr/local/texlive/2012/texmf-dist/tex/latex/hyperref/hpdftex.def
 INPUT /usr/local/texlive/2012/texmf-dist/tex/latex/hyperref/hpdftex.def
 INPUT /usr/local/texlive/2012/texmf-dist/tex/latex/oberdiek/rerunfilecheck.sty
 INPUT /usr/local/texlive/2012/texmf-dist/tex/latex/oberdiek/rerunfilecheck.sty
-INPUT /usr/local/texlive/2012/texmf-dist/tex/latex/enumitem/enumitem.sty
-INPUT /usr/local/texlive/2012/texmf-dist/tex/latex/enumitem/enumitem.sty
 INPUT thesis.aux
 INPUT thesis.aux
 OUTPUT thesis.aux
