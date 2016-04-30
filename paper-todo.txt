@@ -1,9 +1,5 @@
 4/27/16
 
-HAVE A DRAFT FOR ANDREW BY FRIDAY, 8 AM.!!!!
-
-Goal for Friday (done by midnight, needs to be turn-in-able):
-
 - Interstitial paragraph on my approach to summarizing formal stuff
 - Rewrite in 2-column <-- Just for the stuff I have already (PRF_DRBG ideal/real world def / adversary / 2 games, same for the other one)
 
@@ -15,20 +11,22 @@ Goal for Friday (done by midnight, needs to be turn-in-able):
 - Write section on stuff verification helped me catch
 - Write section on specifically annoying reasoning, pointing to list of lemmas
 
-Goal for Saturday: -- should be able to turn it in by 8pm/10pm!!
+Goal for Saturday: -- should be able to turn it in by 8pm/6pm/what is yardparties
 
 - Estimate failure probability (15)
 - Move NoV presentation
-- Typesetting (Andrew's edits), ToC
-- Typesetting (line breaks; code; real-world/ideal-world)
+- On adaptivity of the adversary
+- 2-column the FCF proofs
+- Label tables
+- Typesetting (Andrew's edits)
+- Typesetting (line breaks; code; real-world/ideal-world; whitespace)
 - Move to BibTex? At least fix references (intro)
-- Edit intro/conclusion/prior work
+- Fix inline references
 - Go through and remove inline/commented TODOs, weird symbols in source
 - Print and edit
 
 --
 
-- Label tables (list of tables)
 - Fix abstract
 - Fix introduction
 - Fix conclusion
@@ -40,7 +38,7 @@ Goal for Saturday: -- should be able to turn it in by 8pm/10pm!!
 - Add sections on "not being able to prove this helped me find these errors in my code" and "formal methods made us think about these theorems"
 - Cite entropy extractor paper and summarize
 
-- Cite Naphat
+- Proof for real Instantiate
 - Indistinguishability -> pseudorandomness
 - Fix Pr_1 notation
 - PRNG -> PRG, DRBG
@@ -52,8 +50,11 @@ Goal for Saturday: -- should be able to turn it in by 8pm/10pm!!
 - Fix architecture diagram
 - Change distinguishers D to adversaries A
 - Other misc (look through the marked-up paper)
+
 - Add evaluation questions
 - Talk about the DRBG complexities we glossed over
+
+---
 
 - Go through meeting notes to see what I missed
 - Read EasyCrypt https://www.easycrypt.info/downloads/tutorial/tutorial-prg.pdf

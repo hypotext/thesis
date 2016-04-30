@@ -69,13 +69,13 @@ Formal verification of the \textsc{HMAC-DRBG} pseudorandom number generator}
 % change section fonts
 % \usepackage{color}
 \usepackage[dvipsnames]{xcolor}
-\usepackage{titlesec}
-\titleformat{\chapter}[display]
-  {\normalfont\sffamily\huge\bfseries\color{Black}}
-  {\chaptertitlename\ \thechapter}{20pt}{\Huge}
-\titleformat{\section}
-  {\normalfont\sffamily\Large\bfseries\color{Black}}
-  {\thesection}{1em}{}
+% \usepackage{titlesec}
+% \titleformat{\chapter}[display]
+%   {\normalfont\sffamily\huge\bfseries\color{Black}}
+%   {\chaptertitlename\ \thechapter}{20pt}{\Huge}
+% \titleformat{\section}
+%   {\normalfont\sffamily\Large\bfseries\color{Black}}
+%   {\thesection}{1em}{}
 
 %%% For figures
 \usepackage{graphicx}
@@ -288,7 +288,7 @@ breaklines=true
 % Abstract can be any length, but should be max 350 words for a Dissertation for ProQuest's print indicies (150 words for a Master's Thesis) or it will be truncated for those uses.
 % \input{abstract}
   We have proved, with machine-checked proofs, that the output produced by HMAC-DRBG is indistinguishable from random by a computationally bounded adversary. We proved this about a high-level specification of a simplified version of HMAC-DRBG written in the probabilistic language provided by the Foundational Cryptography Framework (FCF), which is embedded in the Coq proof assistant. We have also proven on paper that HMAC-DRBG is backtracking-resistant. Our work comprises the first formal verification of a real-world PRG.
-  Our functional specification can be linked to a proof of functional correctness of mbedTLS's C implementation of HMAC-DRBG. This will allow our proofs of cryptographic security properties to transfer to this implementation.
+  Our functional specification can be linked to a proof of functional correctness of mbedTLS's C implementation of HMAC-DRBG. This will allow our proofs of cryptographic security properties to transfer to this implementation, resulting in a fully verified real-world DRBG.
 }
 
 \acknowledgements{
@@ -890,12 +890,7 @@ $\textbf{G\_ideal} := $
 \item[] $bits \leftarrow genRandForEach(l)$
 \item[] $ret \s A(bits)$ \\
 \end{game}
-
 \end{dfn}
-
-% TODO remove
-% sometimes latexmk complains about this
-% \break
 
 \subsection{Proof outline}
 Again, we must extend the proof for the security of $H$ to the security of multiple calls of $H$ with $(k,v)$ being updated after each call. This problem often arises when proving the security of PRGs, and it is solved by using a powerful technique called the \emph{hybrid argument}. We will briefly summarize the use of the hybrid argument in the setting of concrete security.
@@ -1524,6 +1519,8 @@ In game-playing proofs, we commonly do two things. First, we might make a slight
 
 To aid with this kind of reasoning, FCF provides a program logic called Probabilistic Relational Postcondition Logic (PRPL). PRPL behaves like a Hoare logic, except there are no preconditions, and we write a specification relating pairs of probabilistic programs instead of a specification on a single deterministic program.
 
+\section{A simple example of reasoning about programs in PRPL}
+
 As a short example demonstrating PRPL, take the following proof goal in Coq.
 
 \begin{lstlisting}
@@ -1599,7 +1596,7 @@ Qed.
 \end{lstlisting}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\chapter{Formal proof outline}
+\chapter{Outline of machine-checked proofs}
 
 \section{Starting HMAC-DRBG definitions}
 

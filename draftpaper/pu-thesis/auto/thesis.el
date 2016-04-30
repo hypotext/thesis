@@ -21,7 +21,6 @@
     "puthesis12"
     "mathpazo"
     "xcolor"
-    "titlesec"
     "graphicx"
     "verbatim"
     "multirow"

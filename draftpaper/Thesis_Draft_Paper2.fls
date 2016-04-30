@@ -1,6 +1,0 @@
-PWD /Users/katherineye/Desktop/Code/thesis/draftpaper
-INPUT /usr/local/texlive/2012/texmf.cnf
-INPUT /usr/local/texlive/2012/texmf/web2c/texmf.cnf
-INPUT /usr/local/texlive/2012/texmf-var/web2c/pdftex/latex.fmt
-INPUT Thesis_Draft_Paper2.tex
-OUTPUT Thesis_Draft_Paper2.log

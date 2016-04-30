@@ -36,8 +36,9 @@
 \newcommand*{\extravspace}[1]{\vspace{0in}}
 %% Setup a command to set spacing for body text; also used to restore spacing after long tables in document
 \newcommand*{\bodyspacing}{
-  \doublespacing
+  \singlespacing
 }
+% vs \doublespacing
 %% Setup a command to set spacing for long tables, to be used manually in document
 \newcommand*{\tablespacing}{
   \singlespacing
@@ -48,7 +49,7 @@
 %%   to be declared from within the document itself. 
 \newcommand*{\makefrontmatter}{
 \bodyspacing
-\frontmatter\maketitlepage\makecopyrightpage\makeabstract
+\frontmatter\maketitlepage\makeabstract
 \makeacknowledgements\makededication\maketoc
 \makelot\clearpage\makelof\clearpage\makelos
 \clearpage\mainmatter
