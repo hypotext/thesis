@@ -100,7 +100,8 @@
     "dfn"
     "cor"
     "lem"
-    "ex")
+    "ex"
+    "rem")
    (LaTeX-add-enumitem-newlists
     '("longenum" "enumerate")))
  :latex)

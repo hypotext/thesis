@@ -251,7 +251,7 @@ breaklines=true
 % subnumbering
 \newtheorem{lem}{Lemma}[thm]
 \newtheorem{ex}{Example}[thm]
-
+\newtheorem{rem}{Remark}[thm]
 
 % create an environment that will indent text
 % see: http://latex.computersci.org/Reference/ListEnvironments
@@ -319,18 +319,16 @@ Andrew Appel provided lots of help with Coq proofs and suggestions for the futur
 
 Lennart Beringer came to all of my thesis meetings and went above and beyond by helping me debug my proofs on Sundays.
 
-Naphat Sanguansin did the work that would allow my proofs to actually hold on an implementation of HMAC-DRBG.
-
 I want to thank Matt and Andrew again for suggesting a thesis topic that was cool and well-motivated, as well as providing detailed feedback on drafts of this thesis.
-
-Thanks to everyone in 2D for general encouragement, cooking great food that sustained me at late hours, sending me thesis jams (thanks, Angela), and camping out with me in the dining room (hi, Jaehwan).
 
 Thanks to Jean Juang, Frederic Koehler, and Xiaoyan Han for being great friends and thesis buddies, and Carolyn Chen and Pallavi Koppol for being great friends during the grad school application process.
 
-Thanks to the Recurse Center for being a community of excellent people who are happy to listen to me ramble about research. 
+Thanks to everyone in 2D for general encouragement, cooking great food that sustained me at late hours, sending me thesis jams (thanks, Angela), and camping out with me in the dining room (hi, Jaehwan).
+
+Thanks to the Recurse Center for being a community of excellent programmers and researchers who are happy to listen to me go on about research. 
 }
 
-% \dedication{To my parents. Wow}
+% \dedication{To my parents.}
 
 \fi  % disable frontmatter
 
@@ -1442,45 +1440,52 @@ This is a negligible quantity for sufficiently large $c$. Usually $c$ is 256, si
 This completes our bound on the total probability of distinguishing between the real-world and ideal-world games.
 \end{proof}
 
-Hirose (2008) estimates the probability of being able to distinguish for the core loop to be around TODO.
+\begin{rem} Assuming real-world usage of the DRBG, we estimate the bound. Again, we typically use SHA-256, so $c = 256 = 2^8$. NIST SP800-90A bounds the number of bits per call by $2^{19}$, which is $2^{11}$ blocks per call. The standard also bounds the number of calls before reseeding by $2^{48}$. So, let the adversary makes $2^{40}$ requests of $2^{10}$ blocks each. Assume that the DRBG is not otherwise compromised or reseeding during that time. 
 
-I'm not sure what $PRF\_Advantage\_Max$ is. Under the assumption that HMAC is a PRF, the max probability of being able to distinguish ought to be negligible in the number of queries made. I'll estimate this as TODO.
+$PRF\_Advantage$ is typically left as a black block (e.g. Hirose (2008)'s estimate). Under the assumption that HMAC is a PRF, the max probability of being able to distinguish ought to be negligible in the number of queries made. 
 
-Assuming real-world usage: the adversary makes 30 billion requests of 10,000 blocks each. The DRBG is never compromised or reseeded. Then the probability of the adversary being able to distinguish is about TODO.
+Then the probability of the adversary being able to distinguish pseudorandom bits from ideally random bits is bounded by (dropping the $+1$ in $maxBlocks + 1$ since it's asymptotically irrelevant)
+$$2^{48} \cdot (PRF\_Advantage\_Max + \f{2^{20}}{2^{256}}) = 2^{48} \cdot PRF\_Advantage\_Max + 2^{-188}.$$
 
-\subsection{Formalization}
+Assuming $PRF\_Advantage\_Max \leq 2^{-100}$, which is reasonable, the probability of the adversary being able to distinguish is less than $10^{-16}$.
 
-These are more code-related. Should I talk about them later?
+See Hirose (2008) for a similar estimate of the probability of being able to distinguish for the core loop (not the output produced by the full DRBG).
 
-Formalization reminded me of one subtlety: there are multiple PRF adversaries and that we need to take 
+\end{rem}
 
-Formalization helped me check the indices, 
+% \subsection{Formalization}
 
-Some things I got wrong: $v_2$ vs $v_1$ in $GenUpdate$; relating which hybrids and intermediate hybrids
+% These are more code-related. Should I talk about them later?
 
-In more detail:
+% Formalization reminded me of one subtlety: there are multiple PRF adversaries and that we need to take 
 
-The PRF adversary. It uses the existing adversary so we can go from PRF to RF, which is much easier to reason about. (TODO: explained already below) Game $i$ here is more complicated because we can pass in any oracle to use on only the $i$th call, instead of the the hardcoding in game $i$ above. (TODO: talk about motivation for this)
+% Formalization helped me check the indices, 
 
-Is there some way to pseudocode $oracleCompMap\_outer$?
+% Some things I got wrong: $v_2$ vs $v_1$ in $GenUpdate$; relating which hybrids and intermediate hybrids
 
-\begin{lstlisting}
-Definition PRF_Adversary (i : nat) : OracleComp Blist (Bvector eta) bool :=
-  bits <--$ oracleCompMap_outer _ _ (Oi_oc' i) maxCallsAndBlocks;
-  $ A bits.
+% In more detail:
 
-(* ith game: use RF oracle *)
-Definition Gi_rf (i : nat) : Comp bool :=
-  [b, _] <-$2 PRF_Adversary i _ _ (randomFunc ({0,1}^eta) eqdbl) nil;
-  ret b.
-\end{lstlisting}
+% The PRF adversary. It uses the existing adversary so we can go from PRF to RF, which is much easier to reason about. (TODO: explained already below) Game $i$ here is more complicated because we can pass in any oracle to use on only the $i$th call, instead of the the hardcoding in game $i$ above. (TODO: talk about motivation for this)
 
-New oracles:
-$Oi\_prg$
-$Oi\_oc$
+% Is there some way to pseudocode $oracleCompMap\_outer$?
 
-%\subsection{Comments on proof technique}
-% compare to campagna/hirose?
+% \begin{lstlisting}
+% Definition PRF_Adversary (i : nat) : OracleComp Blist (Bvector eta) bool :=
+%   bits <--$ oracleCompMap_outer _ _ (Oi_oc' i) maxCallsAndBlocks;
+%   $ A bits.
+
+% (* ith game: use RF oracle *)
+% Definition Gi_rf (i : nat) : Comp bool :=
+%   [b, _] <-$2 PRF_Adversary i _ _ (randomFunc ({0,1}^eta) eqdbl) nil;
+%   ret b.
+% \end{lstlisting}
+
+% New oracles:
+% $Oi\_prg$
+% $Oi\_oc$
+
+% %\subsection{Comments on proof technique}
+% % compare to campagna/hirose?
 
 \section{Proof of backtracking resistance}
 
@@ -1708,8 +1713,8 @@ First, we want to prove the 22 remaining admitted lemmas. There are 17 main lemm
 Besides proving the admitted lemmas, we also want to extend our proof to yield more general and powerful results.
 
 \begin{itemize}
-\item We need to figure out how to adapt the indistinguishability proof to a nonadaptive adversary that picks any list of $blocksPerCall$ and $numCalls$ beforehand, not the hardcoded $maxBlocksPerCall$ and $maxCalls$. One can imagine a pathological DRBG that outputs its key for only $numCalls = 7$, for example. The paper proof here already holds for the more general adversary.
-\item We need to figure out how to adapt the indistinguishability proof to an adaptive adversary. This adversary can choose the number of calls and number of blocks per call, then once it receives output, can call again as many times as it wishes with parameters of its choice. One can imagine a pathological DRBG that "encourages" an adversary to input $7$ as $blocksPerCall$ and outputs its secret key after 3 such calls, so that if it discovers that $7$ is a "bad" input, it keeps inputting it. A non-adaptive adversary would have negligible chance of making this experiment or this discovery.
+\item We adapt the indistinguishability proof to a nonadaptive adversary that picks any list of $blocksPerCall$ and $numCalls$ beforehand, not the hardcoded $maxBlocksPerCall$ and $maxCalls$. One can imagine a pathological DRBG that outputs its key for only $numCalls = 7$, for example. The paper proof here already holds for the more general adversary.
+\item We need to figure out how to extend the indistinguishability proof, as well as the backtracking resistance proof, to an adaptive adversary. This adversary can choose the number of calls and number of blocks per call, then once it receives output, can call again as many times as it wishes with parameters of its choice. One can imagine a pathological DRBG that "encourages" an adversary to input $7$ as $blocksPerCall$ and outputs its secret key after 3 such calls, so that if it discovers that $7$ is a "bad" input, it keeps inputting it. A non-adaptive adversary would have negligible chance of making this experiment or this discovery.
 \item Reuse the indistinguishability proofs to show backtracking resistance. The proof is outlined in Section REFERENCE.
 \item Prove that our cryptographic specification of HMAC-DRBG and a different, functional specification of HMAC-DRBG are equivalent. This is discussed in Section REFERENCE.
 \end{itemize}

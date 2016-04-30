@@ -1,10 +1,5 @@
 4/27/16
 
-- Estimate failure probability (15)
-- Move NoV presentation
-- On adaptivity of the adversary
-- 2-column the FCF proofs
-
 - Fix inline references
 - Go through and remove inline/commented TODOs, weird symbols in source
 - Label tables
@@ -31,6 +26,8 @@
 
 - Add evaluation questions
 - Talk about the DRBG complexities we glossed over
+- 2-column the FCF proofs (but they're in listings)
+- Move NoV presentation
 
 ---
 

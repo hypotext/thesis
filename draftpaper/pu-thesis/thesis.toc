@@ -16,7 +16,6 @@
 \contentsline {section}{\numberline {3.3}Indistinguishability proof for a simplified HMAC-DRBG}{18}{section.3.3}
 \contentsline {subsection}{\numberline {3.3.1}Definitions}{18}{subsection.3.3.1}
 \contentsline {subsection}{\numberline {3.3.2}Proof outline}{20}{subsection.3.3.2}
-\contentsline {subsection}{\numberline {3.3.3}Formalization}{31}{subsection.3.3.3}
 \contentsline {section}{\numberline {3.4}Proof of backtracking resistance}{31}{section.3.4}
 \contentsline {section}{\numberline {3.5}On proving prediction resistance}{35}{section.3.5}
 \contentsline {chapter}{\numberline {4}Comments on the machine-checked proofs}{36}{chapter.4}
