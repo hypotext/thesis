@@ -1,31 +1,21 @@
 4/27/16
 
-- Interstitial paragraph on my approach to summarizing formal stuff
-- Rewrite in 2-column <-- Just for the stuff I have already (PRF_DRBG ideal/real world def / adversary / 2 games, same for the other one)
-
-- Write section on stuff verification helped me catch
-- Write section on specifically annoying reasoning, pointing to list of lemmas
-
-Goal for Saturday: -- should be able to turn it in by 8pm/6pm/what is yardparties
-
 - Estimate failure probability (15)
 - Move NoV presentation
 - On adaptivity of the adversary
-
 - 2-column the FCF proofs
+
+- Fix inline references
+- Go through and remove inline/commented TODOs, weird symbols in source
 - Label tables
 - Typesetting (Andrew's edits)
 - Typesetting (line breaks; code; real-world/ideal-world; whitespace)
 - Move to BibTex? At least fix references (intro)
-- Fix inline references
-- Go through and remove inline/commented TODOs, weird symbols in source
 - Print and edit
 
 --
 
-- Fix "appending"
 - Cite entropy extractor paper and summarize
-
 - Proof for real Instantiate
 - Indistinguishability -> pseudorandomness
 - Fix Pr_1 notation
