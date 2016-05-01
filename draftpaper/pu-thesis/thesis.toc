@@ -12,28 +12,29 @@
 \contentsline {subsection}{\numberline {2.2.1}A simple example of reasoning about programs in PRPL}{8}{subsection.2.2.1}
 \contentsline {chapter}{\numberline {3}Proofs}{10}{chapter.3}
 \contentsline {section}{\numberline {3.1}Paper proofs vs. machine-checked proofs}{10}{section.3.1}
-\contentsline {section}{\numberline {3.2}Indistinguishability proof for one call}{10}{section.3.2}
-\contentsline {section}{\numberline {3.3}Indistinguishability proof for a simplified HMAC-DRBG}{18}{section.3.3}
+\contentsline {section}{\numberline {3.2}Pseudorandomness proof for one call}{10}{section.3.2}
+\contentsline {section}{\numberline {3.3}Pseudorandomness proof for a simplified HMAC-DRBG}{18}{section.3.3}
 \contentsline {subsection}{\numberline {3.3.1}Definitions}{18}{subsection.3.3.1}
 \contentsline {subsection}{\numberline {3.3.2}Proof outline}{20}{subsection.3.3.2}
-\contentsline {section}{\numberline {3.4}Proof of backtracking resistance}{31}{section.3.4}
-\contentsline {section}{\numberline {3.5}On proving prediction resistance}{34}{section.3.5}
-\contentsline {chapter}{\numberline {4}Comments on the machine-checked proofs}{36}{chapter.4}
-\contentsline {section}{\numberline {4.1}Proof tree}{36}{section.4.1}
-\contentsline {section}{\numberline {4.2}Coq-specific reasoning}{38}{section.4.2}
-\contentsline {section}{\numberline {4.3}What's left to prove in the Coq development}{38}{section.4.3}
-\contentsline {section}{\numberline {4.4}How verification helped}{39}{section.4.4}
-\contentsline {subsection}{\numberline {4.4.1}Comments on HMAC-DRBG's design}{40}{subsection.4.4.1}
-\contentsline {chapter}{\numberline {5}Future work}{41}{chapter.5}
-\contentsline {section}{\numberline {5.1}Linking our crypto spec with the functional spec}{41}{section.5.1}
-\contentsline {section}{\numberline {5.2}Extending our work to other DRBGs}{42}{section.5.2}
-\contentsline {chapter}{\numberline {6}Conclusion}{44}{chapter.6}
-\contentsline {chapter}{\numberline {A}Code}{47}{appendix.A}
-\contentsline {chapter}{\numberline {B}Main definitions in the Coq development}{48}{appendix.B}
-\contentsline {section}{\numberline {B.1}PRF-DRBG definitions}{48}{section.B.1}
-\contentsline {section}{\numberline {B.2}HMAC-DRBG definitions}{48}{section.B.2}
-\contentsline {section}{\numberline {B.3}Proof of indistinguishability}{49}{section.B.3}
-\contentsline {subsection}{\numberline {B.3.1}Main games}{49}{subsection.B.3.1}
-\contentsline {chapter}{\numberline {C}Explanations of each lemma in the Coq development}{53}{appendix.C}
-\contentsline {section}{\numberline {C.1}Adjacent hybrids are close}{54}{section.C.1}
-\contentsline {subsection}{\numberline {C.1.1}Identical until bad}{58}{subsection.C.1.1}
+\contentsline {section}{\numberline {3.4}Proof of backtracking resistance}{32}{section.3.4}
+\contentsline {section}{\numberline {3.5}On proving prediction resistance}{35}{section.3.5}
+\contentsline {chapter}{\numberline {4}Comments on the machine-checked proofs}{37}{chapter.4}
+\contentsline {section}{\numberline {4.1}Proof tree}{37}{section.4.1}
+\contentsline {section}{\numberline {4.2}Coq-specific reasoning}{39}{section.4.2}
+\contentsline {section}{\numberline {4.3}What's left to prove in the Coq development}{39}{section.4.3}
+\contentsline {section}{\numberline {4.4}How verification helped}{41}{section.4.4}
+\contentsline {subsection}{\numberline {4.4.1}Comments on HMAC-DRBG's design}{41}{subsection.4.4.1}
+\contentsline {chapter}{\numberline {5}Future work}{42}{chapter.5}
+\contentsline {section}{\numberline {5.1}Linking our crypto spec with the functional spec}{42}{section.5.1}
+\contentsline {section}{\numberline {5.2}Extending our work to other DRBGs}{43}{section.5.2}
+\contentsline {subsection}{\numberline {5.2.1}Metrics for success on the final project}{44}{subsection.5.2.1}
+\contentsline {chapter}{\numberline {6}Conclusion}{45}{chapter.6}
+\contentsline {chapter}{\numberline {A}Code}{48}{appendix.A}
+\contentsline {chapter}{\numberline {B}Main definitions in the Coq development}{49}{appendix.B}
+\contentsline {section}{\numberline {B.1}PRF-DRBG definitions}{49}{section.B.1}
+\contentsline {section}{\numberline {B.2}HMAC-DRBG definitions}{49}{section.B.2}
+\contentsline {section}{\numberline {B.3}Proof of pseudorandomness}{50}{section.B.3}
+\contentsline {subsection}{\numberline {B.3.1}Main games}{50}{subsection.B.3.1}
+\contentsline {chapter}{\numberline {C}Explanations of each lemma in the Coq development}{54}{appendix.C}
+\contentsline {section}{\numberline {C.1}Adjacent hybrids are close}{55}{section.C.1}
+\contentsline {subsection}{\numberline {C.1.1}Identical until bad}{59}{subsection.C.1.1}

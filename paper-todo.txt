@@ -1,32 +1,19 @@
 4/27/16
 
-- Remove weird symbols/quotes in source
-- Label tables
 - Typesetting (Andrew's edits)
 - Typesetting (line breaks; code; real-world/ideal-world; whitespace)
-- Move to BibTex? At least fix references (intro)
-- Print and edit
+  - Print and edit
 
 --
 
-- Cite entropy extractor paper and summarize
-- Proof for real Instantiate
-- Indistinguishability -> pseudorandomness
 - Fix Pr_1 notation
-- PRNG -> PRG, DRBG
+- Move NoV presentation
 - Math font -> serif
 - Listings font -> sans serif
 - PRF_A -> A_{PRF}
 - G_real -> G_{mathit{real}} and also for ideal
-- Fix hyphens
 - Fix architecture diagram
-- Change distinguishers D to adversaries A
-- Other misc (look through the marked-up paper)
-
-- Add evaluation questions
-- Talk about the DRBG complexities we glossed over
 - 2-column the FCF proofs (but they're in listings)
-- Move NoV presentation
 
 ---
 

@@ -2,6 +2,10 @@
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
+\contentsline {table}{\numberline {3.1}{\ignorespaces Oracles used in each call of a hybrid, for each hybrid.}}{22}{table.3.1}
+\contentsline {table}{\numberline {3.2}{\ignorespaces Oracles used in each call of a hybrid, for each hybrid.}}{24}{table.3.2}
+\contentsline {table}{\numberline {3.3}{\ignorespaces Intermediate hybrid $H_i'$, using RF on call $i+1$, between hybrids.}}{24}{table.3.3}
+\contentsline {table}{\numberline {3.4}{\ignorespaces Every hybrid and every intermediate hybrid.}}{25}{table.3.4}
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }

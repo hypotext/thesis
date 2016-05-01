@@ -125,9 +125,11 @@
     "fouque2008"
     "goldreich2005"
     "hirose2008"
+    "pauli2015"
     "petcher2015"
     "petcherthesis2015"
     "sanguansin2016"
+    "schneier2008"
     "ye2014")
    (LaTeX-add-environments
     "game"
