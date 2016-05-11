@@ -24,17 +24,17 @@
 \contentsline {section}{\numberline {4.3}What's left to prove in the Coq development}{39}{section.4.3}
 \contentsline {section}{\numberline {4.4}How verification helped}{41}{section.4.4}
 \contentsline {subsection}{\numberline {4.4.1}Comments on HMAC-DRBG's design}{41}{subsection.4.4.1}
-\contentsline {chapter}{\numberline {5}Future work}{42}{chapter.5}
-\contentsline {section}{\numberline {5.1}Linking our crypto spec with the functional spec}{42}{section.5.1}
-\contentsline {section}{\numberline {5.2}Extending our work to other DRBGs}{43}{section.5.2}
-\contentsline {subsection}{\numberline {5.2.1}Metrics for success on the final project}{44}{subsection.5.2.1}
-\contentsline {chapter}{\numberline {6}Conclusion}{45}{chapter.6}
-\contentsline {chapter}{\numberline {A}Code}{48}{appendix.A}
-\contentsline {chapter}{\numberline {B}Main definitions in the Coq development}{49}{appendix.B}
-\contentsline {section}{\numberline {B.1}PRF-DRBG definitions}{49}{section.B.1}
-\contentsline {section}{\numberline {B.2}HMAC-DRBG definitions}{49}{section.B.2}
-\contentsline {section}{\numberline {B.3}Proof of pseudorandomness}{50}{section.B.3}
-\contentsline {subsection}{\numberline {B.3.1}Main games}{50}{subsection.B.3.1}
-\contentsline {chapter}{\numberline {C}Explanations of each lemma in the Coq development}{54}{appendix.C}
-\contentsline {section}{\numberline {C.1}Adjacent hybrids are close}{55}{section.C.1}
-\contentsline {subsection}{\numberline {C.1.1}Identical until bad}{59}{subsection.C.1.1}
+\contentsline {chapter}{\numberline {5}Future work}{43}{chapter.5}
+\contentsline {section}{\numberline {5.1}Linking our crypto spec with the functional spec}{43}{section.5.1}
+\contentsline {section}{\numberline {5.2}Extending our work to other DRBGs}{44}{section.5.2}
+\contentsline {subsection}{\numberline {5.2.1}Metrics for success on the final project}{45}{subsection.5.2.1}
+\contentsline {chapter}{\numberline {6}Conclusion}{46}{chapter.6}
+\contentsline {chapter}{\numberline {A}Code}{49}{appendix.A}
+\contentsline {chapter}{\numberline {B}Main definitions in the Coq development}{50}{appendix.B}
+\contentsline {section}{\numberline {B.1}PRF-DRBG definitions}{50}{section.B.1}
+\contentsline {section}{\numberline {B.2}HMAC-DRBG definitions}{50}{section.B.2}
+\contentsline {section}{\numberline {B.3}Proof of pseudorandomness}{51}{section.B.3}
+\contentsline {subsection}{\numberline {B.3.1}Main games}{51}{subsection.B.3.1}
+\contentsline {chapter}{\numberline {C}Explanations of each lemma in the Coq development}{55}{appendix.C}
+\contentsline {section}{\numberline {C.1}Adjacent hybrids are close}{56}{section.C.1}
+\contentsline {subsection}{\numberline {C.1.1}Identical until bad}{60}{subsection.C.1.1}

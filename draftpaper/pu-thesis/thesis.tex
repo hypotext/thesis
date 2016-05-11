@@ -26,7 +26,8 @@
 \title{The Notorious \textsc{PRG}:\\
 Formal verification of the \textsc{HMAC-DRBG} pseudorandom number generator}
 
-\submitted{April 2016}  % degree conferral date (January, April, June, September, or November)
+\submitted{April 2016 \\[0.8in]
+This thesis represents my own work \\ in accordance with university regulations.}  % degree conferral date (January, April, June, September, or November)
 % \copyrightyear{2010}  % year in which the copyright is secured by publication of the dissertation.
 \author{Katherine Qinru Ye}
 \adviser{Andrew W. Appel (Princeton University) \\
@@ -303,7 +304,7 @@ breaklines=true
 % Abstract can be any length, but should be max 350 words for a Dissertation for ProQuest's print indicies (150 words for a Master's Thesis) or it will be truncated for those uses.
 % \input{abstract}
   We have proved, with machine-checked proofs, that the output produced by HMAC-DRBG is indistinguishable from random by a computationally bounded adversary. We proved this about a high-level specification of a simplified version of HMAC-DRBG written in the probabilistic language provided by the Foundational Cryptography Framework (FCF), which is embedded in the Coq proof assistant. We have also proven on paper that HMAC-DRBG is backtracking-resistant. Our work comprises the first formal verification of a real-world PRG.
-  Our functional specification can be then linked to a proof of functional correctness of mbedTLS's C implementation of HMAC-DRBG, allowing our proofs of cryptographic security properties to transfer to this implementation. Thus, this will create the fully verified real-world DRBG.
+  Our functional specification can be then linked to a proof of functional correctness of mbedTLS's C implementation of HMAC-DRBG, allowing our proofs of cryptographic security properties to transfer to this implementation. Thus, this will create the first fully verified real-world DRBG.
 }
 
 \acknowledgements{
@@ -534,7 +535,7 @@ As Petcher (2015) summarizes: ``FCF provides an environment for developing and c
 
 A cryptographic game may be viewed as an imperative, probabilistic program (Bellare (2004)). FCF defines the syntax of probabilistic programs as the type $Comp \s A$, the type of a probabilistic program that returns a value of type $A$. The most notable operation is $Rnd$, which produces $n$ uniformly random bits. The other operations are sequencing statements in an imperative manner, repeating a statement, and returning a value.
 
-In FCF, the standard nonuniform probabilistic polynomial time (PPT) adversary is modeled as a parameter $A : I \rightarrow Comp \s bool$. This denotes that the adversary $A$ could be any nonuniform PPT adversary that takes as input some $I$ and returns a boolean guess. $Comp \s bool$ denotes that the adversary may flip coins internally while trying to come up with its guess. FCF has a mechanism to limit the adversary to a polynomial number of queries in some security parameter; refer to Petcher (2015) for details.
+In FCF, the standard nonuniform probabilistic polynomial time (PPT) adversary is modeled as a parameter $A : I \rightarrow Comp \s bool$. This denotes that the adversary $A$ could be any function that takes as input something of type $I$ and returns a boolean guess. $Comp \s bool$ denotes that the adversary may flip coins internally while trying to come up with its guess. In the concrete setting, the complexity of $A$ is not restricted, but we informally assume that it runs in probabilistic polynomial time. Since such a proof holds for any $A$, it also holds for PPT $A$. If any adversaries are constructed from $A$, they should be inspected to verify that they are PPT as well. This can be done either informally or formally: to accomplish the latter, one can prove a statement like ``Assuming the adversary against the PRG runs in time $t$, then the constructed adversary against the PRF runs in time $k \cdot t + c$ (for some constants $k$ and $c$).''\footnote{One can also do a proof in the asymptotic setting. This proof does not provide a concrete bound, but allows one to prove things like  ``the adversary against the PRG is PPT, so the constructed adversary against the PRF is PPT.'' One can only do this in the asymptotic setting because PPT is an asymptotic property.}\footnote{All of our proofs in this paper are in the concrete setting. We make the informal assumption that the PRG adversaries are PPT. Our constructed adversaries are informally PPT upon inspection, assuming the PRG adversaries are PPT.}
 
 Cryptographic security definitions often involve giving the adversary some oracle that it can query, where the oracle must maintain some hidden state across multiple interactions with the adversary. Thus, FCF extends the $Comp$ type, where $Comp \s A$ is a probabilistic program returning a value of type $A$, to the $OracleComp$ type, where $OracleComp \s A \s B \s C$ is a probabilistic program that returns a value of type $C$ and has access to an oracle that takes a value of type $A$ and returns a value of type $B$. (The type of the oracle itself includes a state as input and a new state as output.) Oracle computations may use the standard returning and binding operations, as well as an oracle query operations and an operation that can run a program using a different oracle that can access the current oracle.
 
@@ -661,7 +662,7 @@ We want to prove that the bits generated by $H$ are pseudorandom.
 % TODO what is "polynomial number of blocks"?
 % the probability is over the randomness of the key or something else?
 
-\begin{dfn}For all nonuniform, nonadaptive probabilistic polynomial time distinguishers $D$ and number of blocks $n$ that is polynomial in $c$, there exists a negligible function such that
+\begin{dfn}\textbf{Pseudorandomness.} $H$ is a PRG if for all nonuniform, nonadaptive probabilistic polynomial time distinguishers $D$ and number of blocks $n$ that is polynomial in $c$, there exists a negligible function such that
 $$| \Pr [ D (H (n, k, U_c) = 1] - \Pr [ D(U_{cn}) = 1] | \leq neg(c,n),$$
 
 where $U_c \xleftarrow{R} \{0,1\}^c$ ($U_c$ is sampled uniformly at random from $\{0,1\}^c$), $U_{cn} \xleftarrow{R} \{0,1\}^{cn}$, and $k \xleftarrow{R} \{0,1\}^c$ ($k$ is the key for the PRF).\end{dfn}
@@ -699,7 +700,7 @@ To bound this distance, we introduce an intermediate game, $G\_intermediate$. Fi
 $H\_{rf}(n, v) :=$
 \begin{game}
 \item[] if $n = 0$ then return $nil$
-\item[] else return $r(v) || H(n-1, r(v)).$\\
+\item[] else return $r(v) || H\_rf(n-1, r(v)).$\\
 \end{game}
 
 Note there is no key in the PRG.
@@ -781,7 +782,7 @@ and $H\_oc$ is a modified version of the PRG that takes an oracle and queries it
 $H\_{oc}(o, n, v) :=$
 \begin{game}
 \item[] if $n = 0$ then return $nil$
-\item[] else return $o.query(v) || H(o, n-1, o.query(v)).$
+\item[] else return $o.query(v) || H\_{oc}(o, n-1, o.query(v)).$
 \end{game}
 
 \begin{lem} \label{lem:prf_advantage_one} \begin{gather*}|\Pr[G\_real\_2] - \Pr[G\_intermediate\_2]| \leq PRF\_Advantage.\end{gather*} \end{lem}
@@ -1636,7 +1637,7 @@ However, proving things about this is difficult. Dodis et al. (2013) proved that
 
 Here we give an outline of the structure of the Coq development. The main definitions and games were given in Section \ref{sec:indistinguishability_proof_for_a_simplified_hmac_drbg}, and each lemma in the Coq development is explained in detail in Appendix \ref{sec:explanations_of_each_lemma_in_the_coq_development}. Below, a dagger ($^\dag$) denotes a lemma proven by Petcher. When a lemma is specific to the Coq development and is too obvious to mention in the paper proof, I denote it with an asterisk ($^*$). 
 
-I am confident that all the lemmas are true; paper proofs are given in Appendix \ref{sec:explanations_of_each_lemma_in_the_coq_development}. However, some rely on admitted lemmas, which are either proofs of game equivalence or inductions that I haven't had time to fill in. 
+I am confident that all the lemmas are true; paper proofs are given in Appendix \ref{sec:explanations_of_each_lemma_in_the_coq_development}. However, some rely on admitted lemmas, which are either proofs of game equivalence or inductions that I haven't had time to fill in. I denote admitted lemmas with a question mark ($(?)$). Some lemmas are completely proven except for the admitted lemmas they depend on; I will not mark these. 
 
 This is the main theorem and its Coq proof. It states that the probability that the adversary can distinguish between the real-world and ideal-world games is bounded by the length of the list of blocks requested, multiplied by a constant upper bound on the difference between adjacent hybrids.
 
@@ -1659,25 +1660,25 @@ Qed.
 This is its proof tree, with a very short explanation given for each lemma. For conciseness I use ``equivalent'' to mean either that two games are equal via program equivalence, or that their outputs have computationally indistinguishable distributions. 
 
 \begin{longenum}
-\item \li|G1_Gi_O_equal|$^*$: the real-world game is equal to the first hybrid.
+\item \li|G1_Gi_O_equal|$^*$ (?): the real-world game is equal to the first hybrid.
 \item \li|GenUpdate_v_output_probability|: we can move each $v$-update to the beginning of the next $GenUpdate$ call.
-\item \li|G2_Gi_n_equal|$^*$: the ideal-world game is equal to the last hybrid.
+\item \li|G2_Gi_n_equal|$^*$ (?): the ideal-world game is equal to the last hybrid.
 \item \li|distance_le_prod_f|$^\dag$: the triangle inequality, which lets us bound the distance between adjacent hybrids.
 % Main
 \item \li|Gi_Gi_plus_1_close|: the probability of distinguishing between adjacent hybrids is negligible.
   \begin{longenum}
   \item \li|Gi_normal_prf_eq|$^*$: program equivalence relating normal hybrids and oracle-replacing hybrids. (The two have different types.)
     \begin{longenum}
-    \item \li|Gi_normal_prf_eq_compspec|$^*$: prove the above in PRPL, requiring a tricky induction over the list of block numbers.
+    \item \li|Gi_normal_prf_eq_compspec|$^*$ (?): prove the above in PRPL, requiring a tricky induction over the list of block numbers.
     \end{longenum}
   \item \li|Gi_prf_rf_close|: replace the PRF in the $i$th call of $GenUpdate$ in the $i$th hybrid with a RF, and bound the difference by $PRF\_Advantage\_Max$.
     \begin{longenum}
-      \item \li|PRF_Advantages_lt|$^*$: we can pick some $i$ for which $PRF\_Advantage$ is maximized.
+      \item \li|PRF_Advantages_lt|$^*$ (?): we can pick some $i$ for which $PRF\_Advantage$ is maximized.
     \end{longenum}
 
   \item \li|Gi_rf_rb_close|: replace the RF in the $i$th call of $GenUpdate$ in the $i$th hybrid with RB, and bound the difference by the probability of collisions in the oracle's inputs.
     \begin{longenum}
-    \item \li|Gi_normal_rb_eq|$^*$: another program equivalence relating normal hybrids and oracle-replacing hybrids, along the lines of \li|Gi_normal_prf_eq|.
+    \item \li|Gi_normal_rb_eq|$^*$ (?): another program equivalence relating normal hybrids and oracle-replacing hybrids, along the lines of \li|Gi_normal_prf_eq|.
     \item \li|Gi_rf_return_bad_eq|$^*$: expose the bad event in \li|Gi_rf|.
     \item \li|Gi_rb_return_bad_eq|$^*$: expose the bad event in \li|Gi_rb|.
     \item \li|Gi_rb_rf_identical_until_bad|: 
@@ -1694,7 +1695,7 @@ This is its proof tree, with a very short explanation given for each lemma. For 
       \end{longenum}
     \item \li|Gi_rb_bad_collisions|: bound the probability of the bad event happening.
       \begin{longenum}
-      \item Various game equivalences (\li|Gi_rb_bad_eq_i|)$^{\dag *}$: ruthlessly simplify the oracle computation using the RB oracle, and in the end apply Petcher's existing collision bound.
+      \item Various game equivalences (\li|Gi_rb_bad_eq_i|)$^{\dag *}$ (?): ruthlessly simplify the oracle computation using the RB oracle, and in the end apply Petcher's existing collision bound.
       \end{longenum}
     \end{longenum}
   \end{longenum} 
@@ -1703,6 +1704,8 @@ This is its proof tree, with a very short explanation given for each lemma. For 
 \section{Coq-specific reasoning} \label{sec:coq_specific_reasoning}
 
 Working in Coq requires doing many proofs of program and game equivalence, which can be tedious. Two examples of this above are \li|Gi_normal_prf_eq| and \li|Gi_normal_rb_eq|. Because using oracles changes the types of every computation that uses that computation, the types of $Gen\_loop$, $GenUpdate$, $Oi\_prg$, and $oracleMap$ all change from $Comp$ to $OracleComp$, and we write new functions with the new type. And we need to change the functions slightly to use the oracle in the $i$th call. Proving the above requires doing an induction over both the list of blocks provided by the adversary, and over each number of blocks in a call. Also, \li|Gi_rb_bad_eq_i| is one lemma that requires doing many game transformations and proving equivalences between them.
+
+Also, all of the proofs in this paper are in the concrete setting. Since we use FCF to mechanize our proofs, in the Coq development, we must make the informal assumption that the PRG adversaries are PPT. Our constructed adversaries are informally PPT upon inspection, assuming the PRG adversaries are PPT.
 
 \section{What's left to prove in the Coq development} \label{sec:whats_left_to_prove_in_the_coq_development}
 
@@ -1753,7 +1756,7 @@ Additionally, Coq prevented us from making suble off-by-one errors in the hybrid
 
 %Considering nuances of state and the hybrid argument
 
-Second, working in this environment allowed us to ``execute'' computations in lemmas and test if they held true on small examples. One example of this can be found in the lemmas whose names begin with \li|Gi_normal_prf_eq_compspec|, where wrong results after computing on small expressions allowed us to unearth several typoes in the indices in $Oi\_oc'$ and $GenUpdate$. For example, in $GenUpdate$, we had typed $ret \s (bits, (k', v'))$ instead of $ret \s (bits, (k', v''))$, which made one lemma unprovable until we fixed it. Similar bugs have been found in real-world code because a typo or mistake rendered the code unverifiable. These bugs have also been turned into real-world exploits.
+Second, working in this environment allowed us to ``execute'' computations in lemmas and test if they held true on small examples. One example of this can be found in the lemmas whose names begin with \li|Gi_normal_prf_eq_compspec|, where wrong results after computing on small expressions allowed us to unearth several typos in the indices in $Oi\_oc'$ and $GenUpdate$. For example, in $GenUpdate$, we had typed $ret \s (bits, (k', v'))$ instead of $ret \s (bits, (k', v''))$, which made one lemma unprovable until we fixed it. Similar bugs have been found in real-world code because a typo or mistake rendered the code unverifiable. These bugs have also been turned into real-world exploits.
 
 \subsection{Comments on HMAC-DRBG's design} \label{sec:comments_on_hmac_drbgs_design}
 
